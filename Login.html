@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVRIX Compressor Assistance - Login</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        studio: {
+                            50: '#f8f9f5',
+                            100: '#f1f2ec',
+                            200: '#e8eae1',
+                            300: '#cbd5e1',
+                            600: '#64748b',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+          background-color: #f1f2ec;
+          background-image: 
+            radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.04) 0%, transparent 60%),
+            radial-gradient(circle at 85% 85%, rgba(2, 132, 199, 0.03) 0%, transparent 50%),
+            linear-gradient(to bottom, #f8f9f5, #e8eae1);
+          background-attachment: fixed;
+          color: #1e293b;
+          font-family: 'Inter', sans-serif;
+        }
+
+        .glass-panel-light {
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 246, 241, 0.9) 100%);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          border-top: 1px solid rgba(255, 255, 255, 1);
+          box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-engine-light {
+          background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+          transition: all 0.2s ease;
+        }
+        .btn-engine-light:hover {
+          background: linear-gradient(180deg, #0369a1 0%, #075985 100%);
+          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+        }
+
+        .led-green {
+          background-color: #059669;
+          box-shadow: 0 0 6px #059669;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <header class="border-b border-black/10 bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center shadow-lg text-white font-black">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-black tracking-wider text-base text-slate-800">AVRIX</span>
+                        <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300 uppercase tracking-wider font-bold">Audio Needs</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium hidden sm:block">WE ASSIST YOUR AUDIO NEED</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-lg border border-slate-300 shadow-sm font-mono text-xs">
+                <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
+                <span class="text-[11px] text-slate-700 font-bold">Login Portal</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-md w-full mx-auto px-4 py-12 flex items-center justify-center">
+        <div class="glass-panel-light w-full rounded-2xl p-6 sm:p-8 space-y-6">
+            
+            <div class="text-center space-y-1">
+                <h1 class="text-2xl font-black tracking-wider text-sky-800">AVRIX Audio</h1>
+                <p class="text-xs text-slate-500 font-medium">Login ke Akun AVRIX Kamu</p>
+            </div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Email</label>
+                    <input type="email" id="login-email" required placeholder="nama@email.com" 
+                        class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" 
+                        class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                </div>
+
+                <button type="submit" id="btn-login" 
+                    class="w-full btn-engine-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-md mt-2 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Masuk ke Aplikasi</span>
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-t border-slate-200">
+                <p class="text-xs text-slate-600 font-medium">
+                    Belum punya akun / Mau aktivasi lisensi? <a href="register.html" class="text-sky-700 font-bold hover:underline">Aktivasi di sini</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 font-mono font-semibold">
+        AVRIX Audio &copy; 2026 | Professional Mixing Suite
+    </footer>
+
+    <script>
+        const SUPABASE_URL = 'https://ozuyzelpzsvmurjdjilq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
+        const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+        });
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const btn = document.getElementById('btn-login');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Memeriksa...</span>`;
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                window.location.href = 'plugin.html';
+            } catch (err) {
+                alert("Gagal Login: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-right-to-bracket"></i><span>Masuk ke Aplikasi</span>`;
+            }
+        }
+    </script>
+</body>
+</html>

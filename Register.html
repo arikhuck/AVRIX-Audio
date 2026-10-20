@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVRIX Compressor Assistance - Aktivasi Lisensi</title>
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://ozuyzelpzsvmurjdjilq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
+        const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    </script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        studio: {
+                            50: '#f8f9f5',
+                            100: '#f1f2ec',
+                            200: '#e8eae1',
+                            300: '#cbd5e1',
+                            600: '#64748b',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        },
+                        accent: {
+                            blue: '#0284c7',
+                            darkblue: '#0369a1',
+                            green: '#059669',
+                            amber: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+          background-color: #f1f2ec;
+          background-image: 
+            radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.04) 0%, transparent 60%),
+            radial-gradient(circle at 85% 85%, rgba(2, 132, 199, 0.03) 0%, transparent 50%),
+            linear-gradient(to bottom, #f8f9f5, #e8eae1);
+          background-attachment: fixed;
+          color: #1e293b;
+          font-family: 'Inter', sans-serif;
+        }
+
+        .glass-panel-light {
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 246, 241, 0.9) 100%);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          border-top: 1px solid rgba(255, 255, 255, 1);
+          box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .btn-engine-light {
+          background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+          transition: all 0.2s ease;
+        }
+        .btn-engine-light:hover {
+          background: linear-gradient(180deg, #0369a1 0%, #075985 100%);
+          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+        }
+
+        .led-green {
+          background-color: #059669;
+          box-shadow: 0 0 6px #059669;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <header class="border-b border-black/10 bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center shadow-lg text-white font-black">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-black tracking-wider text-base text-slate-800">AVRIX</span>
+                        <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300 uppercase tracking-wider font-bold">Audio Needs</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium hidden sm:block">WE ASSIST YOUR AUDIO NEEDS</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-lg border border-slate-300 shadow-sm font-mono text-xs">
+                <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
+                <span class="text-[11px] text-slate-700 font-bold">License Activation</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-md w-full mx-auto px-4 py-8 flex items-center justify-center">
+        <div class="glass-panel-light w-full rounded-2xl p-6 sm:p-8 space-y-5">
+            
+            <div class="text-center space-y-1">
+                <h1 class="text-2xl font-black tracking-wider text-sky-800">AVRIX Audio</h1>
+                <p class="text-xs text-slate-500 font-medium">Aktivasi Lisensi & Buat Akun Baru</p>
+            </div>
+
+            <form id="register-form" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Kamu</label>
+                    <input type="email" id="email" required placeholder="nama@email.com" 
+                        class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
+                    <input type="password" id="reg-password" required placeholder="••••••••" 
+                        class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Kode Lisensi dari Mayar</label>
+                    <input type="text" id="license-key" required placeholder="CONTOH: AVRIX-XXXX-XXXX" 
+                        class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-mono font-bold text-sky-800 uppercase focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Pilih Jenis Paket Lisensi</label>
+                    <select id="package-type" required 
+                        class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                        <option value="1month">1 Month Access (30 Hari)</option>
+                        <option value="1year">1 Year Access (365 Hari)</option>
+                        <option value="forever">Forever / Lifetime Access</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="btn-submit" 
+                    class="w-full btn-engine-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-md mt-3 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span>Aktivasi & Masuk ke App</span>
+                </button>
+            </form>
+
+            <div class="text-center pt-2 border-t border-slate-200">
+                <p class="text-xs text-slate-600 font-medium">
+                    Sudah punya akun? <a href="login.html" class="text-sky-700 font-bold hover:underline">Login di sini</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 font-mono font-semibold">
+        AVRIX Audio &copy; 2026 | Professional Mixing Suite
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const regForm = document.getElementById('register-form');
+            if (regForm) {
+                regForm.addEventListener('submit', handleRegister);
+            }
+        });
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('reg-password').value;
+            const licenseKey = document.getElementById('license-key').value.trim();
+            const packageType = document.getElementById('package-type').value;
+            const btn = document.getElementById('btn-submit');
+
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Memproses Aktivasi...</span>`;
+
+            try {
+                // 1. Buat User di Auth Supabase
+                const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+                if (authError) throw authError;
+
+                const user = authData.user;
+                if (!user) throw new Error("Gagal membuat akun.");
+
+                // 2. Hitung Tanggal Expired
+                let expiryDate = null;
+                let isLifetime = false;
+                const now = new Date();
+
+                if (packageType === '1month') {
+                    expiryDate = new Date(now.setDate(now.getDate() + 30)).toISOString();
+                } else if (packageType === '1year') {
+                    expiryDate = new Date(now.setDate(now.getDate() + 365)).toISOString();
+                } else if (packageType === 'forever') {
+                    isLifetime = true;
+                }
+
+                // 3. Simpan Profil & Masa Aktif Lisensi ke Tabel 'profiles'
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .upsert({
+                        id: user.id,
+                        email: email,
+                        license_key: licenseKey,
+                        subscription_expiry: expiryDate,
+                        is_lifetime: isLifetime
+                    });
+
+                if (profileError) throw profileError;
+
+                alert("Aktivasi Lisensi Berhasil!");
+                window.location.href = '/plugin.html';
+
+            } catch (err) {
+                alert("Gagal Registrasi: " + err.message);
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-check-circle"></i><span>Aktivasi & Masuk ke App</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
