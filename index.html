@@ -3,38 +3,44 @@
 <head>
 <!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Supabase JS Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = 'https://ozuyzelpzsvmurjdjilq.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
+  const SUPABASE_ANON_KEY = 'ISI_ANON_KEY_KAMU_DI_SINI';
   const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   async function checkAccess() {
-    // 1. Cek Login
+    // 1. Cek User Login
     const { data: { user } } = await supabase.auth.getUser();
+    
+    // Jika BELUM LOGIN -> Tendang ke halaman login.html
     if (!user) {
       window.location.href = '/login.html';
       return;
     }
 
-    // 2. Cek Masa Aktif Lisensi
+    // 2. Cek Masa Aktif Lisensi di Database
     const { data: profile } = await supabase
       .from('profiles')
       .select('subscription_expiry, is_lifetime')
       .eq('id', user.id)
       .single();
 
+    // Jika TIDAK ADA PROFIL -> Tendang ke halaman register.html untuk aktivasi
     if (!profile) {
-      window.location.href = '/index.html';
+      alert("Lisensi kamu belum terdaftar! Silakan aktivasi terlebih dahulu.");
+      window.location.href = '/register.html';
       return;
     }
 
     const now = new Date();
     const expiry = profile.subscription_expiry ? new Date(profile.subscription_expiry) : null;
 
-    // Jika BUKAN Lifetime DAN (Lisensi Kosong ATAU Sudah Kedaluwarsa)
+    // Jika BUKAN Lifetime DAN (Lisensi Kosong ATAU Sudah Kedaluwarsa) -> Tendang ke login.html / register.html
     if (!profile.is_lifetime && (!expiry || expiry < now)) {
-      alert("Akses kamu belum aktif atau masa langganan sudah habis!");
-      window.location.href = '/index.html';
+      alert("Masa langganan kamu sudah habis! Silakan perbarui lisensi.");
+      window.location.href = '/register.html';
     }
   }
 
