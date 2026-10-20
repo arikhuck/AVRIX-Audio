@@ -3,8 +3,6 @@
 <head>
 <!-- Supabase JS Client -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Supabase JS Client -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   const SUPABASE_URL = 'https://ozuyzelpzsvmurjdjilq.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
@@ -37,7 +35,7 @@
     const now = new Date();
     const expiry = profile.subscription_expiry ? new Date(profile.subscription_expiry) : null;
 
-    // Jika BUKAN Lifetime DAN (Lisensi Kosong ATAU Sudah Kedaluwarsa) -> Tendang ke login.html / register.html
+    // Jika BUKAN Lifetime DAN (Lisensi Kosong ATAU Sudah Kedaluwarsa) -> Tendang ke register.html
     if (!profile.is_lifetime && (!expiry || expiry < now)) {
       alert("Masa langganan kamu sudah habis! Silakan perbarui lisensi.");
       window.location.href = '/register.html';
