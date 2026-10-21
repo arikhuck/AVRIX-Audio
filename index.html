@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVRIX Audio Needs - Dynamic Audio Compressor Engine</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        studio: {
+                            50: '#f8f9f5',
+                            100: '#f1f2ec',
+                            200: '#e8eae1',
+                            300: '#cbd5e1',
+                            600: '#64748b',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+          font-family: 'Inter', sans-serif;
+          overflow-x: hidden;
+          position: relative;
+          background-color: #f1f2ec;
+        }
+
+        /* 1. LAYER FOTO UI COMPRESSOR KAMU (SESUAIKAN NAMA FILE) */
+        .bg-compressor-fixed {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          /* Sesuai nama file screenshot UI kompresor kamu */
+          background-image: url('ui-compressor.JPG'); 
+          background-size: cover;
+          background-position: center top;
+          background-repeat: no-repeat;
+          opacity: 0.28; /* Opacity pas agar jelas tapi teks di atasnya aman */
+          z-index: -3;
+        }
+
+        /* 2. BACKUP BACKGROUND AUDIO PATTERN (AGAR TIDAK POLOS JIKA GAMBAR TIDAK KEBACA) */
+        .bg-audio-pattern {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-image: 
+            radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.12) 0%, transparent 65%),
+            radial-gradient(circle at 85% 85%, rgba(217, 119, 6, 0.08) 0%, transparent 55%),
+            url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 20 Q 30 5, 50 20 T 90 20 T 110 20' stroke='%230284c7' stroke-width='1.2' fill='none' opacity='0.15'/%3E%3Cpath d='M10 60 Q 30 80, 50 60 T 90 60 T 110 60' stroke='%23d97706' stroke-width='1.2' fill='none' opacity='0.12'/%3E%3Ccircle cx='50' cy='20' r='3' fill='%230284c7' opacity='0.2'/%3E%3C/svg%3E");
+          z-index: -2;
+        }
+
+        /* 3. OVERLAY TIPIS BENING */
+        .bg-light-tint {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: linear-gradient(180deg, rgba(248, 249, 245, 0.70) 0%, rgba(232, 234, 225, 0.82) 100%);
+          z-index: -1;
+        }
+
+        .glass-panel-light {
+          background: rgba(255, 255, 255, 0.78);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          border: 1px solid rgba(255, 255, 255, 0.9);
+          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn-engine-light {
+          background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+          transition: all 0.2s ease;
+        }
+        .btn-engine-light:hover {
+          background: linear-gradient(180deg, #0369a1 0%, #075985 100%);
+          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+        }
+
+        .btn-studio-light {
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          color: #1e293b;
+          transition: all 0.2s ease;
+        }
+        .btn-studio-light:hover {
+          background: #ffffff;
+          border-color: #0284c7;
+          color: #0284c7;
+        }
+
+        .led-green {
+          background-color: #059669;
+          box-shadow: 0 0 6px #059669;
+        }
+
+        .pricing-card-popup {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pricing-card-popup:hover {
+          transform: translateY(-6px);
+        }
+
+        .glow-sky:hover {
+          border-color: #0284c7 !important;
+          box-shadow: 0 15px 30px rgba(2, 132, 199, 0.18) !important;
+        }
+
+        .glow-amber:hover {
+          border-color: #d97706 !important;
+          box-shadow: 0 15px 30px rgba(217, 119, 6, 0.18) !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- LAYER BACKGROUND (FOTO UI + PATTERN VECTOR + OVERLAY) -->
+    <div class="bg-compressor-fixed"></div>
+    <div class="bg-audio-pattern"></div>
+    <div class="bg-light-tint"></div>
+
+    <!-- HEADER -->
+    <header class="border-b border-black/10 bg-white/70 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center shadow-lg text-white font-black">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-black tracking-wider text-base text-slate-900">AVRIX</span>
+                        <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-sky-100/90 text-sky-800 border border-sky-300 uppercase tracking-wider font-bold">Audio Needs</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600 font-bold hidden sm:block uppercase tracking-wider">WE ASSIST YOUR NEED</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <a href="login.html" class="btn-studio-light px-4 py-2 rounded-xl text-xs font-bold transition-all">Login Member</a>
+                <a href="#pricing" class="btn-engine-light px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                    <i class="fa-solid fa-bolt text-xs"></i>
+                    <span>Get Access</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20 relative z-10">
+        
+        <!-- HERO SECTION -->
+        <div class="text-center max-w-3xl mx-auto space-y-5">
+            <div class="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-1 rounded-full shadow-sm font-mono text-xs">
+                <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
+                <span class="text-[11px] text-slate-800 font-bold uppercase tracking-wider">Acoustic Engine & Dynamic Compression Advisor</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight leading-tight drop-shadow-sm">
+                Get Precise & Pro <br><span class="text-sky-700">Audio Compression Settings</span> Instantly
+            </h1>
+            
+            <p class="text-xs sm:text-sm text-slate-800 leading-relaxed font-bold max-w-2xl mx-auto">
+                No guessing Attack, Release, and Ratio anymore. AVRIX helps you automatically discover the optimal compressor parameters tailored to your WAV file characteristics & music genre!
+            </p>
+
+            <div class="pt-2 flex flex-wrap justify-center gap-3">
+                <a href="#pricing" class="btn-engine-light px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition-all shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping"></i> Get License Now
+                </a>
+                <a href="login.html" class="btn-studio-light px-6 py-3 rounded-xl font-bold text-xs transition-all">
+                    Already Have An Account? Login
+                </a>
+            </div>
+        </div>
+
+        <!-- DETAILED APP FEATURES SHOWCASE (GRIDS OF ACTUAL FEATURES) -->
+        <section class="space-y-8">
+            <div class="text-center">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Inside AVRIX Audio Engine</h2>
+                <p class="text-xs text-slate-600 font-bold">Scientific compression logic mapped perfectly to legendary hardware</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                <!-- FITUR 1: TRACK PARAMETERS -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="p-2.5 bg-sky-100 text-sky-800 rounded-xl text-lg font-bold">
+                                <i class="fa-solid fa-sliders"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Parameter Calibration</h4>
+                                <h3 class="text-base font-black text-slate-900">Target Instruments & Music Genre Calibration</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Set your target source, whether it's vocal tracks, kick, bass, or Master Bus. Calibrate according to specific sub-genres (like Pop Punk, Hip Hop, or acoustic ballad) and adjust with fine Tempo (BPM) sliders.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/5 rounded-2xl p-4 border border-slate-200">
+                        <div class="flex justify-between items-center text-[10px] font-mono text-slate-500 mb-2 font-bold">
+                            <span>SOURCE IN-OUT</span>
+                            <span class="text-sky-600">POP PUNK HIGH ENERGY</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-sky-600 w-3/4 rounded-full"></div>
+                            </div>
+                            <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                                <div class="h-full bg-amber-500 w-1/2 rounded-full"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FITUR 2: CALIBRATED RECOMMENDATIONS -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="p-2.5 bg-amber-100 text-amber-800 rounded-xl text-lg font-bold">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Recommendations</h4>
+                                <h3 class="text-base font-black text-slate-900">Auto Transient Detect & Calibrated Recommendations</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Say goodbye to messy compression. AVRIX auto-calculates precise Transient Attack, Release (with BPM notes syncing), Knee Curves (Soft/Hard/Spunky) and exact auto Gain Make-up for perfectly leveled levels.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/5 rounded-2xl p-3 border border-slate-200 flex justify-between gap-2 font-mono">
+                        <div class="text-center p-2 bg-white rounded-xl shadow-sm flex-1">
+                            <span class="text-[9px] text-slate-400 block uppercase font-bold">Attack</span>
+                            <span class="text-xs font-black text-slate-900">14 ms</span>
+                        </div>
+                        <div class="text-center p-2 bg-white rounded-xl shadow-sm flex-1">
+                            <span class="text-[9px] text-slate-400 block uppercase font-bold">Release</span>
+                            <span class="text-xs font-black text-slate-900">222 ms</span>
+                        </div>
+                        <div class="text-center p-2 bg-white rounded-xl shadow-sm flex-1">
+                            <span class="text-[9px] text-slate-400 block uppercase font-bold">Ratio</span>
+                            <span class="text-xs font-black text-slate-900">2.8:1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FITUR 3: RECOMENDED HARDWARE ARCHITECTURE -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl text-lg font-bold">
+                                <i class="fa-solid fa-microchip"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Hardware Simulation</h4>
+                                <h3 class="text-base font-black text-slate-900">Classic Vintage Hardware Architectures</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Receive suggested topologies like FET Peak Limiters (1176 Style), optical tube compressors (LA-2A), VCA style, and Vari-Mu based on transient profiles to craft a highly commercial standard sound.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/5 rounded-2xl p-3.5 border border-slate-200 flex items-center gap-3">
+                        <i class="fa-solid fa-circle-nodes text-emerald-600 text-lg"></i>
+                        <div>
+                            <span class="text-[9px] font-mono text-slate-400 block font-bold">RECOMMENDED ARCHITECTURE</span>
+                            <span class="text-[11px] font-bold text-slate-800">FET Peak Limiter (1176 Style) + Optical (LA-2A)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FITUR 4: RATIO SLOPE VISUALIZATION -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="p-2.5 bg-indigo-100 text-indigo-800 rounded-xl text-lg font-bold">
+                                <i class="fa-solid fa-chart-area"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Gain Reduction Transfer Curve</h4>
+                                <h3 class="text-base font-black text-slate-900">Compression Transfer Function Visualizer</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Interactively analyze the direct compression curve graph. See your custom threshold points, ratio slopes, and knee-bend in real-time to gain 100% control over dynamics.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900/5 rounded-2xl p-2.5 border border-slate-200 relative overflow-hidden h-14 flex items-end">
+                        <svg class="w-full h-10 overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <path d="M0,15 L40,15 L80,3 L100,2" stroke="#0284c7" stroke-width="1.5" fill="none"></path>
+                            <circle cx="40" cy="15" r="2" fill="#d97706"></circle>
+                        </svg>
+                        <span class="absolute top-2 right-2 text-[8px] font-mono text-sky-600 font-bold uppercase">Slope 2.8:1 ACTIVE</span>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PRICING SECTION -->
+        <div id="pricing" class="space-y-8 pt-6">
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Choose Your Plan</h2>
+                <p class="text-xs text-slate-600 font-bold">Instant activation & secure checkout via Midtrans</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
+                
+                <!-- 1 MONTH ACCESS -->
+                <div class="glass-panel-light p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-6 pricing-card-popup glow-sky bg-white/95">
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4">
+                            <h3 class="text-sm font-extrabold text-slate-700 uppercase tracking-wider">1 Month Access</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-slate-900">Rp 10.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ month</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-xs text-slate-600 font-medium">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Full Preset Engine Access</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Standard Email Support</li>
+                        </ul>
+                    </div>
+
+                    <a href="PASTE_LINK_MIDTRANS_1_MONTH_DI_SINI" target="_blank" class="w-full btn-studio-light py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center">
+                        Buy Now
+                    </a>
+                </div>
+
+                <!-- 1 YEAR ACCESS (BEST VALUE) -->
+                <div class="glass-panel-light p-6 rounded-2xl border-2 border-sky-600 shadow-xl relative flex flex-col justify-between space-y-6 pricing-card-popup glow-sky bg-white/95">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-700 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow">Best Value</span>
+                    
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4">
+                            <h3 class="text-sm font-extrabold text-sky-800 uppercase tracking-wider">1 Year Access</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-3xl font-black font-mono text-sky-800">Rp 100.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ year</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-xs text-slate-700 font-medium">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Save More Than 15%</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Full Mode Learn Access (WAV)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> All Core Features Included</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Priority Feature Updates</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Community Support</li>
+                        </ul>
+                    </div>
+
+                    <a href="PASTE_LINK_MIDTRANS_1_YEAR_DI_SINI" target="_blank" class="w-full btn-engine-light py-3.5 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md">
+                        Buy Now
+                    </a>
+                </div>
+
+                <!-- FOREVER (LIFETIME) -->
+                <div class="glass-panel-light p-6 rounded-2xl border border-amber-400 shadow-md relative flex flex-col justify-between space-y-6 pricing-card-popup glow-amber bg-white/95">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow">Lifetime</span>
+
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4">
+                            <h3 class="text-sm font-extrabold text-amber-800 uppercase tracking-wider">Forever (Lifetime)</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-slate-900">Rp 150.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ one-time</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-xs text-slate-700 font-medium">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Lifetime Access</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Full Mode Learn Access (WAV)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> No Monthly Subscription Fees</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Free Future Updates</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Top Priority VIP Support</li>
+                        </ul>
+                    </div>
+
+                    <a href="PASTE_LINK_MIDTRANS_LIFETIME_DI_SINI" target="_blank" class="w-full bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md">
+                        Buy Now
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 bg-white/90 backdrop-blur-md py-4 text-center text-xs text-slate-700 font-mono font-bold relative z-10">
+        AVRIX Audio &copy; 2026 | Professional Mixing Suite
+    </footer>
+
+</body>
+</html>
