@@ -45,23 +45,22 @@
           background-color: #f1f2ec;
         }
 
-        /* 1. LAYER FOTO UI COMPRESSOR KAMU (SESUAIKAN NAMA FILE) */
+        /* 1. LAYER FOTO UI COMPRESSOR DI BACKGROUND */
         .bg-compressor-fixed {
           position: fixed;
           top: 0;
           left: 0;
           width: 100vw;
           height: 100vh;
-          /* Sesuai nama file screenshot UI kompresor kamu */
           background-image: url('ui-compressor.JPG'); 
           background-size: cover;
           background-position: center top;
           background-repeat: no-repeat;
-          opacity: 0.28; /* Opacity pas agar jelas tapi teks di atasnya aman */
+          opacity: 0.22;
           z-index: -3;
         }
 
-        /* 2. BACKUP BACKGROUND AUDIO PATTERN (AGAR TIDAK POLOS JIKA GAMBAR TIDAK KEBACA) */
+        /* 2. BACKUP PATTERN VECTOR AUDIO */
         .bg-audio-pattern {
           position: fixed;
           top: 0;
@@ -75,19 +74,19 @@
           z-index: -2;
         }
 
-        /* 3. OVERLAY TIPIS BENING */
+        /* 3. OVERLAY TIPIS KREM STUDIO LIGHT */
         .bg-light-tint {
           position: fixed;
           top: 0;
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: linear-gradient(180deg, rgba(248, 249, 245, 0.70) 0%, rgba(232, 234, 225, 0.82) 100%);
+          background: linear-gradient(180deg, rgba(248, 249, 245, 0.72) 0%, rgba(232, 234, 225, 0.85) 100%);
           z-index: -1;
         }
 
         .glass-panel-light {
-          background: rgba(255, 255, 255, 0.78);
+          background: rgba(255, 255, 255, 0.82);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
           border: 1px solid rgba(255, 255, 255, 0.9);
@@ -143,7 +142,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
 
-    <!-- LAYER BACKGROUND (FOTO UI + PATTERN VECTOR + OVERLAY) -->
+    <!-- OVERLAY BACKGROUND LAYERS -->
     <div class="bg-compressor-fixed"></div>
     <div class="bg-audio-pattern"></div>
     <div class="bg-light-tint"></div>
@@ -202,16 +201,16 @@
             </div>
         </div>
 
-       <!-- DETAILED APP FEATURES SHOWCASE (INSIDE AVRIX AUDIO ENGINE) -->
+        <!-- INSIDE AVRIX AUDIO ENGINE (MEMASANG FITUR ASLI DARI PLUGIN.HTML) -->
         <section class="space-y-8">
             <div class="text-center space-y-1">
-                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Inside AVRIX Audio Engine</h2>
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Inside AVRIX Comp Assistance</h2>
                 <p class="text-xs text-slate-600 font-bold">Scientific compression logic mapped perfectly to legendary hardware & genre dynamics</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                 
-                <!-- FITUR 1: TRACK PARAMETERS & PRESETS -->
+                <!-- FITUR 1: TARGET INSTRUMENTS & GENRES ASLI -->
                 <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
@@ -219,8 +218,8 @@
                                 <i class="fa-solid fa-sliders"></i>
                             </span>
                             <div>
-                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Parameter Calibration</h4>
-                                <h3 class="text-base font-black text-slate-900">Target Instruments & Music Genre Calibration</h3>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">12 Instruments & 12 Genres</h4>
+                                <h3 class="text-base font-black text-slate-900">Target Instrument & Genre Calibration</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
@@ -228,27 +227,40 @@
                         </p>
                     </div>
                     
-                    <!-- DISPLAY LIST PRESET & INSTRUMEN -->
                     <div class="bg-slate-100/90 rounded-2xl p-4 border border-slate-200/80 space-y-3">
                         <div>
-                            <span class="text-[9px] font-mono font-bold text-slate-400 uppercase block mb-1.5">Target Instruments / Bus Included:</span>
-                            <div class="flex flex-wrap gap-1.5 text-[10px] font-bold font-mono">
-                                <span class="bg-sky-600 text-white px-2 py-0.5 rounded shadow-sm">Lead Vocal</span>
-                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Snare Top/Bottom</span>
+                            <span class="text-[9px] font-mono font-bold text-slate-400 uppercase block mb-1.5">Available Target Instruments:</span>
+                            <div class="flex flex-wrap gap-1 text-[10px] font-bold font-mono">
+                                <span class="bg-sky-600 text-white px-2 py-0.5 rounded">Lead Vocal</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Vocal Scream</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Backing Vocal</span>
                                 <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Kick Drum</span>
-                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Bass Guitar</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Snare Drum</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Bass Guitar/Synth</span>
                                 <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Acoustic Guitar</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Electric Guitar</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Rhythm Bus</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Synth Lead</span>
+                                <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Drum Bus</span>
                                 <span class="bg-white text-slate-700 border border-slate-200 px-2 py-0.5 rounded">Master Bus</span>
                             </div>
                         </div>
 
                         <div class="border-t border-slate-200/80 pt-2.5">
-                            <span class="text-[9px] font-mono font-bold text-slate-400 uppercase block mb-1.5">Genre Profile Profiles:</span>
-                            <div class="flex flex-wrap gap-1.5 text-[10px] font-mono font-semibold">
-                                <span class="bg-slate-800 text-amber-300 px-2 py-0.5 rounded">Pop Punk (Punchy Guitars & Snap Snare)</span>
-                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Modern Hip-Hop / Trap</span>
-                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Acoustic / Folk</span>
-                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Rock / Metal Heavy</span>
+                            <span class="text-[9px] font-mono font-bold text-slate-400 uppercase block mb-1.5">Available Music Genres:</span>
+                            <div class="flex flex-wrap gap-1 text-[9px] font-mono font-semibold">
+                                <span class="bg-slate-800 text-amber-300 px-2 py-0.5 rounded">Pop Punk</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Midwest Emo</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Hip-Hop/Trap</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Hipdut</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Modern Metal</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Thall/Djent</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Pop</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Rock</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">EDM</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Jazz</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">R&B</span>
+                                <span class="bg-white text-slate-600 border border-slate-200 px-2 py-0.5 rounded">Lo-Fi</span>
                             </div>
                         </div>
                     </div>
@@ -262,16 +274,15 @@
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                             </span>
                             <div>
-                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Recommendations</h4>
-                                <h3 class="text-base font-black text-slate-900">Auto Transient & Calibrated Recommendations</h3>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Calculations</h4>
+                                <h3 class="text-base font-black text-slate-900">Calibrated Recommendations Engine</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                            Auto-calculates precise Attack, Release (synced to 1/8 note tempo), Knee Curves, and Auto Makeup Gain compensation.
+                            Auto-calculates precise Attack, Release (synced to 1/16, 1/8, 1/4 note tempo), Knee Curves, and exact Makeup Gain compensation.
                         </p>
                     </div>
 
-                    <!-- GRID NILAI REKOMENDASI -->
                     <div class="bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 space-y-3">
                         <div class="grid grid-cols-3 gap-2 font-mono">
                             <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
@@ -304,7 +315,7 @@
                     </div>
                 </div>
 
-                <!-- FITUR 3: HARDWARE ARCHITECTURES -->
+                <!-- FITUR 3: VINTAGE HARDWARE SIMULATION -->
                 <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
@@ -312,24 +323,23 @@
                                 <i class="fa-solid fa-microchip"></i>
                             </span>
                             <div>
-                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Hardware Simulation</h4>
-                                <h3 class="text-base font-black text-slate-900">Vintage Hardware Architectures</h3>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Hardware Topologies</h4>
+                                <h3 class="text-base font-black text-slate-900">Vintage Hardware Simulation</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                            Matches transient profiles to suggested analog hardware topologies like FET Peak Limiters (1176 Style), Optical Tube (LA-2A), and VCA units.
+                            Matches transient profiles to suggested analog hardware topologies like FET Peak Limiters (1176 Style), Optical Tube (LA-2A), SSL G-Master, and Vari-Mu units.
                         </p>
                     </div>
 
-                    <!-- SIMULASI ARSITEKTUR HARDWARE -->
                     <div class="bg-slate-100/90 rounded-2xl p-4 border border-slate-200/80 space-y-2.5">
                         <div class="flex items-center space-x-3 bg-white p-3 rounded-xl border border-slate-200 shadow-sm">
                             <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shadow-sm shrink-0">
                                 <i class="fa-solid fa-microchip"></i>
                             </div>
                             <div>
-                                <span class="text-[9px] font-mono text-slate-400 block font-bold uppercase">TARGET HARDWARE TOPOLOGY</span>
-                                <span class="text-[11px] font-bold text-slate-900">FET Peak Limiter (1176) + Optical (LA-2A)</span>
+                                <span class="text-[9px] font-mono text-slate-400 block font-bold uppercase">RECOMMENDED ARCHITECTURE</span>
+                                <span class="text-[11px] font-bold text-slate-900">FET Peak Limiter (1176 Style) + Optical (LA-2A)</span>
                             </div>
                         </div>
 
@@ -349,47 +359,18 @@
                                 <i class="fa-solid fa-chart-line"></i>
                             </span>
                             <div>
-                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Gain Reduction Transfer Curve</h4>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Transfer Curve Visualization</h4>
                                 <h3 class="text-base font-black text-slate-900">Compression Curve Visualizer</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                            Interactively analyze direct compression transfer functions. Real-time threshold knee-points and ratio slopes provide total control.
+                            Interactively analyze direct compression transfer functions. Real-time threshold knee-points and ratio sliders provide total control.
                         </p>
                     </div>
 
-                    <!-- GAMBAR ULTIMATE ASLI DARI UI COMPRESSOR -->
+                    <!-- GAMBAR FOTO ULTIMATE ASLI UI SCREENSHOT KAMU -->
                     <div class="rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm bg-white">
                         <img src="feature-curve.png" alt="AVRIX Compression Transfer Function Ratio Slope" class="w-full h-auto block object-cover">
-                    </div>
-                </div>
-
-            </div>
-        </section>
-
-                    <!-- BOX GRAFIK RAPI -->
-                    <div class="bg-slate-100/90 rounded-2xl p-3 border border-slate-200/80 relative space-y-2">
-                        <div class="flex justify-between items-center text-[10px] font-mono font-bold">
-                            <span class="text-slate-400">TRANSFER FUNCTION</span>
-                            <span class="text-sky-700 bg-sky-100/90 px-2 py-0.5 rounded border border-sky-200 uppercase">Slope 2.8:1 Active</span>
-                        </div>
-                        
-                        <div class="h-12 w-full bg-white rounded-xl border border-slate-200/80 p-2 flex items-center">
-                            <svg class="w-full h-full" viewBox="0 0 200 40" preserveAspectRatio="none">
-                                <!-- Grid Lines -->
-                                <line x1="0" y1="20" x2="200" y2="20" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="2,2" />
-                                <line x1="100" y1="0" x2="100" y2="40" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="2,2" />
-                                
-                                <!-- 1:1 Direct Reference Line -->
-                                <line x1="10" y1="32" x2="190" y2="8" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
-                                
-                                <!-- Compression Slope Curve -->
-                                <path d="M 10 32 L 90 20 Q 120 16 190 14" stroke="#0284c7" stroke-width="2.5" fill="none" stroke-linecap="round" />
-                                
-                                <!-- Knee Point -->
-                                <circle cx="90" cy="20" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5" />
-                            </svg>
-                        </div>
                     </div>
                 </div>
 
