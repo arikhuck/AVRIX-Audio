@@ -9,36 +9,32 @@
   const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   async function checkAccess() {
-    // 1. Cek User Login
+    // 1. Cek Login
     const { data: { user } } = await supabase.auth.getUser();
-    
-    // Jika BELUM LOGIN -> Tendang ke halaman login.html
     if (!user) {
       window.location.href = '/login.html';
       return;
     }
 
-    // 2. Cek Masa Aktif Lisensi di Database
+    // 2. Cek Masa Aktif Lisensi
     const { data: profile } = await supabase
       .from('profiles')
       .select('subscription_expiry, is_lifetime')
       .eq('id', user.id)
       .single();
 
-    // Jika TIDAK ADA PROFIL -> Tendang ke halaman register.html untuk aktivasi
     if (!profile) {
-      alert("Lisensi kamu belum terdaftar! Silakan aktivasi terlebih dahulu.");
-      window.location.href = '/register.html';
+      window.location.href = '/index.html';
       return;
     }
 
     const now = new Date();
     const expiry = profile.subscription_expiry ? new Date(profile.subscription_expiry) : null;
 
-    // Jika BUKAN Lifetime DAN (Lisensi Kosong ATAU Sudah Kedaluwarsa) -> Tendang ke register.html
+    // Jika BUKAN Lifetime DAN (Lisensi Kosong ATAU Sudah Kedaluwarsa)
     if (!profile.is_lifetime && (!expiry || expiry < now)) {
-      alert("Masa langganan kamu sudah habis! Silakan perbarui lisensi.");
-      window.location.href = '/register.html';
+      alert("Akses kamu belum aktif atau masa langganan sudah habis!");
+      window.location.href = '/index.html';
     }
   }
 
@@ -273,7 +269,7 @@
                                 <span>Target Instrument / Bus</span>
                                 <i class="fa-solid fa-microphone-lines text-sky-600 text-xs"></i>
                             </label>
-                            <select id="input-instrument" onchange="calculateRecommendation()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                            <select id="input-instrument" onchange="onInstrumentChange()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
                                 <option value="Lead Vocal">Lead Vocal (Pop/Rock/Rap)</option>
                                 <option value="Vocal Scream">Vocal Scream / Harsh Screaming</option>
                                 <option value="Backing Vocal">Backing Vocals / Choir Bus</option>
@@ -360,13 +356,24 @@
                                 <span id="param-attack-note" class="text-[10px] text-slate-600 mt-1 block font-medium">Transient Pass</span>
                             </div>
 
+                            <!-- RELEASE TIME CARD: DROPDOWN UNTUK MERUBAH NOTE DURATION -->
                             <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
                                 <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Release Time</span>
                                 <div class="flex items-baseline space-x-1 mt-1">
                                     <span id="param-release" class="text-2xl font-black font-mono text-slate-900">125</span>
                                     <span class="text-xs text-slate-500 font-mono font-bold">ms</span>
                                 </div>
-                                <span id="param-release-sync" class="text-[10px] text-sky-700 mt-1 block font-mono font-bold">Synced to 1/8 note</span>
+                                
+                                <div class="mt-1 flex items-center space-x-1">
+                                    <span class="text-[10px] text-sky-700 font-mono font-bold">Synced:</span>
+                                    <select id="input-release-note" onchange="onReleaseNoteChange()" class="bg-sky-50 border border-sky-300 text-sky-800 rounded px-1.5 py-0.5 text-[10px] font-mono font-bold focus:outline-none focus:border-sky-600 cursor-pointer">
+                                        <option value="1/16">1/16 note</option>
+                                        <option value="1/8" selected>1/8 note</option>
+                                        <option value="1/4">1/4 note</option>
+                                        <option value="1/2">1/2 note</option>
+                                        <option value="1/1">1/1 note</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
@@ -859,6 +866,7 @@
             learnGoal: 'transparent',
             thresholdDb: -8.0,
             customRatio: 2.8,
+            customReleaseNote: null, // Menyimpan note manual buatan user
             rawWavMetrics: null,
             audioContext: null,
             audioBuffer: null,
@@ -893,12 +901,16 @@
             }
         }
 
+        // PERHITUNGAN TEMPO MS DENGAN PILIHAN NOTE LEBIH LENGKAP
         function calculateNoteDurationMs(bpm, noteType) {
             const quarterNoteMs = (60 / bpm) * 1000;
             switch(noteType) {
                 case "1/16": return Math.round(quarterNoteMs / 4);
+                case "1/8": return Math.round(quarterNoteMs / 2);
                 case "1/4": return Math.round(quarterNoteMs);
-                case "1/8": default: return Math.round(quarterNoteMs / 2);
+                case "1/2": return Math.round(quarterNoteMs * 2);
+                case "1/1": return Math.round(quarterNoteMs * 4);
+                default: return Math.round(quarterNoteMs / 2);
             }
         }
 
@@ -920,6 +932,19 @@
             calculateRecommendation();
         }
 
+        // RESET CUSTOM NOTE KETIKA GANTI INSTRUMEN UTAMA
+        function onInstrumentChange() {
+            state.customReleaseNote = null;
+            calculateRecommendation();
+        }
+
+        // HANDLE MANUAL RELEASE NOTE DROPDOWN CHANGE
+        function onReleaseNoteChange() {
+            const selectedNote = document.getElementById('input-release-note').value;
+            state.customReleaseNote = selectedNote;
+            calculateRecommendation();
+        }
+
         function getCalculatedParams() {
             const inst = document.getElementById('input-instrument').value;
             const genre = document.getElementById('input-genre').value;
@@ -933,10 +958,10 @@
             // Genre-specific fine-tuning
             if (genre === 'Pop Punk') {
                 calculatedRatio = (parseFloat(calculatedRatio) + 0.8).toFixed(1);
-                finalAttack = Math.max(5, Math.round(finalAttack * 0.8)); // Fast enough for punchy guitars and snap snare
+                finalAttack = Math.max(5, Math.round(finalAttack * 0.8));
             } else if (genre === 'Midwest') {
                 calculatedRatio = Math.max(1.6, (parseFloat(calculatedRatio) - 0.4)).toFixed(1);
-                finalAttack = Math.round(finalAttack * 1.3); // Slower, warmer attack preserving natural transients
+                finalAttack = Math.round(finalAttack * 1.3);
             } else if (genre === 'Modern Metal' || genre === 'Thall') {
                 calculatedRatio = (parseFloat(calculatedRatio) + 1.2).toFixed(1);
                 finalAttack = Math.max(3, Math.round(finalAttack * 0.7));
@@ -946,7 +971,8 @@
                 calculatedRatio = Math.max(1.5, (parseFloat(calculatedRatio) - 0.5)).toFixed(1);
             }
 
-            const noteType = baseData.baseReleaseNote.includes("1/16") ? "1/16" : (baseData.baseReleaseNote.includes("1/4") ? "1/4" : "1/8");
+            // MENGGUNAKAN NOTE PILIHAN PENGGUNA ATAU DEFAULT PRESET
+            const noteType = state.customReleaseNote || (baseData.baseReleaseNote.includes("1/16") ? "1/16" : (baseData.baseReleaseNote.includes("1/4") ? "1/4" : "1/8"));
             const releaseMs = calculateNoteDurationMs(state.bpm, noteType);
             const activeRatio = state.customRatio || parseFloat(calculatedRatio);
             const estimatedGain = (Math.abs(state.thresholdDb) * (activeRatio - 1) / activeRatio * 0.5).toFixed(1);
@@ -956,7 +982,7 @@
                 typeDesc: baseData.desc,
                 attack: finalAttack,
                 release: releaseMs,
-                releaseSync: `Synced to ${noteType} note @ ${state.bpm} BPM`,
+                noteType: noteType,
                 ratio: `${activeRatio.toFixed(1)}:1`,
                 knee: baseData.knee,
                 lookahead: baseData.lookahead,
@@ -985,7 +1011,13 @@
             document.getElementById('rec-type-desc').innerText = params.typeDesc;
             document.getElementById('param-attack').innerText = params.attack;
             document.getElementById('param-release').innerText = params.release;
-            document.getElementById('param-release-sync').innerText = params.releaseSync;
+            
+            // SINKRONKAN VALUE DROPDOWN RELEASE NOTE
+            const releaseSelect = document.getElementById('input-release-note');
+            if (releaseSelect) {
+                releaseSelect.value = params.noteType;
+            }
+
             document.getElementById('param-ratio').innerText = params.ratio;
             document.getElementById('param-knee').innerText = params.knee;
             document.getElementById('param-gain').innerText = params.makeupGain;
