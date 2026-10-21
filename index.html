@@ -202,10 +202,10 @@
             </div>
         </div>
 
-        <!-- DETAILED APP FEATURES SHOWCASE (GRIDS OF ACTUAL FEATURES) -->
+       <!-- DETAILED APP FEATURES SHOWCASE -->
         <section class="space-y-8">
-            <div class="text-center">
-                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Inside AVRIX Comp Assistance</h2>
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Inside AVRIX Audio Engine</h2>
                 <p class="text-xs text-slate-600 font-bold">Scientific compression logic mapped perfectly to legendary hardware</p>
             </div>
 
@@ -215,29 +215,31 @@
                 <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
-                            <span class="p-2.5 bg-sky-100 text-sky-800 rounded-xl text-lg font-bold">
+                            <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center text-lg font-bold">
                                 <i class="fa-solid fa-sliders"></i>
                             </span>
                             <div>
-                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Parameter Calibration</h4>
-                                <h3 class="text-base font-black text-slate-900">Target Instruments & Music Genre Calibration</h3>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Parameter Calibration</h4>
+                                <h3 class="text-base font-black text-slate-900">Target Instruments & Genre Calibration</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                            Set your target source, whether it's vocal tracks, kick, bass, or Master Bus. Calibrate according to specific sub-genres (like Pop Punk, Hip Hop, or acoustic ballad) and adjust with fine Tempo (BPM) sliders.
+                            Set target sources like vocals, snare, kick, bass, or Master Bus. Calibrate dynamically according to specific sub-genres and fine tempo (BPM) tracking.
                         </p>
                     </div>
-                    <div class="bg-slate-900/5 rounded-2xl p-4 border border-slate-200">
-                        <div class="flex justify-between items-center text-[10px] font-mono text-slate-500 mb-2 font-bold">
-                            <span>SOURCE IN-OUT</span>
-                            <span class="text-sky-600">POP PUNK HIGH ENERGY</span>
+                    
+                    <div class="bg-slate-100/80 rounded-2xl p-4 border border-slate-200/80 space-y-3">
+                        <div class="flex justify-between items-center text-[10px] font-mono font-bold">
+                            <span class="text-slate-500">TARGET PROFILE</span>
+                            <span class="text-sky-700 bg-sky-100 px-2 py-0.5 rounded border border-sky-300">Lead Vocal (Pop Punk)</span>
                         </div>
-                        <div class="space-y-2">
-                            <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-sky-600 w-3/4 rounded-full"></div>
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between text-[10px] font-mono text-slate-500">
+                                <span>TEMPO SYNC</span>
+                                <span class="font-bold text-slate-800">135 BPM</span>
                             </div>
-                            <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                                <div class="h-full bg-amber-500 w-1/2 rounded-full"></div>
+                            <div class="h-2 bg-slate-200 rounded-full overflow-hidden relative">
+                                <div class="h-full bg-gradient-to-r from-sky-500 to-sky-700 w-3/4 rounded-full"></div>
                             </div>
                         </div>
                     </div>
@@ -247,81 +249,103 @@
                 <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
-                            <span class="p-2.5 bg-amber-100 text-amber-800 rounded-xl text-lg font-bold">
+                            <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold">
                                 <i class="fa-solid fa-wand-magic-sparkles"></i>
                             </span>
                             <div>
-                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Recommendations</h4>
-                                <h3 class="text-base font-black text-slate-900">Auto Transient Detect & Calibrated Recommendations</h3>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Recommendations</h4>
+                                <h3 class="text-base font-black text-slate-900">Auto Transient & Calibrated Values</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                            Say goodbye to messy compression. AVRIX auto-calculates precise Transient Attack, Release (with BPM notes syncing), Knee Curves (Soft/Hard/Spunky) and exact auto Gain Make-up for perfectly leveled levels.
+                            Auto-calculates precise Transient Attack, Release (BPM synced), Knee Curves, and exact Makeup Gain compensation for optimal dynamic control.
                         </p>
                     </div>
-                    <div class="bg-slate-900/5 rounded-2xl p-3 border border-slate-200 flex justify-between gap-2 font-mono">
-                        <div class="text-center p-2 bg-white rounded-xl shadow-sm flex-1">
+
+                    <div class="grid grid-cols-3 gap-2 font-mono">
+                        <div class="text-center p-3 bg-white/90 rounded-2xl border border-slate-200 shadow-sm">
                             <span class="text-[9px] text-slate-400 block uppercase font-bold">Attack</span>
-                            <span class="text-xs font-black text-slate-900">14 ms</span>
+                            <span class="text-sm font-black text-slate-900">14 <xs class="text-[10px] font-normal text-slate-500">ms</xs></span>
                         </div>
-                        <div class="text-center p-2 bg-white rounded-xl shadow-sm flex-1">
+                        <div class="text-center p-3 bg-white/90 rounded-2xl border border-slate-200 shadow-sm">
                             <span class="text-[9px] text-slate-400 block uppercase font-bold">Release</span>
-                            <span class="text-xs font-black text-slate-900">222 ms</span>
+                            <span class="text-sm font-black text-slate-900">222 <xs class="text-[10px] font-normal text-slate-500">ms</xs></span>
                         </div>
-                        <div class="text-center p-2 bg-white rounded-xl shadow-sm flex-1">
+                        <div class="text-center p-3 bg-white/90 rounded-2xl border border-slate-200 shadow-sm">
                             <span class="text-[9px] text-slate-400 block uppercase font-bold">Ratio</span>
-                            <span class="text-xs font-black text-slate-900">2.8:1</span>
+                            <span class="text-sm font-black text-slate-900">2.8:1</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- FITUR 3: RECOMENDED HARDWARE ARCHITECTURE -->
+                <!-- FITUR 3: HARDWARE ARCHITECTURE -->
                 <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
-                            <span class="p-2.5 bg-emerald-100 text-emerald-800 rounded-xl text-lg font-bold">
+                            <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-lg font-bold">
                                 <i class="fa-solid fa-microchip"></i>
                             </span>
                             <div>
-                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Hardware Simulation</h4>
-                                <h3 class="text-base font-black text-slate-900">Classic Vintage Hardware Architectures</h3>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Hardware Simulation</h4>
+                                <h3 class="text-base font-black text-slate-900">Vintage Hardware Architectures</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                            Receive suggested topologies like FET Peak Limiters (1176 Style), optical tube compressors (LA-2A), VCA style, and Vari-Mu based on transient profiles to craft a highly commercial standard sound.
+                            Matches transient profiles to suggested analog hardware topologies like FET Peak Limiters (1176 Style), Optical Tube (LA-2A), and VCA units.
                         </p>
                     </div>
-                    <div class="bg-slate-900/5 rounded-2xl p-3.5 border border-slate-200 flex items-center gap-3">
-                        <i class="fa-solid fa-circle-nodes text-emerald-600 text-lg"></i>
+
+                    <div class="bg-slate-100/80 rounded-2xl p-3.5 border border-slate-200/80 flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold shadow-sm">
+                            <i class="fa-solid fa-microchip"></i>
+                        </div>
                         <div>
-                            <span class="text-[9px] font-mono text-slate-400 block font-bold">RECOMMENDED ARCHITECTURE</span>
-                            <span class="text-[11px] font-bold text-slate-800">FET Peak Limiter (1176 Style) + Optical (LA-2A)</span>
+                            <span class="text-[9px] font-mono text-slate-400 block font-bold uppercase">Target Hardware</span>
+                            <span class="text-[11px] font-bold text-slate-900">FET Peak Limiter (1176) + Optical (LA-2A)</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- FITUR 4: RATIO SLOPE VISUALIZATION -->
+                <!-- FITUR 4: RATIO SLOPE VISUALIZATION (RAPI & PRESISE) -->
                 <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
-                            <span class="p-2.5 bg-indigo-100 text-indigo-800 rounded-xl text-lg font-bold">
-                                <i class="fa-solid fa-chart-area"></i>
+                            <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-chart-line"></i>
                             </span>
                             <div>
-                                <h4 class="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">Gain Reduction Transfer Curve</h4>
-                                <h3 class="text-base font-black text-slate-900">Compression Transfer Function Visualizer</h3>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Gain Reduction Transfer Curve</h4>
+                                <h3 class="text-base font-black text-slate-900">Compression Curve Visualizer</h3>
                             </div>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed font-medium">
-                            Interactively analyze the direct compression curve graph. See your custom threshold points, ratio slopes, and knee-bend in real-time to gain 100% control over dynamics.
+                            Interactively analyze direct compression transfer functions. Real-time threshold knee-points and ratio slopes provide total control.
                         </p>
                     </div>
-                    <div class="bg-slate-900/5 rounded-2xl p-2.5 border border-slate-200 relative overflow-hidden h-14 flex items-end">
-                        <svg class="w-full h-10 overflow-visible" viewBox="0 0 100 20" preserveAspectRatio="none">
-                            <path d="M0,15 L40,15 L80,3 L100,2" stroke="#0284c7" stroke-width="1.5" fill="none"></path>
-                            <circle cx="40" cy="15" r="2" fill="#d97706"></circle>
-                        </svg>
-                        <span class="absolute top-2 right-2 text-[8px] font-mono text-sky-600 font-bold uppercase">Slope 2.8:1 ACTIVE</span>
+
+                    <!-- BOX GRAFIK RAPI -->
+                    <div class="bg-slate-100/90 rounded-2xl p-3 border border-slate-200/80 relative space-y-2">
+                        <div class="flex justify-between items-center text-[10px] font-mono font-bold">
+                            <span class="text-slate-400">TRANSFER FUNCTION</span>
+                            <span class="text-sky-700 bg-sky-100/90 px-2 py-0.5 rounded border border-sky-200 uppercase">Slope 2.8:1 Active</span>
+                        </div>
+                        
+                        <div class="h-12 w-full bg-white rounded-xl border border-slate-200/80 p-2 flex items-center">
+                            <svg class="w-full h-full" viewBox="0 0 200 40" preserveAspectRatio="none">
+                                <!-- Grid Lines -->
+                                <line x1="0" y1="20" x2="200" y2="20" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="2,2" />
+                                <line x1="100" y1="0" x2="100" y2="40" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="2,2" />
+                                
+                                <!-- 1:1 Direct Reference Line -->
+                                <line x1="10" y1="32" x2="190" y2="8" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3,3" />
+                                
+                                <!-- Compression Slope Curve -->
+                                <path d="M 10 32 L 90 20 Q 120 16 190 14" stroke="#0284c7" stroke-width="2.5" fill="none" stroke-linecap="round" />
+                                
+                                <!-- Knee Point -->
+                                <circle cx="90" cy="20" r="4" fill="#d97706" stroke="#ffffff" stroke-width="1.5" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
 
