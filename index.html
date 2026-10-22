@@ -26,6 +26,25 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 3s infinite',
+                        'wave': 'wave 1.2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4' },
+                            '50%': { opacity: '0.8' }
+                        },
+                        wave: {
+                            '0%': { height: '15%' },
+                            '100%': { height: '95%' }
+                        }
                     }
                 }
             }
@@ -45,7 +64,6 @@
           background-color: #f1f2ec;
         }
 
-        /* 1. LAYER FOTO UI COMPRESSOR DI BACKGROUND */
         .bg-compressor-fixed {
           position: fixed;
           top: 0;
@@ -56,11 +74,10 @@
           background-size: cover;
           background-position: center top;
           background-repeat: no-repeat;
-          opacity: 0.55;
+          opacity: 0.60;
           z-index: -3;
         }
 
-        /* 2. BACKUP PATTERN VECTOR AUDIO */
         .bg-audio-pattern {
           position: fixed;
           top: 0;
@@ -68,41 +85,41 @@
           width: 100vw;
           height: 100vh;
           background-image: 
-            radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.12) 0%, transparent 65%),
-            radial-gradient(circle at 85% 85%, rgba(217, 119, 6, 0.08) 0%, transparent 55%),
+            radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.15) 0%, transparent 65%),
+            radial-gradient(circle at 85% 85%, rgba(217, 119, 6, 0.10) 0%, transparent 55%),
             url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 20 Q 30 5, 50 20 T 90 20 T 110 20' stroke='%230284c7' stroke-width='1.2' fill='none' opacity='0.15'/%3E%3Cpath d='M10 60 Q 30 80, 50 60 T 90 60 T 110 60' stroke='%23d97706' stroke-width='1.2' fill='none' opacity='0.12'/%3E%3Ccircle cx='50' cy='20' r='3' fill='%230284c7' opacity='0.2'/%3E%3C/svg%3E");
           z-index: -2;
         }
 
-        /* 3. OVERLAY TIPIS KREM STUDIO LIGHT */
         .bg-light-tint {
           position: fixed;
           top: 0;
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: linear-gradient(180deg, rgba(248, 249, 245, 0.72) 0%, rgba(232, 234, 225, 0.85) 100%);
+          background: linear-gradient(180deg, rgba(248, 249, 245, 0.68) 0%, rgba(232, 234, 225, 0.82) 100%);
           z-index: -1;
         }
 
         .glass-panel-light {
-          background: rgba(255, 255, 255, 0.82);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.9);
-          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.06);
+          background: rgba(255, 255, 255, 0.88);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.95);
+          box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.07);
         }
 
         .btn-engine-light {
           background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
           border: 1px solid #0284c7;
           color: #ffffff;
-          box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+          box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
           transition: all 0.2s ease;
         }
         .btn-engine-light:hover {
           background: linear-gradient(180deg, #0369a1 0%, #075985 100%);
-          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+          box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+          transform: translateY(-1px);
         }
 
         .btn-studio-light {
@@ -115,29 +132,37 @@
           background: #ffffff;
           border-color: #0284c7;
           color: #0284c7;
+          transform: translateY(-1px);
         }
 
         .led-green {
           background-color: #059669;
-          box-shadow: 0 0 6px #059669;
+          box-shadow: 0 0 8px #059669;
         }
 
         .pricing-card-popup {
           transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .pricing-card-popup:hover {
-          transform: translateY(-6px);
+          transform: translateY(-8px);
         }
 
         .glow-sky:hover {
           border-color: #0284c7 !important;
-          box-shadow: 0 15px 30px rgba(2, 132, 199, 0.18) !important;
+          box-shadow: 0 15px 35px rgba(2, 132, 199, 0.22) !important;
         }
 
         .glow-amber:hover {
           border-color: #d97706 !important;
-          box-shadow: 0 15px 30px rgba(217, 119, 6, 0.18) !important;
+          box-shadow: 0 15px 35px rgba(217, 119, 6, 0.22) !important;
         }
+
+        /* Waveform Animation Custom Bars */
+        .bar-1 { animation-delay: 0.1s; }
+        .bar-2 { animation-delay: 0.3s; }
+        .bar-3 { animation-delay: 0.2s; }
+        .bar-4 { animation-delay: 0.4s; }
+        .bar-5 { animation-delay: 0.15s; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
@@ -148,7 +173,7 @@
     <div class="bg-light-tint"></div>
 
     <!-- HEADER -->
-    <header class="border-b border-black/10 bg-white/70 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+    <header class="border-b border-black/10 bg-white/75 backdrop-blur-md sticky top-0 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
                 <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center shadow-lg text-white font-black">
@@ -174,32 +199,115 @@
     </header>
 
     <!-- MAIN CONTENT -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-20 relative z-10">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24 relative z-10">
         
-        <!-- HERO SECTION -->
-        <div class="text-center max-w-3xl mx-auto space-y-5">
-            <div class="inline-flex items-center space-x-2 bg-white/90 backdrop-blur-md border border-slate-300 px-3 py-1 rounded-full shadow-sm font-mono text-xs">
-                <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                <span class="text-[11px] text-slate-800 font-bold uppercase tracking-wider">Acoustic Engine & Dynamic Compression Advisor</span>
+        <!-- HERO SECTION WITH GRADIENT GLOW -->
+        <div class="text-center max-w-4xl mx-auto space-y-6 pt-4">
+            
+            <div class="inline-flex items-center space-x-3 bg-white/95 backdrop-blur-md border border-sky-200/80 px-4 py-1.5 rounded-full shadow-md font-mono text-xs animate-float">
+                <div class="flex items-end gap-0.5 h-3">
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-1 h-full"></span>
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-2 h-full"></span>
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-3 h-full"></span>
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-4 h-full"></span>
+                </div>
+                <span class="text-[11px] text-slate-900 font-extrabold uppercase tracking-wider">Acoustic Engine & Dynamic Compression Advisor</span>
             </div>
 
-            <h1 class="text-3xl sm:text-5xl font-black text-slate-950 tracking-tight leading-tight drop-shadow-sm">
-                Get Precise & Pro <br><span class="text-sky-700">Audio Compression Settings</span> Instantly
+            <h1 class="text-4xl sm:text-6xl font-black text-slate-950 tracking-tight leading-tight drop-shadow-sm">
+                Get Precise & Pro <br>
+                <span class="bg-gradient-to-r from-sky-700 via-sky-600 to-indigo-700 bg-clip-text text-transparent">
+                    Audio Compression Settings
+                </span> Instantly
             </h1>
             
-            <p class="text-xs sm:text-sm text-slate-800 leading-relaxed font-bold max-w-2xl mx-auto">
-                No guessing Attack, Release, and Ratio anymore. AVRIX helps you automatically discover the optimal compressor parameters tailored to your WAV file characteristics & music genre!
+            <p class="text-xs sm:text-base text-slate-800 leading-relaxed font-bold max-w-2xl mx-auto">
+                No guessing Attack, Release, and Ratio anymore. AVRIX automatically discovers optimal compression parameters tailored to your track's physical dynamics & music genre!
             </p>
 
             <div class="pt-2 flex flex-wrap justify-center gap-3">
-                <a href="#pricing" class="btn-engine-light px-6 py-3 rounded-xl font-bold text-xs tracking-wide transition-all shadow-md flex items-center gap-2">
+                <a href="#pricing" class="btn-engine-light px-7 py-3.5 rounded-xl font-extrabold text-xs tracking-wide transition-all shadow-lg flex items-center gap-2">
                     <i class="fa-solid fa-cart-shopping"></i> Get License Now
                 </a>
-                <a href="login.html" class="btn-studio-light px-6 py-3 rounded-xl font-bold text-xs transition-all">
+                <a href="login.html" class="btn-studio-light px-7 py-3.5 rounded-xl font-extrabold text-xs transition-all shadow-sm">
                     Already Have An Account? Login
                 </a>
             </div>
+
+            <!-- STATS METRICS BAR -->
+            <div class="pt-6 grid grid-cols-3 gap-3 max-w-lg mx-auto font-mono">
+                <div class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <span class="block text-xl font-black text-sky-800">12+</span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Instruments</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <span class="block text-xl font-black text-sky-800">14+</span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Genres A-Z</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <span class="block text-xl font-black text-emerald-600">100%</span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">DSP Accuracy</span>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE COMPRESSOR DEMO PREVIEW -->
+            <div class="pt-6 max-w-2xl mx-auto">
+                <div class="glass-panel-light p-5 rounded-3xl border border-sky-300/80 shadow-2xl text-left space-y-4 relative overflow-hidden group">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
+                            <span class="text-xs font-mono font-extrabold text-slate-800 uppercase">Live Demo Interactive Preview</span>
+                        </div>
+                        <span class="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">Interactive Engine</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Try Selecting Instrument:</label>
+                            <select onchange="updateDemoValues(this.value)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600">
+                                <option value="lead_vocal">Lead Vocal (Pop / Rock)</option>
+                                <option value="snare">Snare Drum (Punchy Snap)</option>
+                                <option value="master_bus">Master Bus (Pop Punk Glue)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Live Calibrated Output:</label>
+                            <div class="bg-slate-900 text-sky-400 font-mono text-xs p-2 rounded-xl flex justify-between items-center border border-slate-800">
+                                <span>ATTACK: <b id="demo-attack" class="text-white">12 ms</b></span>
+                                <span>RELEASE: <b id="demo-release" class="text-white">125 ms</b></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
+
+        <!-- HOW IT WORKS SECTION -->
+        <section class="space-y-8">
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">How It Works in 3 Simple Steps</h2>
+                <p class="text-xs text-slate-600 font-bold">Fast, accurate, and scientifically designed for audio engineers</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">1</div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase">Choose Target Profile</h3>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Select from 12 instruments and 14 music genres arranged from A to Z.</p>
+                </div>
+                <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">2</div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase">Calibrate or Drop WAV</h3>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Set your song BPM or drag & drop a WAV audio file for automatic Crest Factor measurement.</p>
+                </div>
+                <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">3</div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase">Copy & Mix</h3>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Copy the calibrated Attack, Release, Knee, and Makeup Gain directly into your DAW compressor.</p>
+                </div>
+            </div>
+        </section>
 
         <!-- INSIDE AVRIX AUDIO ENGINE -->
         <section class="space-y-8">
@@ -218,7 +326,7 @@
                                 <i class="fa-solid fa-sliders"></i>
                             </span>
                             <div>
-                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">12 Instruments & 12 Genres</h4>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">12 Instruments & 14 Genres</h4>
                                 <h3 class="text-base font-black text-slate-900">Target Instrument & Genre Calibration</h3>
                             </div>
                         </div>
@@ -229,93 +337,95 @@
 
                     <div class="bg-slate-100/90 rounded-2xl p-4 border border-slate-200/80 space-y-4">
                         <div>
-                            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-2">Available Target Instruments:</span>
+                            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-2">Available Target Instruments (A-Z):</span>
                             <div class="flex flex-wrap gap-1.5">
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Lead Vocal</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Vocal Scream</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Backing Vocal</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Kick Drum</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Snare Drum</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Bass Guitar/Synth</span>
                                 <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Acoustic Guitar</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Electric Guitar</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Rhythm Bus</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Synth Lead</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Backing Vocal</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Bass Guitar/Synth</span>
                                 <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Drum Bus</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Electric Guitar</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Kick Drum</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Lead Vocal</span>
                                 <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Master Bus</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Rhythm Bus</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Snare Drum</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Synth Lead</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Vocal Scream</span>
                             </div>
                         </div>
 
                         <div class="border-t border-slate-200/60 pt-3">
-                            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-2">Available Music Genres:</span>
+                            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-2">Available Music Genres (A-Z):</span>
                             <div class="flex flex-wrap gap-1.5">
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Pop Punk</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Midwest Emo</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">EDM</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Hardcore</span>
                                 <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Hip-Hop/Trap</span>
                                 <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Hipdut</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Modern Metal</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Thall/Djent</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Pop</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Rock</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">EDM</span>
                                 <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Jazz</span>
-                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">R&B</span>
                                 <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Lo-Fi</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Midwest Emo</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Modern Metal</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Pop</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Pop Punk</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Punk</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">R&B</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Rock</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Thall/Djent</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-              <!-- FITUR 2: CALIBRATED RECOMMENDATIONS -->
-<div class="glass-panel-light p-6 rounded-3xl border border-white space-y-4 shadow-xl">
-    <div class="space-y-2">
-        <div class="flex items-center space-x-3">
-            <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold">
-                <i class="fa-solid fa-wand-magic-sparkles"></i>
-            </span>
-            <div>
-                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Calculations</h4>
-                <h3 class="text-base font-black text-slate-900">Calibrated Recommendations Engine</h3>
-            </div>
-        </div>
-        <p class="text-xs text-slate-700 leading-relaxed font-medium">
-            Auto-calculates precise Attack, Release (synced to 1/16, 1/8, 1/4 note tempo), Knee Curves, and exact Makeup Gain compensation.
-        </p>
-    </div>
+                <!-- FITUR 2: CALIBRATED RECOMMENDATIONS -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white space-y-4 shadow-xl">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Calculations</h4>
+                                <h3 class="text-base font-black text-slate-900">Calibrated Recommendations Engine</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Auto-calculates precise Attack, Release (synced to 1/16, 1/8, 1/4 note tempo), Knee Curves, and exact Makeup Gain compensation.
+                        </p>
+                    </div>
 
-    <div class="bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 space-y-3">
-        <div class="grid grid-cols-3 gap-2 font-mono">
-            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[9px] text-slate-400 block uppercase font-bold">Attack Time</span>
-                <span class="text-xs font-black text-slate-900">14 ms</span>
-                <span class="text-[8px] text-sky-600 font-semibold block mt-0.5">Transient Pass</span>
-            </div>
-            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[9px] text-slate-400 block uppercase font-bold">Release Time</span>
-                <span class="text-xs font-black text-slate-900">222 ms</span>
-                <span class="text-[8px] text-sky-600 font-semibold block mt-0.5">1/8 Note @ 135 BPM</span>
-            </div>
-            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
-                <span class="text-[9px] text-slate-400 block uppercase font-bold">Ratio Slope</span>
-                <span class="text-xs font-black text-slate-900">2.8:1</span>
-                <span class="text-[8px] text-slate-500 font-semibold block mt-0.5">Dynamic Slope</span>
-            </div>
-        </div>
+                    <div class="bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 space-y-3">
+                        <div class="grid grid-cols-3 gap-2 font-mono">
+                            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-[9px] text-slate-400 block uppercase font-bold">Attack Time</span>
+                                <span class="text-xs font-black text-slate-900">14 ms</span>
+                                <span class="text-[8px] text-sky-600 font-semibold block mt-0.5">Transient Pass</span>
+                            </div>
+                            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-[9px] text-slate-400 block uppercase font-bold">Release Time</span>
+                                <span class="text-xs font-black text-slate-900">222 ms</span>
+                                <span class="text-[8px] text-sky-600 font-semibold block mt-0.5">1/8 Note @ 135 BPM</span>
+                            </div>
+                            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-[9px] text-slate-400 block uppercase font-bold">Ratio Slope</span>
+                                <span class="text-xs font-black text-slate-900">2.8:1</span>
+                                <span class="text-[8px] text-slate-500 font-semibold block mt-0.5">Dynamic Slope</span>
+                            </div>
+                        </div>
 
-        <div class="grid grid-cols-2 gap-2 font-mono">
-            <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between px-3">
-                <span class="text-[9px] text-slate-400 uppercase font-bold">Knee Profile:</span>
-                <span class="text-[10px] font-bold text-slate-800">Soft Knee</span>
-            </div>
-            <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between px-3">
-                <span class="text-[9px] text-slate-400 uppercase font-bold">Auto Makeup:</span>
-                <span class="text-[10px] font-black text-emerald-600">+2.6 dB</span>
-            </div>
-        </div>
-    </div>
-</div>
+                        <div class="grid grid-cols-2 gap-2 font-mono">
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between px-3">
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">Knee Profile:</span>
+                                <span class="text-[10px] font-bold text-slate-800">Soft Knee</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between px-3">
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">Auto Makeup:</span>
+                                <span class="text-[10px] font-black text-emerald-600">+2.6 dB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-               <!-- FITUR 3: VINTAGE HARDWARE SIMULATION -->
+                <!-- FITUR 3: VINTAGE HARDWARE SIMULATION -->
                 <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
                     <div class="space-y-4">
                         <div class="flex items-center space-x-3">
@@ -391,95 +501,92 @@
         </section>
 
         <!-- PRICING SECTION -->
-<div id="pricing" class="space-y-8 pt-6">
-    <div class="text-center space-y-1">
-        <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Choose Your Plan</h2>
-        <p class="text-xs text-slate-600 font-bold">Instant activation & secure checkout via Midtrans</p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
-        
-        <!-- 1 MONTH ACCESS -->
-        <div class="glass-panel-light p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between pricing-card-popup glow-sky bg-white/95">
-            <div class="space-y-4">
-                <!-- Header khusus dikunci tinggi minimumnya agar garis pemisah sejajar sempurna -->
-                <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
-                    <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">1 Month Access</h3>
-                    <div class="flex items-baseline justify-center gap-1 pt-1">
-                        <span class="text-2xl font-black font-mono text-slate-900">Rp 10.000</span>
-                        <span class="text-xs text-slate-500 font-bold font-mono">/ month</span>
-                    </div>
-                </div>
-
-                <ul class="space-y-2.5 text-xs text-slate-600 font-medium pt-1">
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Full Preset Engine Access</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Standard Email Support</li>
-                </ul>
+        <div id="pricing" class="space-y-8 pt-6">
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Choose Your Plan</h2>
+                <p class="text-xs text-slate-600 font-bold">Instant activation & secure checkout via Midtrans</p>
             </div>
 
-            <a href="PASTE_LINK_MIDTRANS_1_MONTH_DI_SINI" target="_blank" class="w-full btn-studio-light py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center mt-6">
-                Buy Now
-            </a>
-        </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
+                
+                <!-- 1 MONTH ACCESS -->
+                <div class="glass-panel-light p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between pricing-card-popup glow-sky bg-white/95">
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
+                            <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">1 Month Access</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-slate-900">Rp 10.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ month</span>
+                            </div>
+                        </div>
 
-        <!-- 1 YEAR ACCESS (BEST VALUE) -->
-        <div class="glass-panel-light p-6 rounded-2xl border-2 border-sky-600 shadow-xl relative flex flex-col justify-between pricing-card-popup glow-sky bg-white/95">
-            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-700 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow z-10">Best Value</span>
-            
-            <div class="space-y-4">
-                <!-- Header dengan tinggi minimum yang sama -->
-                <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
-                    <h3 class="text-xs font-extrabold text-sky-800 uppercase tracking-wider">1 Year Access</h3>
-                    <div class="flex items-baseline justify-center gap-1 pt-1">
-                        <span class="text-2xl font-black font-mono text-sky-800">Rp 100.000</span>
-                        <span class="text-xs text-slate-500 font-bold font-mono">/ year</span>
+                        <ul class="space-y-2.5 text-xs text-slate-600 font-medium pt-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Full Preset Engine Access</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Standard Email Support</li>
+                        </ul>
                     </div>
+
+                    <a href="PASTE_LINK_MIDTRANS_1_MONTH_DI_SINI" target="_blank" class="w-full btn-studio-light py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center mt-6">
+                        Buy Now
+                    </a>
                 </div>
 
-                <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-1">
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Save More Than 15%</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Full Mode Learn Access (WAV)</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> All Core Features Included</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Priority Feature Updates</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Community Support</li>
-                </ul>
-            </div>
+                <!-- 1 YEAR ACCESS (BEST VALUE) -->
+                <div class="glass-panel-light p-6 rounded-2xl border-2 border-sky-600 shadow-xl relative flex flex-col justify-between pricing-card-popup glow-sky bg-white/95">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-700 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow z-10">Best Value</span>
+                    
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
+                            <h3 class="text-xs font-extrabold text-sky-800 uppercase tracking-wider">1 Year Access</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-sky-800">Rp 100.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ year</span>
+                            </div>
+                        </div>
 
-            <a href="PASTE_LINK_MIDTRANS_1_YEAR_DI_SINI" target="_blank" class="w-full btn-engine-light py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md mt-6">
-                Buy Now
-            </a>
-        </div>
-
-        <!-- FOREVER (LIFETIME) -->
-        <div class="glass-panel-light p-6 rounded-2xl border border-amber-400 shadow-md relative flex flex-col justify-between pricing-card-popup glow-amber bg-white/95">
-            <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow z-10">Lifetime</span>
-
-            <div class="space-y-4">
-                <!-- Header dengan tinggi minimum yang sama -->
-                <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
-                    <h3 class="text-xs font-extrabold text-amber-800 uppercase tracking-wider">Forever (Lifetime)</h3>
-                    <div class="flex items-baseline justify-center gap-1 pt-1">
-                        <span class="text-2xl font-black font-mono text-slate-900">Rp 150.000</span>
-                        <span class="text-xs text-slate-500 font-bold font-mono">/ one-time</span>
+                        <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Save More Than 15%</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Full Mode Learn Access (WAV)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> All Core Features Included</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Priority Feature Updates</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Community Support</li>
+                        </ul>
                     </div>
+
+                    <a href="PASTE_LINK_MIDTRANS_1_YEAR_DI_SINI" target="_blank" class="w-full btn-engine-light py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md mt-6">
+                        Buy Now
+                    </a>
                 </div>
 
-                <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-1">
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Lifetime Access</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Full Mode Learn Access (WAV)</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> No Monthly Subscription Fees</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Free Future Updates</li>
-                    <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Top Priority VIP Support</li>
-                </ul>
+                <!-- FOREVER (LIFETIME) -->
+                <div class="glass-panel-light p-6 rounded-2xl border border-amber-400 shadow-md relative flex flex-col justify-between pricing-card-popup glow-amber bg-white/95">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow z-10">Lifetime</span>
+
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
+                            <h3 class="text-xs font-extrabold text-amber-800 uppercase tracking-wider">Forever (Lifetime)</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-slate-900">Rp 150.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ one-time</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Lifetime Access</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Full Mode Learn Access (WAV)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> No Monthly Subscription Fees</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Free Future Updates</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Top Priority VIP Support</li>
+                        </ul>
+                    </div>
+
+                    <a href="PASTE_LINK_MIDTRANS_LIFETIME_DI_SINI" target="_blank" class="w-full bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md mt-6">
+                        Buy Now
+                    </a>
+                </div>
+
             </div>
-
-            <a href="PASTE_LINK_MIDTRANS_LIFETIME_DI_SINI" target="_blank" class="w-full bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md mt-6">
-                Buy Now
-            </a>
         </div>
-
-    </div>
-</div>
     </main>
 
     <!-- FOOTER -->
@@ -487,5 +594,22 @@
         AVRIX Audio &copy; 2026 | Professional Mixing Suite
     </footer>
 
+    <!-- DEMO PREVIEW INTERACTIVE LOGIC -->
+    <script>
+        function updateDemoValues(val) {
+            const attackEl = document.getElementById('demo-attack');
+            const releaseEl = document.getElementById('demo-release');
+            if (val === 'lead_vocal') {
+                attackEl.innerText = '12 ms';
+                releaseEl.innerText = '125 ms';
+            } else if (val === 'snare') {
+                attackEl.innerText = '30 ms';
+                releaseEl.innerText = '80 ms';
+            } else if (val === 'master_bus') {
+                attackEl.innerText = '30 ms';
+                releaseEl.innerText = '250 ms';
+            }
+        }
+    </script>
 </body>
 </html>
