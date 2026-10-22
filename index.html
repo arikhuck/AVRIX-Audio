@@ -159,11 +159,6 @@
         .bar-2 { animation-delay: 0.3s; }
         .bar-3 { animation-delay: 0.2s; }
         .bar-4 { animation-delay: 0.4s; }
-
-        /* Smooth Carousel Fade */
-        .slide-item {
-          transition: opacity 0.5s ease-in-out;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
@@ -202,26 +197,26 @@
     <!-- MAIN CONTENT -->
     <main class="space-y-16 relative z-10 pb-12">
         
-        <!-- 2. HERO SLIDER SHOWCASE (TETAP DI BAGIAN PALING ATAS SETELAH HEADER) -->
+        <!-- 2. HERO SLIDER SHOWCASE (SMOOTH HORIZONTAL TRANSLATE) -->
         <section class="w-full max-w-6xl mx-auto pt-6 px-4">
             <div id="preview-slider-container" class="relative w-full h-[22rem] md:h-[28rem] overflow-hidden rounded-3xl bg-slate-950 shadow-2xl border border-white/30 group">
                 
-                <!-- CAROUSEL TRACK -->
-                <div class="absolute inset-0 w-full h-full">
+                <!-- CAROUSEL TRACK (HORIZONTALLY ALIGNED FLEXBOX) -->
+                <div id="slider-track" class="flex w-full h-full transition-transform duration-700 ease-in-out">
                     <!-- Slide 1 -->
-                    <div id="slide-1" class="slide-item absolute inset-0 w-full h-full block">
-                        <img src="preview-1.png" onerror="this.onerror=null; this.src='preview-1.jpg';" alt="AVRIX Interface Preview 1" class="w-full h-full object-cover object-top opacity-95 transition-all duration-300">
+                    <div class="w-full h-full flex-shrink-0 relative">
+                        <img src="preview-1.png" onerror="this.onerror=null; this.src='preview-1.jpg';" alt="AVRIX Interface Preview 1" class="w-full h-full object-cover object-top opacity-95">
                     </div>
                     <!-- Slide 2 -->
-                    <div id="slide-2" class="slide-item absolute inset-0 w-full h-full hidden">
-                        <img src="preview-2.png" onerror="this.onerror=null; this.src='preview-2.jpg';" alt="AVRIX Interface Preview 2" class="w-full h-full object-cover object-top opacity-95 transition-all duration-300">
+                    <div class="w-full h-full flex-shrink-0 relative">
+                        <img src="preview-2.png" onerror="this.onerror=null; this.src='preview-2.jpg';" alt="AVRIX Interface Preview 2" class="w-full h-full object-cover object-top opacity-95">
                     </div>
                 </div>
 
                 <!-- AMBIENT TOP SHADOW -->
                 <div class="absolute top-0 inset-x-0 h-16 bg-gradient-to-b from-black/60 to-transparent z-20 pointer-events-none"></div>
 
-                <!-- TRANSISI GRADASI UTAMA KE CONTEN BAWAH -->
+                <!-- TRANSISI GRADASI UTAMA KE CONTENT BAWAH -->
                 <div class="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#f1f2ec] via-[#f1f2ec]/80 to-transparent z-20 pointer-events-none"></div>
 
                 <!-- FLOATING OVERLAYS -->
@@ -614,7 +609,7 @@
         AVRIX Audio &copy; 2026 | Professional Mixing Suite
     </footer>
 
-    <!-- AUTO SLIDE 3 DETIK SCRIPT -->
+    <!-- AUTO HORIZONTAL SLIDE 3 DETIK SCRIPT -->
     <script>
         let currentSlide = 1;
         const totalSlides = 2;
@@ -628,21 +623,24 @@
 
         function showSlide(index) {
             currentSlide = index;
+            const track = document.getElementById('slider-track');
+            
+            // Translate track horizontally: 0% untuk slide 1, -100% untuk slide 2
+            const translatePercent = (index - 1) * 100;
+            track.style.transform = `translateX(-${translatePercent}%)`;
+
+            // Update Dot Indicators
             for (let i = 1; i <= totalSlides; i++) {
-                const slide = document.getElementById(`slide-${i}`);
                 const dot = document.getElementById(`dot-${i}`);
                 if (i === index) {
-                    slide.classList.remove('opacity-0', 'hidden');
-                    slide.classList.add('opacity-100', 'block');
                     dot.classList.remove('bg-white/40', 'scale-100');
                     dot.classList.add('bg-sky-500', 'scale-110');
                 } else {
-                    slide.classList.remove('opacity-100', 'block');
-                    slide.classList.add('opacity-0', 'hidden');
                     dot.classList.remove('bg-sky-500', 'scale-110');
                     dot.classList.add('bg-white/40', 'scale-100');
                 }
             }
+
             document.getElementById('slider-caption').innerText = sliderCaptions[index] || "AVRIX Interface Preview";
         }
 
@@ -679,7 +677,7 @@
             startAutoSlide();
         }
 
-        // Run slider automatically on load
+        // Jalankan slide otomatis saat halaman dibuka
         startAutoSlide();
     </script>
 </body>
