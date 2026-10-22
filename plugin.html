@@ -9,14 +9,12 @@
   const supabase = supabasejs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   async function checkAccess() {
-    // 1. Cek Login
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       window.location.href = '/login.html';
       return;
     }
 
-    // 2. Cek Masa Aktif Lisensi
     const { data: profile } = await supabase
       .from('profiles')
       .select('subscription_expiry, is_lifetime')
@@ -31,7 +29,6 @@
     const now = new Date();
     const expiry = profile.subscription_expiry ? new Date(profile.subscription_expiry) : null;
 
-    // Jika BUKAN Lifetime DAN (Lisensi Kosong ATAU Sudah Kedaluwarsa)
     if (!profile.is_lifetime && (!expiry || expiry < now)) {
       alert("Akses kamu belum aktif atau masa langganan sudah habis!");
       window.location.href = '/index.html';
@@ -206,10 +203,6 @@
           background-color: #059669;
           box-shadow: 0 0 6px #059669;
         }
-        .led-amber {
-          background-color: #d97706;
-          box-shadow: 0 0 6px #d97706;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
@@ -243,7 +236,7 @@
             <div class="hidden lg:flex items-center space-x-3 text-xs font-mono">
                 <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-lg border border-slate-300 shadow-sm">
                     <span id="dsp-status-dot" class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                    <span id="dsp-status-text" class="text-[11px] text-slate-700 font-bold">Audio Engine Online</span>
+                    <span id="dsp-status-text" class="text-[11px] text-slate-700 font-bold">DSP Engine Online</span>
                 </div>
             </div>
         </div>
@@ -264,46 +257,53 @@
                             <span class="text-[10px] font-mono text-slate-500 font-medium">Source Profile</span>
                         </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                                <span>Target Instrument / Bus</span>
-                                <i class="fa-solid fa-microphone-lines text-sky-600 text-xs"></i>
-                            </label>
-                            <select id="input-instrument" onchange="onInstrumentChange()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
-                                <option value="Lead Vocal">Lead Vocal (Pop/Rock/Rap)</option>
-                                <option value="Vocal Scream">Vocal Scream / Harsh Screaming</option>
-                                <option value="Backing Vocal">Backing Vocals / Choir Bus</option>
-                                <option value="Kick Drum">Kick Drum (Punch & Sub)</option>
-                                <option value="Snare Drum">Snare Drum (Crack & Shell)</option>
-                                <option value="Bass Guitar/Synth">Bass Guitar / Synth Bass</option>
-                                <option value="Acoustic Guitar">Acoustic Guitar (Body & Pick)</option>
-                                <option value="Electric Guitar">Electric Guitar (Rhythm/Lead)</option>
-                                <option value="Rhythm Bus">Rhythm Bus (Guitars/Synths Glue)</option>
-                                <option value="Synth Lead">Synth Lead / Brass Arp</option>
-                                <option value="Drum Bus">Drum Bus (Glue & Snap)</option>
-                                <option value="Master Bus">Master Bus / Stereo Mix Bus</option>
-                            </select>
-                        </div>
+                        <!-- STACK VERTIKAL UNTUK PARAMETER -->
+                        <div class="space-y-4">
+                            <!-- TARGET INSTRUMENT / BUS DROPDOWN (A-Z) -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                                    <span>Target Instrument / Bus</span>
+                                    <i class="fa-solid fa-microphone-lines text-sky-600 text-xs"></i>
+                                </label>
+                                <select id="input-instrument" onchange="onInstrumentChange()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                                    <option value="Acoustic Guitar">Acoustic Guitar (Body & Pick)</option>
+                                    <option value="Backing Vocal">Backing Vocals / Choir Bus</option>
+                                    <option value="Bass Guitar/Synth">Bass Guitar / Synth Bass</option>
+                                    <option value="Drum Bus">Drum Bus (Glue & Snap)</option>
+                                    <option value="Electric Guitar">Electric Guitar (Rhythm/Lead)</option>
+                                    <option value="Kick Drum">Kick Drum (Punch & Sub)</option>
+                                    <option value="Lead Vocal" selected>Lead Vocal (Pop/Rock/Rap)</option>
+                                    <option value="Master Bus">Master Bus / Stereo Mix Bus</option>
+                                    <option value="Rhythm Bus">Rhythm Bus (Guitars/Synths Glue)</option>
+                                    <option value="Snare Drum">Snare Drum (Crack & Shell)</option>
+                                    <option value="Synth Lead">Synth Lead / Brass Arp</option>
+                                    <option value="Vocal Scream">Vocal Scream / Harsh Screaming</option>
+                                </select>
+                            </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
-                                <span>Music Genre</span>
-                                <i class="fa-solid fa-compact-disc text-amber-600 text-xs"></i>
-                            </label>
-                            <select id="input-genre" onchange="calculateRecommendation()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
-                                <option value="Pop Punk">Pop Punk (High Energy, Punchy Guitars & Snap Snare)</option>
-                                <option value="Midwest">Midwest Emo / Indie (Warm Analog, Natural Dynamics)</option>
-                                <option value="Hip-Hop">Hip-Hop / Trap Modern</option>
-                                <option value="Hipdut">Hipdut (Hip-Hop Dangdut)</option>
-                                <option value="Modern Metal">Modern Metal / Core</option>
-                                <option value="Thall">Thall / Djent (Low-Tuned Heavy)</option>
-                                <option value="Pop">Pop / Top 40 Radio</option>
-                                <option value="Rock">Rock / Alternative</option>
-                                <option value="EDM">EDM / House / Cyber</option>
-                                <option value="Jazz">Jazz / Acoustic Soul</option>
-                                <option value="R&B">R&B / Modern Soul</option>
-                                <option value="Lo-Fi">Lo-Fi / Vintage Chill</option>
-                            </select>
+                            <!-- MUSIC GENRE DROPDOWN (A-Z) -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                                    <span>Music Genre</span>
+                                    <i class="fa-solid fa-compact-disc text-amber-600 text-xs"></i>
+                                </label>
+                                <select id="input-genre" onchange="state.ratioManuallyAdjusted=false; calculateRecommendation()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                                    <option value="EDM">EDM / House / Cyber</option>
+                                    <option value="Hardcore" selected>Hardcore / Post-Hardcore (Slamming Attack, Tight Low End)</option>
+                                    <option value="Hip-Hop">Hip-Hop / Trap Modern</option>
+                                    <option value="Hipdut">Hipdut (Hip-Hop Dangdut)</option>
+                                    <option value="Jazz">Jazz / Acoustic Soul</option>
+                                    <option value="Lo-Fi">Lo-Fi / Vintage Chill</option>
+                                    <option value="Midwest">Midwest Emo / Indie (Warm Analog, Natural Dynamics)</option>
+                                    <option value="Modern Metal">Modern Metal / Core</option>
+                                    <option value="Pop">Pop / Top 40 Radio</option>
+                                    <option value="Pop Punk">Pop Punk (High Energy, Punchy Guitars & Snap Snare)</option>
+                                    <option value="Punk">Punk Rock / Melodic Punk (Raw, Fast & Aggressive Snap)</option>
+                                    <option value="R&B">R&B / Modern Soul</option>
+                                    <option value="Rock">Rock / Alternative</option>
+                                    <option value="Thall">Thall / Djent (Low-Tuned Heavy)</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div>
@@ -344,6 +344,9 @@
                                 <span class="w-2.5 h-2.5 rounded-full led-cyan animate-pulse"></span>
                                 <h3 class="text-xs font-bold tracking-wider uppercase text-slate-800">Calibrated Recommendations</h3>
                             </div>
+                            <button onclick="copyCurrentParamsToClipboard()" class="text-xs font-mono font-bold text-sky-700 hover:text-sky-900 bg-sky-50 hover:bg-sky-100 px-3 py-1 rounded-lg border border-sky-200 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-copy"></i> Copy Settings
+                            </button>
                         </div>
 
                         <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -486,9 +489,17 @@
                         <button id="btn-play-audio" onclick="toggleAudioPlayback()" class="w-11 h-11 rounded-xl btn-engine-light flex items-center justify-center transition-all shadow-md">
                             <i id="play-icon" class="fa-solid fa-play text-base"></i>
                         </button>
-                        <div>
-                            <h3 id="audio-filename" class="text-sm font-extrabold text-slate-900 font-mono">sample_vocal.wav</h3>
-                            <p id="audio-fileinfo" class="text-[11px] font-mono text-slate-500 font-medium">44.1 kHz | Stereo | 00:04.20</p>
+                        <div class="flex items-center space-x-2">
+                            <div>
+                                <h3 id="audio-filename" class="text-sm font-extrabold text-slate-900 font-mono">sample_vocal.wav</h3>
+                                <p id="audio-fileinfo" class="text-[11px] font-mono text-slate-500 font-medium">
+                                    44.1 kHz | 2 Ch | <span id="playback-timer" class="text-sky-800 font-bold">00:00.00</span> / <span id="audio-duration-display">00:04.20</span>
+                                </p>
+                            </div>
+                            <!-- TOMBOL X RESET -->
+                            <button onclick="resetAudioFile()" title="Change Audio File" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-red-100 hover:text-red-600 text-slate-500 flex items-center justify-center transition-all border border-slate-300 ml-2">
+                                <i class="fa-solid fa-xmark text-xs font-bold"></i>
+                            </button>
                         </div>
                     </div>
                     
@@ -504,7 +515,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
-                    <div class="md:col-span-10 relative h-36 bg-white rounded-xl border border-slate-200 overflow-hidden shadow-inner">
+                    <div class="md:col-span-10 relative h-36 bg-white rounded-xl border border-slate-200 overflow-hidden shadow-inner cursor-pointer" onclick="seekAudioFromCanvas(event)">
                         <canvas id="waveformCanvas" class="w-full h-full block"></canvas>
                     </div>
                     <div class="md:col-span-2 bg-white rounded-xl p-3 flex flex-col justify-between border border-slate-200 text-slate-800 font-mono text-[10px] shadow-sm">
@@ -580,18 +591,18 @@
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-700 mb-1">Target Instrument Profile</label>
                                 <select id="learn-target-inst" onchange="recalibrateWavRecommendation()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600">
-                                    <option value="Lead Vocal">Lead Vocal</option>
-                                    <option value="Vocal Scream">Vocal Scream</option>
-                                    <option value="Backing Vocal">Backing Vocals / Choir</option>
-                                    <option value="Kick Drum">Kick Drum</option>
-                                    <option value="Snare Drum">Snare Drum</option>
-                                    <option value="Bass Guitar/Synth">Bass Guitar / Synth Bass</option>
                                     <option value="Acoustic Guitar">Acoustic Guitar</option>
-                                    <option value="Electric Guitar">Electric Guitar</option>
-                                    <option value="Rhythm Bus">Rhythm Bus</option>
-                                    <option value="Synth Lead">Synth Lead</option>
+                                    <option value="Backing Vocal">Backing Vocals / Choir</option>
+                                    <option value="Bass Guitar/Synth">Bass Guitar / Synth Bass</option>
                                     <option value="Drum Bus">Drum Bus</option>
+                                    <option value="Electric Guitar">Electric Guitar</option>
+                                    <option value="Kick Drum">Kick Drum</option>
+                                    <option value="Lead Vocal" selected>Lead Vocal</option>
                                     <option value="Master Bus">Master Bus</option>
+                                    <option value="Rhythm Bus">Rhythm Bus</option>
+                                    <option value="Snare Drum">Snare Drum</option>
+                                    <option value="Synth Lead">Synth Lead</option>
+                                    <option value="Vocal Scream">Vocal Scream</option>
                                 </select>
                             </div>
 
@@ -672,53 +683,28 @@
     </div>
 
     <script>
-        // PRESET DATABASE DENGAN LOGIKA AUDIO ENGINEERING PERSIS & PRESISI
         const presetDatabase = {
-            "Lead Vocal": {
-                baseAttack: 12,
-                baseRatio: 3.5,
+            "Acoustic Guitar": {
+                baseAttack: 20,
+                baseRatio: 2.2,
                 goalAdjustments: {
                     transparent: { 
                         attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
-                        plugins: "Precision Digital / Transparent VCA",
-                        desc: "Controlled dynamic balance without coloration, preserving natural vocal transients.",
-                        rationale: "Clean target: Natural attack & mild ratio maintain clean vocal clarity."
+                        plugins: "Optical / VCA Precision Compressor",
+                        desc: "Gentle dynamic control preserving string air, body resonance, and plucking dynamics.",
+                        rationale: "Clean target: Ultra-soft knee keeps acoustic plucking open & natural."
                     },
                     warm: { 
                         attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
-                        plugins: "Optical Tube Compressor (LA-2A Style)",
-                        desc: "Smooth opto leveling with organic tube warmth and continuous non-linear release.",
-                        rationale: "Warm target: Slower optical response with tube saturation glues vocals naturally."
+                        plugins: "Tube Opto Compressor",
+                        desc: "Warm body enhancement for strummed folk & indie acoustic guitars.",
+                        rationale: "Warm target: Smooth release brings out woody body sustain and room air."
                     },
                     aggressive: { 
                         attackMult: 1.8, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
-                        plugins: "FET Peak Limiter / VCA Punch (1176 / Distressor)",
-                        desc: "Slow attack lets initial vocal transient pass through before clamping body with fast 1/16 release.",
-                        rationale: "Punchy target: Extended attack (transient pass) + fast release gives vocal explosive front-presence."
-                    }
-                }
-            },
-            "Vocal Scream": {
-                baseAttack: 8,
-                baseRatio: 5.0,
-                goalAdjustments: {
-                    transparent: { 
-                        attackMult: 1.0, ratioMult: 0.7, knee: "Medium Knee", note: "1/8",
-                        plugins: "Clean Peak Limiter",
-                        desc: "Transparent peak catching to avoid clipping without squashing scream dynamics.",
-                        rationale: "Clean target: Mild peak control keeps shouting vocals open and dynamic."
-                    },
-                    warm: { 
-                        attackMult: 1.3, ratioMult: 0.9, knee: "Soft Knee", note: "1/8",
-                        plugins: "Vari-Mu Tube Limiter",
-                        desc: "Adds analog tube body and softens harsh upper-mid sibilance.",
-                        rationale: "Warm target: Tube saturation thickens harsh screams and rounds off extreme edge."
-                    },
-                    aggressive: { 
-                        attackMult: 1.7, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
-                        plugins: "FET Peak Limiter (1176 All-Buttons Mode)",
-                        desc: "Slightly delayed attack allows harsh vocal snap through, paired with fast release to slam decay.",
-                        rationale: "Punchy target: High ratio + fast release clamps scream sustain while retaining transient bite."
+                        plugins: "VCA Pick Transient Shaper",
+                        desc: "Extended attack lets pick strums pop out clearly before clamping string decay with fast 1/16 release.",
+                        rationale: "Punchy target: Slow attack elevates pick strumming noise to cut through dense rhythm mixes."
                     }
                 }
             },
@@ -746,54 +732,6 @@
                     }
                 }
             },
-            "Kick Drum": {
-                baseAttack: 20,
-                baseRatio: 4.0,
-                goalAdjustments: {
-                    transparent: { 
-                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
-                        plugins: "Clean VCA Compressor",
-                        desc: "Controls kick dynamic variations while leaving low-end impact untouched.",
-                        rationale: "Clean target: Balanced attack preserves initial beater click cleanly."
-                    },
-                    warm: { 
-                        attackMult: 1.2, ratioMult: 1.0, knee: "Medium Knee", note: "1/16",
-                        plugins: "Vari-Mu / Diode Bridge Compressor (Neve / Fairchild)",
-                        desc: "Rich low-end warmth and analog transformer weight for kick body.",
-                        rationale: "Warm target: Transformer saturation adds sub-bass weight and analog roundness."
-                    },
-                    aggressive: { 
-                        attackMult: 2.0, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
-                        plugins: "VCA Punch Compressor (API 2500 / SSL G-Master)",
-                        desc: "Slow attack (30-40ms) lets initial beater transient pass cleanly, clamped by fast 1/16 release.",
-                        rationale: "Punchy target: Extended slow attack lets the beater transient pop hard before clamping sub tail."
-                    }
-                }
-            },
-            "Snare Drum": {
-                baseAttack: 15,
-                baseRatio: 4.0,
-                goalAdjustments: {
-                    transparent: { 
-                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
-                        plugins: "Transparent Precision VCA",
-                        desc: "Maintains natural stick hit and snare wire sizzle without clamping.",
-                        rationale: "Clean target: Natural attack ensures stick crack passes 100% cleanly."
-                    },
-                    warm: { 
-                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
-                        plugins: "Diode Bridge / Opto Hybrid",
-                        desc: "Thickens snare body shell resonance with warm analog harmonic grit.",
-                        rationale: "Warm target: Analog saturation fills out thin snare shells with harmonic fatness."
-                    },
-                    aggressive: { 
-                        attackMult: 2.2, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
-                        plugins: "FET / VCA Hybrid Compressor (1176 / Distressor)",
-                        desc: "Slow attack (30ms+) allows full stick crack to pass before heavy decay compression with fast 1/16 release.",
-                        rationale: "Punchy target: Maximum transient pass (slow attack) + rapid release = explosive snare crack!"
-                    }
-                }
-            },
             "Bass Guitar/Synth": {
                 baseAttack: 18,
                 baseRatio: 3.0,
@@ -815,102 +753,6 @@
                         plugins: "FET / Fast VCA Bass Compressor",
                         desc: "Slow attack lets slap thumb / pick attack pass through before heavy sustain clamping.",
                         rationale: "Punchy target: Delayed attack accentuates slap/pick transient while fast release tightens low-end."
-                    }
-                }
-            },
-            "Acoustic Guitar": {
-                baseAttack: 20,
-                baseRatio: 2.2,
-                goalAdjustments: {
-                    transparent: { 
-                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
-                        plugins: "Optical / VCA Precision Compressor",
-                        desc: "Gentle dynamic control preserving string air, body resonance, and plucking dynamics.",
-                        rationale: "Clean target: Ultra-soft knee keeps acoustic plucking open & natural."
-                    },
-                    warm: { 
-                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
-                        plugins: "Tube Opto Compressor",
-                        desc: "Warm body enhancement for strummed folk & indie acoustic guitars.",
-                        rationale: "Warm target: Smooth release brings out woody body sustain and room air."
-                    },
-                    aggressive: { 
-                        attackMult: 1.8, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
-                        plugins: "VCA Pick Transient Shaper",
-                        desc: "Extended attack lets pick strums pop out clearly before clamping string decay with fast 1/16 release.",
-                        rationale: "Punchy target: Slow attack elevates pick strumming noise to cut through dense rhythm mixes."
-                    }
-                }
-            },
-            "Electric Guitar": {
-                baseAttack: 15,
-                baseRatio: 3.0,
-                goalAdjustments: {
-                    transparent: { 
-                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
-                        plugins: "Clean VCA Guitar Compressor",
-                        desc: "Controls high pick transients without altering amp tone or drive.",
-                        rationale: "Clean target: Transparent control keeps original guitar amp response intact."
-                    },
-                    warm: { 
-                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
-                        plugins: "Vari-Mu / Tube Guitar Compressor",
-                        desc: "Adds rich tube saturation and sustain to rhythm and lead guitar solos.",
-                        rationale: "Warm target: Tube saturation rounds off harsh pick bite and lengthens sustain."
-                    },
-                    aggressive: { 
-                        attackMult: 1.9, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
-                        plugins: "FET Peak Limiter (1176 Style)",
-                        desc: "Slow attack lets pick bite pop upfront, compressed by fast 1/16 release for aggressive chunk.",
-                        rationale: "Punchy target: Transient-pass attack + high ratio adds massive pick bite and chunk."
-                    }
-                }
-            },
-            "Rhythm Bus": {
-                baseAttack: 25,
-                baseRatio: 2.5,
-                goalAdjustments: {
-                    transparent: { 
-                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
-                        plugins: "Clean Stereo Bus Leveler",
-                        desc: "Unifies rhythm guitars, synths, and keys transparently.",
-                        rationale: "Clean target: Mild ratio glues rhythm instruments without losing punch."
-                    },
-                    warm: { 
-                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
-                        plugins: "SSL G-Master Bus / VCA Glue",
-                        desc: "Cohesive stereo mix bus compressor for unifying mid-range rhythm elements.",
-                        rationale: "Warm target: Analog VCA glue unifies mid-range elements with warm cohesion."
-                    },
-                    aggressive: { 
-                        attackMult: 1.7, ratioMult: 1.4, knee: "Medium Knee", note: "1/8",
-                        plugins: "API 2500 Thrust Bus Compressor",
-                        desc: "Slow attack lets rhythm hits punch through, clamped tightly with fast tempo release.",
-                        rationale: "Punchy target: Slow attack + fast release makes rhythm bus pump with groove."
-                    }
-                }
-            },
-            "Synth Lead": {
-                baseAttack: 12,
-                baseRatio: 3.5,
-                goalAdjustments: {
-                    transparent: { 
-                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
-                        plugins: "Digital Precision Compressor",
-                        desc: "Controls synth peaks without altering filter envelope characteristics.",
-                        rationale: "Clean target: Preserves synth filter movement and transient snap."
-                    },
-                    warm: { 
-                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
-                        plugins: "Diode Bridge / Vintage VCA",
-                        desc: "Smooths digital synth harshness with analog transformer warmth.",
-                        rationale: "Warm target: Analog saturation takes away cold digital synth edge."
-                    },
-                    aggressive: { 
-                        attackMult: 1.8, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
-                        plugins: "Fast VCA / FET Compressor",
-                        desc: "Slow attack lets synth transient attack pop out before clamping body with fast 1/16 release.",
-                        rationale: "Punchy target: Extended attack accentuates arpeggio transients and synth energy."
                     }
                 }
             },
@@ -938,18 +780,90 @@
                     }
                 }
             },
+            "Electric Guitar": {
+                baseAttack: 15,
+                baseRatio: 3.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Clean VCA Guitar Compressor",
+                        desc: "Controls high pick transients without altering amp tone or drive.",
+                        rationale: "Clean target: Transparent control keeps original guitar amp response intact."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Vari-Mu / Tube Guitar Compressor",
+                        desc: "Adds rich tube saturation and sustain to rhythm and lead guitar solos.",
+                        rationale: "Warm target: Tube saturation rounds off harsh pick bite and lengthens sustain."
+                    },
+                    aggressive: { 
+                        attackMult: 1.9, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET Peak Limiter (1176 Style)",
+                        desc: "Slow attack lets pick bite pop upfront, compressed by fast 1/16 release for aggressive chunk.",
+                        rationale: "Punchy target: Transient-pass attack + high ratio adds massive pick bite and chunk."
+                    }
+                }
+            },
+            "Kick Drum": {
+                baseAttack: 20,
+                baseRatio: 4.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Clean VCA Compressor",
+                        desc: "Controls kick dynamic variations while leaving low-end impact untouched.",
+                        rationale: "Clean target: Balanced attack preserves initial beater click cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Medium Knee", note: "1/16",
+                        plugins: "Vari-Mu / Diode Bridge Compressor (Neve / Fairchild)",
+                        desc: "Rich low-end warmth and analog transformer weight for kick body.",
+                        rationale: "Warm target: Transformer saturation adds sub-bass weight and analog roundness."
+                    },
+                    aggressive: { 
+                        attackMult: 2.0, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "VCA Punch Compressor (API 2500 / SSL G-Master)",
+                        desc: "Slow attack (30-40ms) lets initial beater transient pass cleanly, clamped by fast 1/16 release.",
+                        rationale: "Punchy target: Extended slow attack lets the beater transient pop hard before clamping sub tail."
+                    }
+                }
+            },
+            "Lead Vocal": {
+                baseAttack: 12,
+                baseRatio: 3.5,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Precision Digital / Transparent VCA",
+                        desc: "Controlled dynamic balance without coloration, preserving natural vocal transients.",
+                        rationale: "Clean target: Natural attack & mild ratio maintain clean vocal clarity."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Optical Tube Compressor (LA-2A Style)",
+                        desc: "Smooth opto leveling with organic tube warmth and continuous non-linear release.",
+                        rationale: "Warm target: Slower optical response with tube saturation glues vocals naturally."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
+                        plugins: "FET Peak Limiter / VCA Punch (1176 / Distressor)",
+                        desc: "Slow attack lets initial vocal transient pass through before clamping body with fast 1/16 release.",
+                        rationale: "Punchy target: Extended attack (transient pass) + fast release gives vocal explosive front-presence."
+                    }
+                }
+            },
             "Master Bus": {
                 baseAttack: 30,
                 baseRatio: 1.8,
                 goalAdjustments: {
                     transparent: { 
-                        attackMult: 1.0, ratioMult: 0.85, knee: "Ultra Soft Knee", note: "1/4",
+                        attackMult: 1.0, ratioMult: 0.85, knee: "Ultra Soft Knee", note: "1/8",
                         plugins: "Digital Mastering Precision Leveler (Weiss DS1-MK3)",
                         desc: "Transparent mastering bus compression for overall mix glue and loudness density.",
                         rationale: "Clean target: Ultra-soft knee controls mix dynamic peaks transparently."
                     },
                     warm: { 
-                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/2",
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
                         plugins: "Vari-Mu Tube Mastering Compressor (Fairchild / Manley)",
                         desc: "Lush analog mastering glue, gentle high-end smoothing, and sub warmth.",
                         rationale: "Warm target: Tube mastering glue adds depth and analog warmth to full mix."
@@ -961,19 +875,116 @@
                         rationale: "Punchy target: Glues mix tight for commercial loudness and punchy club impact."
                     }
                 }
+            },
+            "Rhythm Bus": {
+                baseAttack: 25,
+                baseRatio: 2.5,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
+                        plugins: "Clean Stereo Bus Leveler",
+                        desc: "Unifies rhythm guitars, synths, and keys transparently.",
+                        rationale: "Clean target: Mild ratio glues rhythm instruments without losing punch."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "SSL G-Master Bus / VCA Glue",
+                        desc: "Cohesive stereo mix bus compressor for unifying mid-range rhythm elements.",
+                        rationale: "Warm target: Analog VCA glue unifies mid-range elements with warm cohesion."
+                    },
+                    aggressive: { 
+                        attackMult: 1.7, ratioMult: 1.4, knee: "Medium Knee", note: "1/8",
+                        plugins: "API 2500 Thrust Bus Compressor",
+                        desc: "Slow attack lets rhythm hits punch through, clamped tightly with fast tempo release.",
+                        rationale: "Punchy target: Slow attack + fast release makes rhythm bus pump with groove."
+                    }
+                }
+            },
+            "Snare Drum": {
+                baseAttack: 15,
+                baseRatio: 4.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Transparent Precision VCA",
+                        desc: "Maintains natural stick hit and snare wire sizzle without clamping.",
+                        rationale: "Clean target: Natural attack ensures stick crack passes 100% cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Diode Bridge / Opto Hybrid",
+                        desc: "Thickens snare body shell resonance with warm analog harmonic grit.",
+                        rationale: "Warm target: Analog saturation fills out thin snare shells with harmonic fatness."
+                    },
+                    aggressive: { 
+                        attackMult: 2.2, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET / VCA Hybrid Compressor (1176 / Distressor)",
+                        desc: "Slow attack (30ms+) allows full stick crack to pass before heavy decay compression with fast 1/16 release.",
+                        rationale: "Punchy target: Maximum transient pass (slow attack) + rapid release = explosive snare crack!"
+                    }
+                }
+            },
+            "Synth Lead": {
+                baseAttack: 12,
+                baseRatio: 3.5,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Digital Precision Compressor",
+                        desc: "Controls synth peaks without altering filter envelope characteristics.",
+                        rationale: "Clean target: Preserves synth filter movement and transient snap."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Diode Bridge / Vintage VCA",
+                        desc: "Smooths digital synth harshness with analog transformer warmth.",
+                        rationale: "Warm target: Analog saturation takes away cold digital synth edge."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "Fast VCA / FET Compressor",
+                        desc: "Slow attack lets synth transient attack pop out before clamping body with fast 1/16 release.",
+                        rationale: "Punchy target: Extended attack accentuates arpeggio transients and synth energy."
+                    }
+                }
+            },
+            "Vocal Scream": {
+                baseAttack: 8,
+                baseRatio: 5.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.7, knee: "Medium Knee", note: "1/8",
+                        plugins: "Clean Peak Limiter",
+                        desc: "Transparent peak catching to avoid clipping without squashing scream dynamics.",
+                        rationale: "Clean target: Mild peak control keeps shouting vocals open and dynamic."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 0.9, knee: "Soft Knee", note: "1/8",
+                        plugins: "Vari-Mu Tube Limiter",
+                        desc: "Adds analog tube body and softens harsh upper-mid sibilance.",
+                        rationale: "Warm target: Tube saturation thickens harsh screams and rounds off extreme edge."
+                    },
+                    aggressive: { 
+                        attackMult: 1.7, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET Peak Limiter (1176 All-Buttons Mode)",
+                        desc: "Slightly delayed attack allows harsh vocal snap through, paired with fast release to slam decay.",
+                        rationale: "Punchy target: High ratio + fast release clamps scream sustain while retaining transient bite."
+                    }
+                }
             }
         };
 
         const state = {
             activeTab: 'manual',
             instrument: 'Lead Vocal',
-            genre: 'Pop Punk',
+            genre: 'Hardcore',
             bpm: 135,
             detectedBpm: 135,
             goal: 'transparent',
             learnGoal: 'transparent',
             thresholdDb: -8.0,
-            customRatio: 2.8,
+            customRatio: null,
+            ratioManuallyAdjusted: false,
             customReleaseNote: null,
             rawWavMetrics: null,
             audioContext: null,
@@ -983,10 +994,10 @@
             gainNode: null,
             analyserNode: null,
             isPlaying: false,
-            startTime: 0,
-            pauseOffset: 0,
             learnedData: null,
-            animFrameId: null
+            animFrameId: null,
+            playbackStartTime: 0,
+            playbackStartOffset: 0
         };
 
         function switchTab(tab) {
@@ -1009,6 +1020,13 @@
             }
         }
 
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            const ms = Math.floor((seconds % 1) * 100);
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
+        }
+
         function calculateNoteDurationMs(bpm, noteType) {
             const quarterNoteMs = (60 / bpm) * 1000;
             switch(noteType) {
@@ -1022,13 +1040,14 @@
         }
 
         function updateBpmFromSlider(val) {
-            state.bpm = parseInt(val);
+            state.bpm = parseInt(val, 10);
             document.getElementById('bpm-display').innerText = `${state.bpm} BPM`;
             calculateRecommendation();
         }
 
         function setGoal(goalType) {
             state.goal = goalType;
+            state.ratioManuallyAdjusted = false;
             document.querySelectorAll('.goal-btn').forEach(btn => {
                 btn.classList.remove('btn-studio-active-light');
             });
@@ -1041,6 +1060,7 @@
 
         function onInstrumentChange() {
             state.customReleaseNote = null;
+            state.ratioManuallyAdjusted = false;
             calculateRecommendation();
         }
 
@@ -1054,46 +1074,66 @@
             const inst = document.getElementById('input-instrument').value;
             const genre = document.getElementById('input-genre').value;
             const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
-
-            const goalAdj = baseData.goalAdjustments[state.goal] || { 
+            const goalAdj = baseData.goalAdjustments[state.goal] || {
                 attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8",
-                plugins: "VCA Compressor", desc: "Standard compression profile.", rationale: "Balanced dynamic control." 
+                plugins: "VCA Compressor",
+                desc: "General-purpose compression starting point.",
+                rationale: "Use gain reduction and level-matched listening to fine-tune this starting point."
             };
-            
-            let finalAttack = Math.round(baseData.baseAttack * goalAdj.attackMult);
-            let calculatedRatio = (baseData.baseRatio * goalAdj.ratioMult).toFixed(1);
 
-            // Genre-specific fine-tuning
-            if (genre === 'Pop Punk') {
-                calculatedRatio = (parseFloat(calculatedRatio) + 0.8).toFixed(1);
-                finalAttack = Math.max(5, Math.round(finalAttack * 1.1));
+            let attack = baseData.baseAttack * goalAdj.attackMult;
+            let ratio = baseData.baseRatio * goalAdj.ratioMult;
+
+            if (genre === 'Hardcore') {
+                ratio += 0.5;
+                attack *= 0.9;
+            } else if (genre === 'Punk') {
+                ratio += 0.3;
+                attack *= 0.95;
+            } else if (genre === 'Pop Punk') {
+                ratio += 0.4;
+                attack *= 1.05;
             } else if (genre === 'Midwest') {
-                calculatedRatio = Math.max(1.6, (parseFloat(calculatedRatio) - 0.4)).toFixed(1);
-                finalAttack = Math.round(finalAttack * 1.2);
+                ratio -= 0.2;
+                attack *= 1.1;
             } else if (genre === 'Modern Metal' || genre === 'Thall') {
-                calculatedRatio = (parseFloat(calculatedRatio) + 1.2).toFixed(1);
+                ratio += 0.6;
             } else if (genre === 'Hipdut') {
-                calculatedRatio = (parseFloat(calculatedRatio) + 0.5).toFixed(1);
-            } else if (genre === 'Jazz' || genre === 'Acoustic/Folk') {
-                calculatedRatio = Math.max(1.5, (parseFloat(calculatedRatio) - 0.5)).toFixed(1);
+                ratio += 0.3;
+            } else if (genre === 'Jazz' || genre === 'Lo-Fi') {
+                ratio -= 0.3;
             }
 
-            const noteType = state.customReleaseNote || goalAdj.note || "1/8";
+            ratio = Math.min(10, Math.max(1.5, ratio));
+            attack = Math.min(80, Math.max(1, Math.round(attack)));
+
+            const calculatedRatio = Math.round(ratio * 10) / 10;
+            const activeRatio = state.ratioManuallyAdjusted && Number.isFinite(state.customRatio)
+                ? Math.min(12, Math.max(1, state.customRatio))
+                : calculatedRatio;
+
+            let noteType = state.customReleaseNote || goalAdj.note || "1/8";
+            if (inst === "Master Bus" && (genre === "Hardcore" || genre === "Punk" || genre === "Pop Punk" || genre === "Modern Metal")) {
+                if (!state.customReleaseNote && state.goal !== "warm") {
+                    noteType = "1/8";
+                }
+            }
+
             const releaseMs = calculateNoteDurationMs(state.bpm, noteType);
-            const activeRatio = state.customRatio || parseFloat(calculatedRatio);
-            const estimatedGain = (Math.abs(state.thresholdDb) * (activeRatio - 1) / activeRatio * 0.5).toFixed(1);
+            const autoGain = (Math.abs(state.thresholdDb) * (1 - (1 / activeRatio)) * 0.5).toFixed(1);
 
             return {
                 plugins: goalAdj.plugins,
                 typeDesc: goalAdj.desc,
-                attack: finalAttack,
+                attack,
                 release: releaseMs,
-                noteType: noteType,
+                noteType,
                 ratio: `${activeRatio.toFixed(1)}:1`,
-                knee: goalAdj.knee,
-                makeupGain: `+${estimatedGain}`,
+                knee: goalAdj.knee || "Soft Knee",
+                makeupGain: `${autoGain}`,
                 rationale: goalAdj.rationale,
-                calculatedRatio: parseFloat(calculatedRatio)
+                calculatedRatio,
+                activeRatio
             };
         }
 
@@ -1101,40 +1141,43 @@
             const genre = document.getElementById('input-genre').value;
             const params = getCalculatedParams();
 
-            state.customRatio = params.calculatedRatio;
+            if (!state.ratioManuallyAdjusted) {
+                state.customRatio = params.calculatedRatio;
+            }
+
             const slider = document.getElementById('input-ratio-slider');
             if (slider && document.activeElement !== slider) {
-                slider.value = params.calculatedRatio;
+                slider.value = params.activeRatio;
             }
+
             const threshSlider = document.getElementById('input-threshold');
-            if (threshSlider) {
-                state.thresholdDb = parseFloat(threshSlider.value);
-            }
+            if (threshSlider) state.thresholdDb = parseFloat(threshSlider.value);
 
             document.getElementById('rec-compressor-type').innerText = params.plugins;
             document.getElementById('rec-type-desc').innerText = params.typeDesc;
             document.getElementById('param-attack').innerText = params.attack;
             document.getElementById('param-release').innerText = params.release;
-            
+
             const releaseSelect = document.getElementById('input-release-note');
-            if (releaseSelect) {
-                releaseSelect.value = params.noteType;
-            }
+            if (releaseSelect) releaseSelect.value = params.noteType;
 
             document.getElementById('param-ratio').innerText = params.ratio;
             document.getElementById('param-knee').innerText = params.knee;
-            document.getElementById('param-gain').innerText = params.makeupGain;
+            document.getElementById('param-gain').innerText = `+${params.makeupGain}`;
             document.getElementById('param-gain').className = "text-2xl font-black font-mono text-emerald-600";
-            document.getElementById('param-knee-desc').innerText = `${genre} Dynamic Curve Profile`;
+            document.getElementById('param-knee-desc').innerText = `${genre} starting profile`;
             document.getElementById('rec-rationale').innerText = params.rationale;
 
             document.getElementById('legend-ratio-display').innerText = params.ratio;
             document.getElementById('threshold-val-display').innerText = `${state.thresholdDb.toFixed(1)} dB`;
-            document.getElementById('ratio-val-display').innerText = params.ratio;
+            document.getElementById('ratio-val-display').innerText = `${params.activeRatio.toFixed(1)} : 1`;
             document.getElementById('tooltip-thresh-val').innerText = `${state.thresholdDb.toFixed(1)} dB`;
             document.getElementById('tooltip-ratio-val').innerText = params.ratio;
 
-            drawTransferCurve(params.calculatedRatio, params.knee);
+            const inst = document.getElementById('input-instrument').value;
+            const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
+            const goalAdj = baseData.goalAdjustments[state.goal] || {};
+            drawTransferCurve(params.activeRatio, goalAdj.knee || params.knee);
             updateAudioDspNodes();
         }
 
@@ -1144,9 +1187,14 @@
 
             state.thresholdDb = threshVal;
             state.customRatio = ratioVal;
+            state.ratioManuallyAdjusted = true;
+
+            const autoGain = (Math.abs(threshVal) * (1 - (1 / ratioVal)) * 0.5).toFixed(1);
 
             document.getElementById('threshold-val-display').innerText = `${threshVal.toFixed(1)} dB`;
             document.getElementById('ratio-val-display').innerText = `${ratioVal.toFixed(1)} : 1`;
+            document.getElementById('param-ratio').innerText = `${ratioVal.toFixed(1)}:1`;
+            document.getElementById('param-gain').innerText = `+${autoGain}`;
             document.getElementById('legend-ratio-display').innerText = `${ratioVal.toFixed(1)}:1`;
             document.getElementById('tooltip-thresh-val').innerText = `${threshVal.toFixed(1)} dB`;
             document.getElementById('tooltip-ratio-val').innerText = `${ratioVal.toFixed(1)}:1`;
@@ -1163,163 +1211,182 @@
             const canvas = document.getElementById('transferCurveCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            
             const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
+            if (!rect.width || !rect.height) return;
 
-            const width = rect.width;
-            const height = rect.height;
-            const paddingLeft = 45;
-            const paddingBottom = 35;
-            const paddingTop = 20;
-            const paddingRight = 25;
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+            const width = rect.width, height = rect.height;
+            const left = 45, bottom = 35, top = 20, right = 25;
+            const plotWidth = width - left - right;
+            const plotHeight = height - top - bottom;
             ctx.clearRect(0, 0, width, height);
-
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, width, height);
 
-            const plotWidth = width - paddingLeft - paddingRight;
-            const plotHeight = height - paddingTop - paddingBottom;
+            const xToPx = x => left + ((x + 40) / 40) * plotWidth;
+            const yToPx = y => height - bottom - ((y + 40) / 40) * plotHeight;
+            const inputDbToOutputDb = (inputDb) => {
+                const threshold = state.thresholdDb;
+                const safeRatio = Math.max(1, Number(ratio) || 1);
+                const kneeWidth = String(kneeType).toLowerCase().includes('soft') ? 6 :
+                                  String(kneeType).toLowerCase().includes('medium') ? 3 : 0;
+
+                if (kneeWidth <= 0) {
+                    return inputDb <= threshold ? inputDb : threshold + (inputDb - threshold) / safeRatio;
+                }
+
+                const lower = threshold - kneeWidth / 2;
+                const upper = threshold + kneeWidth / 2;
+                if (inputDb < lower) return inputDb;
+                if (inputDb > upper) return threshold + (inputDb - threshold) / safeRatio;
+
+                const offset = inputDb - threshold + kneeWidth / 2;
+                return inputDb + ((1 / safeRatio) - 1) * (offset * offset) / (2 * kneeWidth);
+            };
 
             ctx.strokeStyle = '#f1f5f9';
             ctx.lineWidth = 1;
-
-            const gridStepsX = [-40, -30, -20, -10, 0];
-            gridStepsX.forEach(db => {
-                const norm = (db + 40) / 40;
-                const x = paddingLeft + norm * plotWidth;
-
-                ctx.beginPath();
-                ctx.moveTo(x, paddingTop);
-                ctx.lineTo(x, height - paddingBottom);
-                ctx.stroke();
-
+            [-40, -30, -20, -10, 0].forEach(db => {
+                const x = xToPx(db);
+                ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, height - bottom); ctx.stroke();
                 ctx.fillStyle = '#94a3b8';
                 ctx.font = '500 10px "JetBrains Mono", monospace';
-                ctx.fillText(`${db}`, x - 8, height - 12);
+                ctx.fillText(String(db), x - 8, height - 12);
             });
-
-            const gridStepsY = [0, 10, 20, 30, 40];
-            gridStepsY.forEach((val, i) => {
-                const norm = i / 4;
-                const y = height - paddingBottom - norm * plotHeight;
-
-                ctx.beginPath();
-                ctx.moveTo(paddingLeft, y);
-                ctx.lineTo(width - paddingRight, y);
-                ctx.stroke();
-
+            [-40, -30, -20, -10, 0].forEach(db => {
+                const y = yToPx(db);
+                ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(width - right, y); ctx.stroke();
                 ctx.fillStyle = '#94a3b8';
                 ctx.font = '500 10px "JetBrains Mono", monospace';
-                ctx.fillText(`${val}`, 15, y + 3);
+                ctx.fillText(String(db), 8, y + 3);
             });
 
             ctx.strokeStyle = '#e2e8f0';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(paddingLeft, paddingTop, plotWidth, plotHeight);
-
-            const mapDbToXY = (inDb, outDb) => {
-                const normX = (inDb + 40) / 40;
-                const normY = outDb / 40;
-                return {
-                    x: paddingLeft + normX * plotWidth,
-                    y: height - paddingBottom - normY * plotHeight
-                };
-            };
-
-            const threshDb = state.thresholdDb;
-            const threshOutDb = threshDb + 40;
-
-            const pStart = mapDbToXY(-40, 0);
-            const pThresh = mapDbToXY(threshDb, threshOutDb);
-            const pEndLinear = mapDbToXY(0, 40);
+            ctx.strokeRect(left, top, plotWidth, plotHeight);
 
             ctx.strokeStyle = '#94a3b8';
             ctx.lineWidth = 1.5;
             ctx.setLineDash([4, 4]);
             ctx.beginPath();
-            ctx.moveTo(pStart.x, pStart.y);
-            ctx.lineTo(pEndLinear.x, pEndLinear.y);
+            ctx.moveTo(xToPx(-40), yToPx(-40));
+            ctx.lineTo(xToPx(0), yToPx(0));
             ctx.stroke();
             ctx.setLineDash([]);
-
-            const aboveThreshRange = 0 - threshDb;
-            const outputAboveThresh = aboveThreshRange / ratio;
-            const compressedMaxOutDb = threshOutDb + outputAboveThresh;
-
-            const pEndCompressed = mapDbToXY(0, compressedMaxOutDb);
 
             ctx.strokeStyle = '#0284c7';
             ctx.lineWidth = 3;
             ctx.beginPath();
-
-            if (kneeType && kneeType.includes("Soft")) {
-                const kneeHalf = 3;
-                const kneeStartInDb = Math.max(-40, threshDb - kneeHalf);
-                const kneeStartOutDb = kneeStartInDb + 40;
-                const pKneeStart = mapDbToXY(kneeStartInDb, kneeStartOutDb);
-
-                const kneeEndInDb = Math.min(0, threshDb + kneeHalf);
-                const kneeEndOutDb = threshOutDb + ((kneeEndInDb - threshDb) / ratio);
-                const pKneeEnd = mapDbToXY(kneeEndInDb, kneeEndOutDb);
-
-                ctx.moveTo(pStart.x, pStart.y);
-                ctx.lineTo(pKneeStart.x, pKneeStart.y);
-                ctx.quadraticCurveTo(pThresh.x, pThresh.y, pKneeEnd.x, pKneeEnd.y);
-                ctx.lineTo(pEndCompressed.x, pEndCompressed.y);
-            } else {
-                ctx.moveTo(pStart.x, pStart.y);
-                ctx.lineTo(pThresh.x, pThresh.y);
-                ctx.lineTo(pEndCompressed.x, pEndCompressed.y);
+            for (let i = 0; i <= 400; i++) {
+                const inputDb = -40 + i * 0.1;
+                const outputDb = inputDbToOutputDb(inputDb);
+                const x = xToPx(inputDb), y = yToPx(outputDb);
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
             }
             ctx.stroke();
 
+            const t = state.thresholdDb;
+            const ty = inputDbToOutputDb(t);
             ctx.fillStyle = '#ffffff';
-            ctx.beginPath();
-            ctx.arc(pThresh.x, pThresh.y, 6, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.strokeStyle = '#0284c7';
-            ctx.lineWidth = 2.5;
-            ctx.stroke();
+            ctx.beginPath(); ctx.arc(xToPx(t), yToPx(ty), 5, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 2.5; ctx.stroke();
         }
 
         function estimateTempo(buffer) {
-            return 135;
+            const sampleRate = buffer.sampleRate;
+            const hopSeconds = 0.01;
+            const hop = Math.max(1, Math.round(sampleRate * hopSeconds));
+            const mono = new Float32Array(Math.ceil(buffer.length / hop));
+            const channels = buffer.numberOfChannels;
+
+            for (let frame = 0, offset = 0; offset < buffer.length; frame++, offset += hop) {
+                const end = Math.min(buffer.length, offset + hop);
+                let sum = 0, count = 0;
+                for (let ch = 0; ch < channels; ch++) {
+                    const channel = buffer.getChannelData(ch);
+                    for (let i = offset; i < end; i++) {
+                        sum += channel[i] * channel[i];
+                        count++;
+                    }
+                }
+                mono[frame] = count ? Math.sqrt(sum / count) : 0;
+            }
+
+            if (mono.length < 200) return 120;
+            const novelty = new Float32Array(mono.length);
+            let mean = 0;
+            for (let i = 1; i < mono.length; i++) {
+                novelty[i] = Math.max(0, mono[i] - mono[i - 1]);
+                mean += novelty[i];
+            }
+            mean /= novelty.length;
+            if (mean < 1e-5) return 120;
+            for (let i = 0; i < novelty.length; i++) novelty[i] -= mean;
+
+            const minLag = Math.max(1, Math.floor(60 / 200 / hopSeconds));
+            const maxLag = Math.min(novelty.length - 2, Math.ceil(60 / 55 / hopSeconds));
+            let bestLag = 0, bestScore = -Infinity;
+            for (let lag = minLag; lag <= maxLag; lag++) {
+                let score = 0, normA = 0, normB = 0;
+                for (let i = lag; i < novelty.length; i++) {
+                    const a = novelty[i], b = novelty[i - lag];
+                    score += a * b;
+                    normA += a * a;
+                    normB += b * b;
+                }
+                const normalized = score / Math.sqrt((normA * normB) || 1);
+                if (normalized > bestScore) {
+                    bestScore = normalized;
+                    bestLag = lag;
+                }
+            }
+
+            if (!bestLag || bestScore < 0.03) return 120;
+            let bpm = 60 / (bestLag * hopSeconds);
+            while (bpm < 70) bpm *= 2;
+            while (bpm > 180) bpm /= 2;
+            return Math.round(Math.min(200, Math.max(50, bpm)));
         }
 
         function analyzeAudioBuffer(buffer) {
-            const data = buffer.getChannelData(0);
-            let peak = 0;
-            let sumSq = 0;
-
-            for (let i = 0; i < data.length; i++) {
-                const abs = Math.abs(data[i]);
-                if (abs > peak) peak = abs;
-                sumSq += data[i] * data[i];
+            let peak = 0, sumSq = 0, sampleCount = 0;
+            for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+                const data = buffer.getChannelData(ch);
+                for (let i = 0; i < data.length; i++) {
+                    const abs = Math.abs(data[i]);
+                    if (abs > peak) peak = abs;
+                    sumSq += data[i] * data[i];
+                    sampleCount++;
+                }
             }
 
-            const rms = Math.sqrt(sumSq / data.length);
-            const peakDb = peak > 0 ? (20 * Math.log10(peak)).toFixed(1) : -60;
-            const rmsDb = rms > 0 ? (20 * Math.log10(rms)).toFixed(1) : -60;
-            const crestFactor = (peakDb - rmsDb).toFixed(1);
+            const rms = sampleCount ? Math.sqrt(sumSq / sampleCount) : 0;
+            const peakDb = peak > 0 ? 20 * Math.log10(peak) : -120;
+            const rmsDb = rms > 0 ? 20 * Math.log10(rms) : -120;
+            const crestFactor = peakDb - rmsDb;
 
             state.detectedBpm = estimateTempo(buffer);
-
-            document.getElementById('metric-peak').innerText = `${peakDb} dBFS`;
-            document.getElementById('metric-rms').innerText = `${rmsDb} dBFS`;
-            document.getElementById('metric-crest').innerText = `${crestFactor} dB`;
+            document.getElementById('metric-peak').innerText = `${peakDb.toFixed(1)} dBFS`;
+            document.getElementById('metric-rms').innerText = `${rmsDb.toFixed(1)} dBFS`;
+            document.getElementById('metric-crest').innerText = `${crestFactor.toFixed(1)} dB`;
             document.getElementById('metric-bpm').innerText = `${state.detectedBpm} BPM`;
+            document.getElementById('metric-bpm-badge').innerText = 'Estimated';
+            document.getElementById('metric-crest-label').innerText =
+                crestFactor > 18 ? 'Very High Dynamics' : crestFactor > 12 ? 'High Dynamics' : crestFactor > 6 ? 'Moderate Dynamics' : 'Low Crest Factor';
 
-            const peakPct = Math.min(100, Math.max(0, (parseFloat(peakDb) + 60) * (100 / 60)));
-            const rmsPct = Math.min(100, Math.max(0, (parseFloat(rmsDb) + 60) * (100 / 60)));
+            const peakPct = Math.min(100, Math.max(0, (peakDb + 60) * (100 / 60)));
+            const rmsPct = Math.min(100, Math.max(0, (rmsDb + 60) * (100 / 60)));
             document.getElementById('bar-peak').style.width = `${peakPct}%`;
             document.getElementById('bar-rms').style.width = `${rmsPct}%`;
 
-            state.rawWavMetrics = { peakDb: parseFloat(peakDb), rmsDb: parseFloat(rmsDb), crestFactor: parseFloat(crestFactor) };
+            state.rawWavMetrics = {
+                peakDb: Number(peakDb.toFixed(2)),
+                rmsDb: Number(rmsDb.toFixed(2)),
+                crestFactor: Number(crestFactor.toFixed(2))
+            };
             recalibrateWavRecommendation();
         }
 
@@ -1340,15 +1407,20 @@
                 }
                 state.audioContext.decodeAudioData(e.target.result, function(decodedData) {
                     state.audioBuffer = decodedData;
-                    const durationSec = decodedData.duration.toFixed(2);
-                    document.getElementById('audio-fileinfo').innerText = `${decodedData.sampleRate} Hz | ${decodedData.numberOfChannels} Ch | ${durationSec}s (${fileSizeMb} MB)`;
-
-                    drawWaveform(decodedData);
-                    analyzeAudioBuffer(decodedData);
+                    state.playbackStartOffset = 0;
+                    document.getElementById('audio-duration-display').innerText = formatTime(decodedData.duration);
+                    document.getElementById('playback-timer').innerText = "00:00.00";
 
                     if (loader) loader.classList.add('hidden');
+                    document.getElementById('drop-zone').classList.add('hidden');
                     document.getElementById('waveform-section').classList.remove('hidden');
                     document.getElementById('analysis-results').classList.remove('hidden');
+
+                    requestAnimationFrame(() => {
+                        drawWaveform(decodedData, 0);
+                    });
+
+                    analyzeAudioBuffer(decodedData);
                 }, function(err) {
                     if (loader) loader.classList.add('hidden');
                     showToast("Error decoding audio file.");
@@ -1357,40 +1429,55 @@
             reader.readAsArrayBuffer(file);
         }
 
+        function resetAudioFile() {
+            stopAudioPlayback();
+            state.audioBuffer = null;
+            state.rawWavMetrics = null;
+            state.learnedData = null;
+            state.playbackStartOffset = 0;
+            document.getElementById('wav-file-input').value = "";
+            document.getElementById('waveform-section').classList.add('hidden');
+            document.getElementById('analysis-results').classList.add('hidden');
+            document.getElementById('drop-zone').classList.remove('hidden');
+        }
+
         function recalibrateWavRecommendation() {
             const inst = document.getElementById('learn-target-inst').value;
             const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
-            const crest = state.rawWavMetrics ? state.rawWavMetrics.crestFactor : 15;
+            const metrics = state.rawWavMetrics;
+            const crest = metrics ? metrics.crestFactor : 0;
+            const goalAdj = baseData.goalAdjustments[state.learnGoal] || {
+                attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8"
+            };
 
-            const goalAdj = baseData.goalAdjustments ? (baseData.goalAdjustments[state.learnGoal] || { attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8" }) : { attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8" };
+            const crestFactor = metrics ? (crest > 18 ? 1.15 : crest > 12 ? 1.0 : 0.9) : 1;
+            const attack = Math.min(80, Math.max(1, Math.round(baseData.baseAttack * goalAdj.attackMult * crestFactor)));
+            const release = calculateNoteDurationMs(state.detectedBpm || 120, goalAdj.note || "1/8");
+            const ratio = Math.min(10, Math.max(1.5, Math.round(baseData.baseRatio * goalAdj.ratioMult * 10) / 10));
 
-            let attack = Math.max(2, Math.round(baseData.baseAttack * goalAdj.attackMult * (crest > 15 ? 1.2 : 0.9)));
-            let release = calculateNoteDurationMs(state.detectedBpm || 135, goalAdj.note || "1/8");
-            let ratio = (baseData.baseRatio * goalAdj.ratioMult).toFixed(1);
+            const targetThreshold = metrics ? Math.min(-6, Math.max(-36, metrics.rmsDb + 3)) : -18;
+            const estimatedGain = metrics ? (Math.abs(targetThreshold - metrics.rmsDb) * (1 - (1 / ratio)) * 0.6).toFixed(1) : "2.5";
 
-            if (state.rawWavMetrics) {
-                const estGain = Math.max(0.5, (Math.abs(state.rawWavMetrics.peakDb) * (parseFloat(ratio) - 1) / parseFloat(ratio) * 0.4)).toFixed(1);
-                document.getElementById('learn-param-gain').innerText = `+${estGain} dB`;
-            } else {
-                document.getElementById('learn-param-gain').innerText = `+2.5 dB`;
-            }
-
+            document.getElementById('learn-param-gain').innerText = `+${estimatedGain} dB`;
             document.getElementById('learn-param-attack').innerText = `${attack} ms`;
             document.getElementById('learn-param-release').innerText = `${release} ms`;
-            document.getElementById('learn-param-ratio').innerText = `${ratio}:1`;
+            document.getElementById('learn-param-ratio').innerText = `${ratio.toFixed(1)}:1`;
             document.getElementById('learn-param-knee').innerText = goalAdj.knee || "Soft Knee";
-
-            document.getElementById('learn-rationale-text').innerText = 
-                `Based on Crest Factor of ${crest} dB with ${state.learnGoal.toUpperCase()} target: Calibrated ${attack}ms attack (transient pass), ${ratio}:1 ratio, and ${goalAdj.knee} profile for ${inst}.`;
+            document.getElementById('learn-rationale-text').innerText = metrics
+                ? `Audio peak: ${metrics.peakDb.toFixed(1)} dBFS, RMS: ${metrics.rmsDb.toFixed(1)} dBFS, Crest Factor: ${crest.toFixed(1)} dB. Recommended calibration: ${attack}ms Attack, ${release}ms Release (${goalAdj.note || '1/8'}), and +${estimatedGain} dB Makeup Gain.`
+                : `Select an audio file to measure physical characteristics.`;
 
             state.learnedData = {
                 instrument: inst,
-                attack: attack,
-                release: release,
-                ratio: ratio,
+                attack,
+                release,
+                ratio: ratio.toFixed(1),
                 knee: goalAdj.knee || "Soft Knee",
-                gain: state.rawWavMetrics ? Math.max(0.5, (Math.abs(state.rawWavMetrics.peakDb) * (parseFloat(ratio) - 1) / parseFloat(ratio) * 0.4)).toFixed(1) : "2.5"
+                gain: estimatedGain,
+                threshold: targetThreshold
             };
+
+            updateAudioDspNodes();
         }
 
         function setLearnGoal(goal) {
@@ -1418,40 +1505,43 @@
             showToast("Learned settings synced to Preset Engine!");
         }
 
-        function drawWaveform(buffer, currentPlayTime = 0) {
+        function drawWaveform(buffer, currentProgressSec = 0) {
             const canvas = document.getElementById('waveformCanvas');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
 
-            const dpr = window.devicePixelRatio || 1;
             const rect = canvas.getBoundingClientRect();
-            canvas.width = rect.width * dpr;
-            canvas.height = rect.height * dpr;
-            ctx.scale(dpr, dpr);
+            if (!rect.width || !rect.height) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
             const width = rect.width;
             const height = rect.height;
             const data = buffer.getChannelData(0);
+            const duration = buffer.duration || 1;
 
             ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = '#ffffff';
             ctx.fillRect(0, 0, width, height);
 
-            ctx.strokeStyle = '#f1f5f9';
+            ctx.strokeStyle = '#e2e8f0';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(0, height / 2);
             ctx.lineTo(width, height / 2);
             ctx.stroke();
 
-            const barWidth = 3;
-            const gap = 2;
+            const barWidth = 2.5;
+            const gap = 1.5;
             const totalBars = Math.floor(width / (barWidth + gap));
             const step = Math.floor(data.length / totalBars);
             const centerY = height / 2;
-            const minBarHeight = 4;
+            const minBarHeight = 3;
 
-            ctx.fillStyle = '#0284c7';
+            const playheadX = (currentProgressSec / duration) * width;
 
             for (let i = 0; i < totalBars; i++) {
                 let max = 0;
@@ -1461,17 +1551,50 @@
                     if (abs > max) max = abs;
                 }
 
-                const barHeight = Math.max(minBarHeight, max * (height - 24));
+                const barHeight = Math.max(minBarHeight, max * (height - 16));
                 const x = i * (barWidth + gap);
                 const y = centerY - (barHeight / 2);
 
-                ctx.beginPath();
-                if (ctx.roundRect) {
-                    ctx.roundRect(x, y, barWidth, barHeight, 2);
+                if (x <= playheadX) {
+                    ctx.fillStyle = '#64748b';
                 } else {
-                    ctx.rect(x, y, barWidth, barHeight);
+                    ctx.fillStyle = '#0284c7';
                 }
+
+                ctx.fillRect(x, y, barWidth, barHeight);
+            }
+
+            if (currentProgressSec > 0 || state.isPlaying) {
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(playheadX, 0);
+                ctx.lineTo(playheadX, height);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(playheadX, 4, 4, 0, Math.PI * 2);
                 ctx.fill();
+            }
+        }
+
+        function seekAudioFromCanvas(event) {
+            if (!state.audioBuffer) return;
+            const canvas = document.getElementById('waveformCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+            const seekTime = percentage * state.audioBuffer.duration;
+
+            state.playbackStartOffset = seekTime;
+
+            if (state.isPlaying) {
+                stopAudioPlayback(false);
+                startAudioPlayback(seekTime);
+            } else {
+                drawWaveform(state.audioBuffer, seekTime);
+                document.getElementById('playback-timer').innerText = formatTime(seekTime);
             }
         }
 
@@ -1479,15 +1602,23 @@
             if (!state.audioBuffer) return;
 
             if (state.isPlaying) {
-                stopAudioPlayback();
+                stopAudioPlayback(true);
             } else {
-                startAudioPlayback();
+                startAudioPlayback(state.playbackStartOffset);
             }
         }
 
-        function startAudioPlayback() {
+        function startAudioPlayback(offset = 0) {
             if (!state.audioContext) {
                 state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (state.audioContext.state === 'suspended') {
+                state.audioContext.resume();
+            }
+
+            if (state.audioSource) {
+                try { state.audioSource.disconnect(); } catch(e){}
             }
 
             state.audioSource = state.audioContext.createBufferSource();
@@ -1497,25 +1628,38 @@
             state.gainNode = state.audioContext.createGain();
             state.analyserNode = state.audioContext.createAnalyser();
 
-            state.audioSource.connect(state.compressorNode);
-            state.compressorNode.connect(state.gainNode);
-            state.gainNode.connect(state.analyserNode);
-            state.analyserNode.connect(state.audioContext.destination);
-
             updateAudioDspNodes();
 
-            state.audioSource.start(0);
+            state.playbackStartTime = state.audioContext.currentTime - offset;
+            state.audioSource.start(0, offset);
             state.isPlaying = true;
             document.getElementById('play-icon').className = "fa-solid fa-pause text-base";
 
             state.audioSource.onended = () => {
-                stopAudioPlayback();
+                if (state.isPlaying && (getCurrentPlaybackTime() >= state.audioBuffer.duration - 0.1)) {
+                    stopAudioPlayback(true);
+                    state.playbackStartOffset = 0;
+                    drawWaveform(state.audioBuffer, 0);
+                    document.getElementById('playback-timer').innerText = "00:00.00";
+                }
             };
 
             updateMeters();
         }
 
-        function stopAudioPlayback() {
+        function getCurrentPlaybackTime() {
+            if (!state.isPlaying || !state.audioContext) return state.playbackStartOffset;
+            return state.audioContext.currentTime - state.playbackStartTime;
+        }
+
+        function stopAudioPlayback(resetOffset = true) {
+            if (state.isPlaying && state.audioContext) {
+                state.playbackStartOffset = state.audioContext.currentTime - state.playbackStartTime;
+            }
+            if (resetOffset) {
+                state.playbackStartOffset = 0;
+            }
+
             if (state.audioSource) {
                 try { state.audioSource.stop(); } catch(e){}
             }
@@ -1530,24 +1674,46 @@
         }
 
         function updateAudioDspNodes() {
-            if (!state.compressorNode) return;
+            if (!state.audioSource || !state.audioContext) return;
+
             const enabled = document.getElementById('toggle-sim-compressor').checked;
 
-            if (enabled && state.learnedData) {
-                state.compressorNode.threshold.setValueAtTime(-18, state.audioContext.currentTime);
-                state.compressorNode.ratio.setValueAtTime(parseFloat(state.learnedData.ratio) || 4, state.audioContext.currentTime);
-                state.compressorNode.attack.setValueAtTime((parseFloat(state.learnedData.attack) || 10) / 1000, state.audioContext.currentTime);
-                state.compressorNode.release.setValueAtTime((parseFloat(state.learnedData.release) || 100) / 1000, state.audioContext.currentTime);
-                state.gainNode.gain.setValueAtTime(Math.pow(10, (parseFloat(state.learnedData.gain) || 2) / 20), state.audioContext.currentTime);
+            try {
+                state.audioSource.disconnect();
+                if (state.compressorNode) state.compressorNode.disconnect();
+                if (state.gainNode) state.gainNode.disconnect();
+                if (state.analyserNode) state.analyserNode.disconnect();
+            } catch(e){}
+
+            if (enabled) {
+                const inst = document.getElementById('input-instrument').value;
+                const params = getCalculatedParams();
+                const thresh = state.thresholdDb;
+
+                state.compressorNode.threshold.setValueAtTime(thresh, state.audioContext.currentTime);
+                state.compressorNode.ratio.setValueAtTime(params.activeRatio, state.audioContext.currentTime);
+                state.compressorNode.attack.setValueAtTime(params.attack / 1000, state.audioContext.currentTime);
+                state.compressorNode.release.setValueAtTime(params.release / 1000, state.audioContext.currentTime);
+                
+                const gainDb = parseFloat(params.makeupGain) || 0;
+                state.gainNode.gain.setValueAtTime(Math.pow(10, gainDb / 20), state.audioContext.currentTime);
+
+                state.audioSource.connect(state.compressorNode);
+                state.compressorNode.connect(state.gainNode);
+                state.gainNode.connect(state.analyserNode);
+                state.analyserNode.connect(state.audioContext.destination);
             } else {
-                state.compressorNode.threshold.setValueAtTime(0, state.audioContext.currentTime);
-                state.compressorNode.ratio.setValueAtTime(1, state.audioContext.currentTime);
-                state.gainNode.gain.setValueAtTime(1, state.audioContext.currentTime);
+                state.audioSource.connect(state.analyserNode);
+                state.analyserNode.connect(state.audioContext.destination);
             }
         }
 
         function updateMeters() {
             if (!state.isPlaying || !state.analyserNode) return;
+
+            const currentTime = getCurrentPlaybackTime();
+            document.getElementById('playback-timer').innerText = formatTime(currentTime);
+            drawWaveform(state.audioBuffer, currentTime);
 
             const array = new Uint8Array(state.analyserNode.frequencyBinCount);
             state.analyserNode.getByteTimeDomainData(array);
@@ -1562,14 +1728,38 @@
             document.getElementById('meter-out-value').innerText = `${outDb.toFixed(1)} dB`;
             document.getElementById('meter-out-bar').style.width = `${Math.min(100, Math.max(0, (outDb + 48) * 2.08))}%`;
 
-            if (state.compressorNode && state.compressorNode.reduction) {
+            const enabled = document.getElementById('toggle-sim-compressor').checked;
+            if (enabled && state.compressorNode && state.compressorNode.reduction) {
                 const gr = state.compressorNode.reduction;
                 const grVal = typeof gr === 'number' ? gr : (gr.value || 0);
                 document.getElementById('meter-gr-value').innerText = `${grVal.toFixed(1)} dB`;
                 document.getElementById('meter-gr-bar').style.width = `${Math.min(100, Math.abs(grVal) * 8)}%`;
+            } else {
+                document.getElementById('meter-gr-value').innerText = "0.0 dB";
+                document.getElementById('meter-gr-bar').style.width = "0%";
             }
 
             state.animFrameId = requestAnimationFrame(updateMeters);
+        }
+
+        function copyCurrentParamsToClipboard() {
+            const p = getCalculatedParams();
+            const text = `AVRIX Compressor Preset:
+• Target: ${document.getElementById('input-instrument').value}
+• Genre: ${document.getElementById('input-genre').value}
+• Attack: ${p.attack} ms
+• Release: ${p.release} ms (${p.noteType})
+• Ratio: ${p.ratio}
+• Threshold: ${state.thresholdDb.toFixed(1)} dB
+• Knee: ${p.knee}
+• Makeup Gain: +${p.makeupGain} dB
+• Architecture: ${p.plugins}`;
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Compressor settings copied to clipboard!");
+            }).catch(() => {
+                showToast("Failed to copy settings.");
+            });
         }
 
         function showToast(msg) {
@@ -1590,7 +1780,7 @@
                 const data = getCalculatedParams();
                 drawTransferCurve(state.customRatio, data.knee);
                 if (state.audioBuffer) {
-                    drawWaveform(state.audioBuffer);
+                    drawWaveform(state.audioBuffer, getCurrentPlaybackTime());
                 }
             });
         };
