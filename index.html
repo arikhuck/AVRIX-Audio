@@ -159,6 +159,11 @@
         .bar-2 { animation-delay: 0.3s; }
         .bar-3 { animation-delay: 0.2s; }
         .bar-4 { animation-delay: 0.4s; }
+
+        /* Slide Transition Smoothness */
+        .slide-item {
+          transition: opacity 0.5s ease-in-out;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
@@ -246,45 +251,49 @@
                 </div>
             </div>
 
-            <!-- COMBINED APP UI PREVIEW SHOWCASE (PREVIEW 1 & PREVIEW 2) -->
-            <div class="pt-6 max-w-5xl mx-auto">
-                <div class="glass-panel-light p-4 sm:p-5 rounded-3xl border border-white/90 shadow-2xl space-y-4">
+            <!-- AUTO SLIDER SHOWCASE (FULL WIDTH HIGH RESOLUTION PREVIEW) -->
+            <div class="pt-6 max-w-4xl mx-auto">
+                <div id="preview-slider-container" class="glass-panel-light p-4 sm:p-5 rounded-3xl border border-white/90 shadow-2xl space-y-4 text-left relative group">
                     
                     <div class="flex items-center justify-between pb-3 px-2 border-b border-slate-200/80">
                         <div class="flex items-center space-x-2">
                             <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                            <span class="text-xs font-mono font-extrabold text-slate-800 uppercase tracking-wider">AVRIX Engine Interface Showcase</span>
+                            <span id="slider-caption" class="text-xs font-mono font-extrabold text-slate-800 uppercase tracking-wider">
+                                Parameter Calibration View
+                            </span>
                         </div>
-                        <span class="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">PRO SUITE</span>
+                        <div class="flex items-center space-x-3">
+                            <span id="hover-badge" class="hidden text-[9px] font-mono font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200"><i class="fa-solid fa-pause mr-1"></i> PAUSED (10s)</span>
+                            <span class="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">PRO SUITE</span>
+                        </div>
                     </div>
 
-                    <!-- GRID 2 PREVIEW GAMBAR -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- SLIDER CONTAINER -->
+                    <div class="relative rounded-2xl overflow-hidden border border-slate-300/80 shadow-inner bg-slate-900">
                         
-                        <!-- PREVIEW 1 -->
-                        <div class="space-y-2 text-left">
-                            <div class="flex items-center justify-between text-[11px] font-mono font-bold text-slate-600 px-1">
-                                <span><i class="fa-solid fa-sliders text-sky-600 mr-1"></i> Parameter Calibration View</span>
-                                <span class="text-[9px] text-slate-400">Preview 1</span>
-                            </div>
-                            <div class="rounded-2xl overflow-hidden border border-slate-300/80 shadow-md bg-slate-900 group hover:border-sky-500 transition-all">
-                                <!-- Menggunakan preview-1.jpg / preview-1.png -->
-                                <img src="preview-1.png" onerror="this.onerror=null; this.src='preview-1.jpg';" alt="AVRIX Interface Preview 1" class="w-full h-auto block object-cover group-hover:scale-[1.01] transition-transform duration-300">
-                            </div>
+                        <!-- SLIDE 1 -->
+                        <div id="slide-1" class="slide-item block">
+                            <img src="preview-1.png" onerror="this.onerror=null; this.src='preview-1.jpg';" alt="AVRIX Interface Preview 1" class="w-full h-auto block object-cover">
                         </div>
 
-                        <!-- PREVIEW 2 -->
-                        <div class="space-y-2 text-left">
-                            <div class="flex items-center justify-between text-[11px] font-mono font-bold text-slate-600 px-1">
-                                <span><i class="fa-solid fa-chart-line text-amber-600 mr-1"></i> Waveform & Dynamic Meter View</span>
-                                <span class="text-[9px] text-slate-400">Preview 2</span>
-                            </div>
-                            <div class="rounded-2xl overflow-hidden border border-slate-300/80 shadow-md bg-slate-900 group hover:border-sky-500 transition-all">
-                                <!-- Menggunakan preview-2.jpg / preview-2.png -->
-                                <img src="preview-2.png" onerror="this.onerror=null; this.src='preview-2.jpg';" alt="AVRIX Interface Preview 2" class="w-full h-auto block object-cover group-hover:scale-[1.01] transition-transform duration-300">
-                            </div>
+                        <!-- SLIDE 2 -->
+                        <div id="slide-2" class="slide-item hidden">
+                            <img src="preview-2.png" onerror="this.onerror=null; this.src='preview-2.jpg';" alt="AVRIX Interface Preview 2" class="w-full h-auto block object-cover">
                         </div>
 
+                        <!-- NAVIGATION ARROWS -->
+                        <button onclick="prevSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 border border-white/20">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                        </button>
+                        <button onclick="nextSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 border border-white/20">
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+                    </div>
+
+                    <!-- SLIDER DOTS INDICATORS -->
+                    <div class="flex justify-center items-center space-x-2 pt-1">
+                        <button onclick="goToSlide(1)" id="dot-1" class="w-2.5 h-2.5 rounded-full bg-sky-600 transition-all"></button>
+                        <button onclick="goToSlide(2)" id="dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-300 transition-all"></button>
                     </div>
 
                 </div>
@@ -603,5 +612,96 @@
         AVRIX Audio &copy; 2026 | Professional Mixing Suite
     </footer>
 
+    <!-- AUTO SLIDER SCRIPT WITH HOVER 10s PAUSE LOGIC -->
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 2;
+        let slideTimer = null;
+        let pauseTimer = null;
+        const normalInterval = 5000; // 5 Detik
+        const hoverPauseDuration = 10000; // 10 Detik
+
+        const sliderCaptions = {
+            1: "Parameter Calibration View",
+            2: "Waveform & Dynamic Meter View"
+        };
+
+        function showSlide(index) {
+            currentSlide = index;
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                const dot = document.getElementById(`dot-${i}`);
+                if (i === index) {
+                    slide.classList.remove('hidden');
+                    slide.classList.add('block');
+                    dot.classList.remove('bg-slate-300');
+                    dot.classList.add('bg-sky-600');
+                } else {
+                    slide.classList.remove('block');
+                    slide.classList.add('hidden');
+                    dot.classList.remove('bg-sky-600');
+                    dot.classList.add('bg-slate-300');
+                }
+            }
+            document.getElementById('slider-caption').innerText = sliderCaptions[index] || "AVRIX Interface Preview";
+        }
+
+        function nextSlide() {
+            let next = currentSlide + 1;
+            if (next > totalSlides) next = 1;
+            showSlide(next);
+        }
+
+        function prevSlide() {
+            let prev = currentSlide - 1;
+            if (prev < 1) prev = totalSlides;
+            showSlide(prev);
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+            resetAutoSlide();
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            slideTimer = setInterval(() => {
+                nextSlide();
+            }, normalInterval);
+        }
+
+        function stopAutoSlide() {
+            if (slideTimer) clearInterval(slideTimer);
+        }
+
+        function resetAutoSlide() {
+            stopAutoSlide();
+            startAutoSlide();
+        }
+
+        // HOVER PAUSE 10 DETIK LOGIC
+        const sliderEl = document.getElementById('preview-slider-container');
+        const hoverBadge = document.getElementById('hover-badge');
+
+        sliderEl.addEventListener('mouseenter', () => {
+            stopAutoSlide();
+            if (pauseTimer) clearTimeout(pauseTimer);
+            hoverBadge.classList.remove('hidden');
+
+            pauseTimer = setTimeout(() => {
+                hoverBadge.classList.add('hidden');
+                startAutoSlide();
+            }, hoverPauseDuration);
+        });
+
+        sliderEl.addEventListener('mouseleave', () => {
+            if (pauseTimer) clearTimeout(pauseTimer);
+            hoverBadge.classList.add('hidden');
+            startAutoSlide();
+        });
+
+        // Start slider on load
+        startAutoSlide();
+    </script>
 </body>
 </html>
