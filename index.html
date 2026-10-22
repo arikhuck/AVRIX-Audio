@@ -29,17 +29,12 @@
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
-                        'pulse-glow': 'pulseGlow 3s infinite',
                         'wave': 'wave 1.2s ease-in-out infinite alternate'
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0px)' },
                             '50%': { transform: 'translateY(-8px)' }
-                        },
-                        pulseGlow: {
-                            '0%, 100%': { opacity: '0.4' },
-                            '50%': { opacity: '0.8' }
                         },
                         wave: {
                             '0%': { height: '15%' },
@@ -64,6 +59,7 @@
           background-color: #f1f2ec;
         }
 
+        /* 1. LAYER FOTO UI COMPRESSOR DI BACKGROUND */
         .bg-compressor-fixed {
           position: fixed;
           top: 0;
@@ -78,6 +74,7 @@
           z-index: -3;
         }
 
+        /* 2. BACKUP PATTERN VECTOR AUDIO */
         .bg-audio-pattern {
           position: fixed;
           top: 0;
@@ -91,6 +88,7 @@
           z-index: -2;
         }
 
+        /* 3. OVERLAY TIPIS KREM STUDIO LIGHT */
         .bg-light-tint {
           position: fixed;
           top: 0;
@@ -162,7 +160,6 @@
         .bar-2 { animation-delay: 0.3s; }
         .bar-3 { animation-delay: 0.2s; }
         .bar-4 { animation-delay: 0.4s; }
-        .bar-5 { animation-delay: 0.15s; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
@@ -201,7 +198,7 @@
     <!-- MAIN CONTENT -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24 relative z-10">
         
-        <!-- HERO SECTION WITH GRADIENT GLOW -->
+        <!-- HERO SECTION -->
         <div class="text-center max-w-4xl mx-auto space-y-6 pt-4">
             
             <div class="inline-flex items-center space-x-3 bg-white/95 backdrop-blur-md border border-sky-200/80 px-4 py-1.5 rounded-full shadow-md font-mono text-xs animate-float">
@@ -250,34 +247,90 @@
                 </div>
             </div>
 
-            <!-- INTERACTIVE COMPRESSOR DEMO PREVIEW -->
+            <!-- INTERACTIVE COMPRESSOR DEMO PREVIEW (PRO AUDIO A/B DEMO) -->
             <div class="pt-6 max-w-2xl mx-auto">
                 <div class="glass-panel-light p-5 rounded-3xl border border-sky-300/80 shadow-2xl text-left space-y-4 relative overflow-hidden group">
+                    
+                    <!-- HEADER WIDGET -->
                     <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                         <div class="flex items-center space-x-2">
                             <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                            <span class="text-xs font-mono font-extrabold text-slate-800 uppercase">Live Demo Interactive Preview</span>
+                            <span class="text-xs font-mono font-extrabold text-slate-800 uppercase tracking-wider">Live WebAudio DSP Engine Preview</span>
                         </div>
-                        <span class="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">Interactive Engine</span>
+                        <span class="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">Interactive A/B Test</span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Try Selecting Instrument:</label>
-                            <select onchange="updateDemoValues(this.value)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600">
-                                <option value="lead_vocal">Lead Vocal (Pop / Rock)</option>
-                                <option value="snare">Snare Drum (Punchy Snap)</option>
-                                <option value="master_bus">Master Bus (Pop Punk Glue)</option>
+                    <!-- DROPDOWN & AUDIO A/B CONTROLS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                        <div class="sm:col-span-7">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Select Track Profile:</label>
+                            <select id="demo-inst-select" onchange="changeDemoPreset(this.value)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 shadow-sm">
+                                <option value="lead_vocal">Lead Vocal (Pop / Rock - Punchy Presence)</option>
+                                <option value="snare">Snare Drum (High Snap & Crack)</option>
+                                <option value="master_bus">Master Bus (Pop Punk Glue & Density)</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Live Calibrated Output:</label>
-                            <div class="bg-slate-900 text-sky-400 font-mono text-xs p-2 rounded-xl flex justify-between items-center border border-slate-800">
-                                <span>ATTACK: <b id="demo-attack" class="text-white">12 ms</b></span>
-                                <span>RELEASE: <b id="demo-release" class="text-white">125 ms</b></span>
+
+                        <!-- AUDIO PLAY & A/B TOGGLE -->
+                        <div class="sm:col-span-5 flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0">
+                            <button id="demo-play-btn" onclick="toggleDemoAudio()" class="btn-engine-light px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow">
+                                <i id="demo-play-icon" class="fa-solid fa-play"></i>
+                                <span id="demo-play-text">Play Audio</span>
+                            </button>
+
+                            <div class="flex items-center space-x-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                                <span class="text-[10px] font-mono font-bold text-slate-600">A/B DSP:</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="demo-ab-toggle" onchange="toggleDemoDsp()" class="sr-only peer" checked>
+                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-sky-600"></div>
+                                </label>
                             </div>
                         </div>
                     </div>
+
+                    <!-- PARAMETERS GRID OUTPUT -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-center">
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Attack</span>
+                            <span id="demo-attack" class="text-xs font-black text-sky-400">12 ms</span>
+                        </div>
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Release</span>
+                            <span id="demo-release" class="text-xs font-black text-sky-400">125 ms</span>
+                        </div>
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Ratio</span>
+                            <span id="demo-ratio" class="text-xs font-black text-white">3.5:1</span>
+                        </div>
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Knee</span>
+                            <span id="demo-knee" class="text-xs font-black text-white">Soft</span>
+                        </div>
+                        <div class="col-span-2 sm:col-span-1 bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Auto Gain</span>
+                            <span id="demo-gain" class="text-xs font-black text-emerald-400">+3.2 dB</span>
+                        </div>
+                    </div>
+
+                    <!-- LIVE ANIMATED METER BAR -->
+                    <div class="bg-slate-100 p-2.5 rounded-2xl border border-slate-200/80 space-y-1.5 font-mono text-[9px]">
+                        <div class="flex justify-between font-bold text-slate-600">
+                            <span>ESTIMATED DYNAMIC GAIN REDUCTION:</span>
+                            <span id="demo-gr-text" class="text-amber-600 font-black">0.0 dB</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                            <div id="demo-gr-bar" class="bg-amber-500 h-full w-0 transition-all duration-100"></div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER MICRO CTA -->
+                    <div class="pt-1 flex items-center justify-between text-[11px] font-medium border-t border-slate-200">
+                        <span class="text-slate-600 font-bold">Want full WAV Mode Learn & custom BPM calibration?</span>
+                        <a href="#pricing" class="text-sky-700 hover:text-sky-900 font-extrabold flex items-center gap-1 underline underline-offset-2">
+                            Unlock Access <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
@@ -294,7 +347,7 @@
                 <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
                     <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">1</div>
                     <h3 class="text-sm font-black text-slate-900 uppercase">Choose Target Profile</h3>
-                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Select from 12 instruments and 14 music genres.</p>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Select from 12 instruments and 14 music genres arranged from A to Z.</p>
                 </div>
                 <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
                     <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">2</div>
@@ -594,21 +647,133 @@
         AVRIX Audio &copy; 2026 | Professional Mixing Suite
     </footer>
 
-    <!-- DEMO PREVIEW INTERACTIVE LOGIC -->
+    <!-- WEBAUDIO DSP DEMO ENGINE SCRIPT -->
     <script>
-        function updateDemoValues(val) {
-            const attackEl = document.getElementById('demo-attack');
-            const releaseEl = document.getElementById('demo-release');
-            if (val === 'lead_vocal') {
-                attackEl.innerText = '12 ms';
-                releaseEl.innerText = '125 ms';
-            } else if (val === 'snare') {
-                attackEl.innerText = '30 ms';
-                releaseEl.innerText = '80 ms';
-            } else if (val === 'master_bus') {
-                attackEl.innerText = '30 ms';
-                releaseEl.innerText = '250 ms';
+        let demoAudioCtx = null;
+        let demoOsc = null;
+        let demoGain = null;
+        let demoComp = null;
+        let demoIsPlaying = false;
+        let demoAnimFrame = null;
+
+        const demoPresets = {
+            lead_vocal: { attack: 0.012, release: 0.125, ratio: 3.5, knee: "Soft", gain: "+3.2 dB", thresh: -16 },
+            snare: { attack: 0.030, release: 0.080, ratio: 4.5, knee: "Hard", gain: "+4.5 dB", thresh: -12 },
+            master_bus: { attack: 0.030, release: 0.250, ratio: 2.0, knee: "Ultra Soft", gain: "+1.8 dB", thresh: -8 }
+        };
+
+        function initDemoAudio() {
+            if (!demoAudioCtx) {
+                demoAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
             }
+            if (demoAudioCtx.state === 'suspended') {
+                demoAudioCtx.resume();
+            }
+        }
+
+        function changeDemoPreset(val) {
+            const p = demoPresets[val] || demoPresets.lead_vocal;
+            document.getElementById('demo-attack').innerText = `${Math.round(p.attack * 1000)} ms`;
+            document.getElementById('demo-release').innerText = `${Math.round(p.release * 1000)} ms`;
+            document.getElementById('demo-ratio').innerText = `${p.ratio}:1`;
+            document.getElementById('demo-knee').innerText = p.knee;
+            document.getElementById('demo-gain').innerText = p.gain;
+
+            if (demoComp && demoAudioCtx) {
+                demoComp.attack.setValueAtTime(p.attack, demoAudioCtx.currentTime);
+                demoComp.release.setValueAtTime(p.release, demoAudioCtx.currentTime);
+                demoComp.ratio.setValueAtTime(p.ratio, demoAudioCtx.currentTime);
+                demoComp.threshold.setValueAtTime(p.thresh, demoAudioCtx.currentTime);
+            }
+        }
+
+        function toggleDemoAudio() {
+            initDemoAudio();
+            if (demoIsPlaying) {
+                stopDemoAudio();
+            } else {
+                startDemoAudio();
+            }
+        }
+
+        function startDemoAudio() {
+            const key = document.getElementById('demo-inst-select').value;
+            const p = demoPresets[key] || demoPresets.lead_vocal;
+
+            demoOsc = demoAudioCtx.createOscillator();
+            demoGain = demoAudioCtx.createGain();
+            demoComp = demoAudioCtx.createDynamicsCompressor();
+
+            demoComp.threshold.setValueAtTime(p.thresh, demoAudioCtx.currentTime);
+            demoComp.ratio.setValueAtTime(p.ratio, demoAudioCtx.currentTime);
+            demoComp.attack.setValueAtTime(p.attack, demoAudioCtx.currentTime);
+            demoComp.release.setValueAtTime(p.release, demoAudioCtx.currentTime);
+
+            demoOsc.type = 'sawtooth';
+            demoOsc.frequency.setValueAtTime(110, demoAudioCtx.currentTime);
+
+            const lfo = demoAudioCtx.createOscillator();
+            const lfoGain = demoAudioCtx.createGain();
+            lfo.frequency.value = 2.5; 
+            lfoGain.gain.value = 0.4;
+            lfo.connect(demoGain.gain);
+            lfo.start();
+
+            toggleDemoDsp();
+
+            demoOsc.start();
+            demoIsPlaying = true;
+
+            document.getElementById('demo-play-icon').className = "fa-solid fa-pause";
+            document.getElementById('demo-play-text').innerText = "Pause Demo";
+
+            updateDemoMeter();
+        }
+
+        function stopDemoAudio() {
+            if (demoOsc) {
+                try { demoOsc.stop(); } catch(e){}
+            }
+            demoIsPlaying = false;
+            document.getElementById('demo-play-icon').className = "fa-solid fa-play";
+            document.getElementById('demo-play-text').innerText = "Play Audio";
+            document.getElementById('demo-gr-text').innerText = "0.0 dB";
+            document.getElementById('demo-gr-bar').style.width = "0%";
+            if (demoAnimFrame) cancelAnimationFrame(demoAnimFrame);
+        }
+
+        function toggleDemoDsp() {
+            if (!demoIsPlaying || !demoAudioCtx) return;
+            const enabled = document.getElementById('demo-ab-toggle').checked;
+            
+            demoOsc.disconnect();
+            demoComp.disconnect();
+            demoGain.disconnect();
+
+            if (enabled) {
+                demoOsc.connect(demoComp);
+                demoComp.connect(demoGain);
+                demoGain.connect(demoAudioCtx.destination);
+            } else {
+                demoOsc.connect(demoGain);
+                demoGain.connect(demoAudioCtx.destination);
+            }
+        }
+
+        function updateDemoMeter() {
+            if (!demoIsPlaying) return;
+            const enabled = document.getElementById('demo-ab-toggle').checked;
+
+            if (enabled && demoComp && demoComp.reduction) {
+                const gr = Math.abs(demoComp.reduction);
+                document.getElementById('demo-gr-text').innerText = `-${gr.toFixed(1)} dB`;
+                document.getElementById('demo-gr-bar').style.width = `${Math.min(100, gr * 12)}%`;
+            } else {
+                document.getElementById('demo-gr-text').innerText = "0.0 dB (Bypassed)";
+                document.getElementById('demo-gr-bar').style.width = "0%";
+            }
+
+            demoAnimFrame = requestAnimationFrame(updateDemoMeter);
         }
     </script>
 </body>
