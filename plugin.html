@@ -356,7 +356,6 @@
                                 <span id="param-attack-note" class="text-[10px] text-slate-600 mt-1 block font-medium">Transient Pass</span>
                             </div>
 
-                            <!-- RELEASE TIME CARD: DROPDOWN UNTUK MERUBAH NOTE DURATION -->
                             <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
                                 <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Release Time</span>
                                 <div class="flex items-baseline space-x-1 mt-1">
@@ -673,185 +672,294 @@
     </div>
 
     <script>
+        // PRESET DATABASE DENGAN LOGIKA AUDIO ENGINEERING PERSIS & PRESISI
         const presetDatabase = {
             "Lead Vocal": {
-                plugins: "FET Peak Limiter (1176 Style) + Optical (LA-2A)",
-                desc: "Fast FET transistor design for peak catching followed by smooth opto levelling.",
                 baseAttack: 12,
                 baseRatio: 3.5,
-                baseReleaseNote: "1/8",
-                knee: "Soft Knee",
-                lookahead: 1.5,
-                rationale: "Tuned to control dynamic vocal swings while preserving clarity and vocal presence.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.5, ratioMult: 0.8 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.6, ratioMult: 1.4 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Precision Digital / Transparent VCA",
+                        desc: "Controlled dynamic balance without coloration, preserving natural vocal transients.",
+                        rationale: "Clean target: Natural attack & mild ratio maintain clean vocal clarity."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Optical Tube Compressor (LA-2A Style)",
+                        desc: "Smooth opto leveling with organic tube warmth and continuous non-linear release.",
+                        rationale: "Warm target: Slower optical response with tube saturation glues vocals naturally."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
+                        plugins: "FET Peak Limiter / VCA Punch (1176 / Distressor)",
+                        desc: "Slow attack lets initial vocal transient pass through before clamping body with fast 1/16 release.",
+                        rationale: "Punchy target: Extended attack (transient pass) + fast release gives vocal explosive front-presence."
+                    }
                 }
             },
             "Vocal Scream": {
-                plugins: "Ultra Fast FET Limiter (1176 Rev E)",
-                desc: "Screaming transients control with heavy harmonic saturation and soft clip.",
-                baseAttack: 4,
-                baseRatio: 6.0,
-                baseReleaseNote: "1/16",
-                knee: "Hard Knee",
-                lookahead: 0.5,
-                rationale: "Aggressive peak clamping for harsh shouting & screaming vocals to prevent digital clipping.",
+                baseAttack: 8,
+                baseRatio: 5.0,
                 goalAdjustments: {
-                    transparent: { attackMult: 1.8, ratioMult: 0.7 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.5, ratioMult: 1.5 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.7, knee: "Medium Knee", note: "1/8",
+                        plugins: "Clean Peak Limiter",
+                        desc: "Transparent peak catching to avoid clipping without squashing scream dynamics.",
+                        rationale: "Clean target: Mild peak control keeps shouting vocals open and dynamic."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 0.9, knee: "Soft Knee", note: "1/8",
+                        plugins: "Vari-Mu Tube Limiter",
+                        desc: "Adds analog tube body and softens harsh upper-mid sibilance.",
+                        rationale: "Warm target: Tube saturation thickens harsh screams and rounds off extreme edge."
+                    },
+                    aggressive: { 
+                        attackMult: 1.7, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET Peak Limiter (1176 All-Buttons Mode)",
+                        desc: "Slightly delayed attack allows harsh vocal snap through, paired with fast release to slam decay.",
+                        rationale: "Punchy target: High ratio + fast release clamps scream sustain while retaining transient bite."
+                    }
                 }
             },
             "Backing Vocal": {
-                plugins: "Opto Tube Compressor (LA-2A / T-RackS Opto)",
-                desc: "Smooth musical gain reduction to glue backing harmonies into the background.",
-                baseAttack: 25,
+                baseAttack: 20,
                 baseRatio: 2.5,
-                baseReleaseNote: "1/4",
-                knee: "Soft Knee",
-                lookahead: 2.0,
-                rationale: "Slower response glues multiple voice layers behind lead vocal without transient harshness.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.3, ratioMult: 0.8 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.7, ratioMult: 1.3 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
+                        plugins: "Digital Stereo Bus Compressor",
+                        desc: "Transparent backing choir leveling for smooth background balance.",
+                        rationale: "Clean target: Gentle reduction keeps harmonies open behind lead vocals."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Opto Tube Compressor (LA-2A / T-RackS Opto)",
+                        desc: "Smooth musical gain reduction to glue backing harmonies into the background.",
+                        rationale: "Warm target: Opto leveling glues multiple vocal layers into a lush background bed."
+                    },
+                    aggressive: { 
+                        attackMult: 1.6, ratioMult: 1.4, knee: "Medium Knee", note: "1/8",
+                        plugins: "VCA Bus Compressor",
+                        desc: "Slower attack lets group consonants punch through before tight compression.",
+                        rationale: "Punchy target: Transient-pass attack keeps gang vocal consonants sharp and upfront."
+                    }
                 }
             },
             "Kick Drum": {
-                plugins: "VCA Compressor (API 2500 / SSL G-Master)",
-                desc: "Punchy VCA dynamic engine for tight sub impact and transient crack.",
-                baseAttack: 30,
+                baseAttack: 20,
                 baseRatio: 4.0,
-                baseReleaseNote: "1/16",
-                knee: "Hard Knee",
-                lookahead: 0.0,
-                rationale: "Slow attack lets the initial beater transient pass through before clamping low-end boom.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.4, ratioMult: 0.7 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.5, ratioMult: 1.6 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Clean VCA Compressor",
+                        desc: "Controls kick dynamic variations while leaving low-end impact untouched.",
+                        rationale: "Clean target: Balanced attack preserves initial beater click cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Medium Knee", note: "1/16",
+                        plugins: "Vari-Mu / Diode Bridge Compressor (Neve / Fairchild)",
+                        desc: "Rich low-end warmth and analog transformer weight for kick body.",
+                        rationale: "Warm target: Transformer saturation adds sub-bass weight and analog roundness."
+                    },
+                    aggressive: { 
+                        attackMult: 2.0, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "VCA Punch Compressor (API 2500 / SSL G-Master)",
+                        desc: "Slow attack (30-40ms) lets initial beater transient pass cleanly, clamped by fast 1/16 release.",
+                        rationale: "Punchy target: Extended slow attack lets the beater transient pop hard before clamping sub tail."
+                    }
                 }
             },
             "Snare Drum": {
-                plugins: "FET / VCA Hybrid Compressor",
-                desc: "Fast response transient shaping for shell body weight and stick snap.",
                 baseAttack: 15,
                 baseRatio: 4.0,
-                baseReleaseNote: "1/8",
-                knee: "Medium Knee",
-                lookahead: 0.5,
-                rationale: "Balances stick impact pop with ring body decay to make snare cut through dense mixes.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.5, ratioMult: 0.75 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.4, ratioMult: 1.5 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Transparent Precision VCA",
+                        desc: "Maintains natural stick hit and snare wire sizzle without clamping.",
+                        rationale: "Clean target: Natural attack ensures stick crack passes 100% cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Diode Bridge / Opto Hybrid",
+                        desc: "Thickens snare body shell resonance with warm analog harmonic grit.",
+                        rationale: "Warm target: Analog saturation fills out thin snare shells with harmonic fatness."
+                    },
+                    aggressive: { 
+                        attackMult: 2.2, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET / VCA Hybrid Compressor (1176 / Distressor)",
+                        desc: "Slow attack (30ms+) allows full stick crack to pass before heavy decay compression with fast 1/16 release.",
+                        rationale: "Punchy target: Maximum transient pass (slow attack) + rapid release = explosive snare crack!"
+                    }
                 }
             },
             "Bass Guitar/Synth": {
-                plugins: "Optical / Vari-Mu Compressor (Teletronix LA-2A / Fairchild 670)",
-                desc: "Smooth low-end levelling with organic warmth and sustained sub bass.",
-                baseAttack: 20,
+                baseAttack: 18,
                 baseRatio: 3.0,
-                baseReleaseNote: "1/8",
-                knee: "Soft Knee",
-                lookahead: 1.0,
-                rationale: "Levels out note velocities for an unwavering, solid low-end foundation.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.4, ratioMult: 0.8 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.6, ratioMult: 1.5 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Digital Low-End Leveler",
+                        desc: "Transparent note-to-note volume leveling without harmonic distortion.",
+                        rationale: "Clean target: Evens out bass note velocities without muddying sub frequencies."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Optical / Vari-Mu Compressor (LA-2A / Fairchild 670)",
+                        desc: "Smooth low-end levelling with organic warmth and sustained sub bass.",
+                        rationale: "Warm target: Opto/Tube compression gives deep sustained bass body."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET / Fast VCA Bass Compressor",
+                        desc: "Slow attack lets slap thumb / pick attack pass through before heavy sustain clamping.",
+                        rationale: "Punchy target: Delayed attack accentuates slap/pick transient while fast release tightens low-end."
+                    }
                 }
             },
             "Acoustic Guitar": {
-                plugins: "Optical / VCA Precision Compressor",
-                desc: "Gentle dynamic control preserving string air, body resonance, and plucking dynamics.",
-                baseAttack: 25,
+                baseAttack: 20,
                 baseRatio: 2.2,
-                baseReleaseNote: "1/8",
-                knee: "Soft Knee",
-                lookahead: 1.0,
-                rationale: "Controls loud pick attacks while elevating soft string body resonance smoothly.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.3, ratioMult: 0.8 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.5, ratioMult: 1.4 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Optical / VCA Precision Compressor",
+                        desc: "Gentle dynamic control preserving string air, body resonance, and plucking dynamics.",
+                        rationale: "Clean target: Ultra-soft knee keeps acoustic plucking open & natural."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Tube Opto Compressor",
+                        desc: "Warm body enhancement for strummed folk & indie acoustic guitars.",
+                        rationale: "Warm target: Smooth release brings out woody body sustain and room air."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
+                        plugins: "VCA Pick Transient Shaper",
+                        desc: "Extended attack lets pick strums pop out clearly before clamping string decay with fast 1/16 release.",
+                        rationale: "Punchy target: Slow attack elevates pick strumming noise to cut through dense rhythm mixes."
+                    }
                 }
             },
             "Electric Guitar": {
-                plugins: "VCA / FET Compressor",
-                desc: "Sustain enhancement and pick bite for rhythm or lead guitar tracks.",
-                baseAttack: 18,
+                baseAttack: 15,
                 baseRatio: 3.0,
-                baseReleaseNote: "1/8",
-                knee: "Medium Knee",
-                lookahead: 1.0,
-                rationale: "Evens out pick stroke dynamic spikes and adds rich harmonic sustain.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.4, ratioMult: 0.8 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.5, ratioMult: 1.5 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Clean VCA Guitar Compressor",
+                        desc: "Controls high pick transients without altering amp tone or drive.",
+                        rationale: "Clean target: Transparent control keeps original guitar amp response intact."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Vari-Mu / Tube Guitar Compressor",
+                        desc: "Adds rich tube saturation and sustain to rhythm and lead guitar solos.",
+                        rationale: "Warm target: Tube saturation rounds off harsh pick bite and lengthens sustain."
+                    },
+                    aggressive: { 
+                        attackMult: 1.9, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET Peak Limiter (1176 Style)",
+                        desc: "Slow attack lets pick bite pop upfront, compressed by fast 1/16 release for aggressive chunk.",
+                        rationale: "Punchy target: Transient-pass attack + high ratio adds massive pick bite and chunk."
+                    }
                 }
             },
             "Rhythm Bus": {
-                plugins: "SSL G-Master Bus / VCA Glue",
-                desc: "Cohesive stereo mix bus compressor for unifying mid-range rhythm elements.",
-                baseAttack: 30,
+                baseAttack: 25,
                 baseRatio: 2.5,
-                baseReleaseNote: "1/4",
-                knee: "Soft Knee",
-                lookahead: 2.0,
-                rationale: "Glues rhythm instruments together into a singular cohesive sonic unit.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.3, ratioMult: 0.8 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.6, ratioMult: 1.4 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
+                        plugins: "Clean Stereo Bus Leveler",
+                        desc: "Unifies rhythm guitars, synths, and keys transparently.",
+                        rationale: "Clean target: Mild ratio glues rhythm instruments without losing punch."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "SSL G-Master Bus / VCA Glue",
+                        desc: "Cohesive stereo mix bus compressor for unifying mid-range rhythm elements.",
+                        rationale: "Warm target: Analog VCA glue unifies mid-range elements with warm cohesion."
+                    },
+                    aggressive: { 
+                        attackMult: 1.7, ratioMult: 1.4, knee: "Medium Knee", note: "1/8",
+                        plugins: "API 2500 Thrust Bus Compressor",
+                        desc: "Slow attack lets rhythm hits punch through, clamped tightly with fast tempo release.",
+                        rationale: "Punchy target: Slow attack + fast release makes rhythm bus pump with groove."
+                    }
                 }
             },
             "Synth Lead": {
-                plugins: "Fast VCA / Diode Bridge Compressor",
-                desc: "Snappy transient shaping and leveling for synth lines and arp arpeggios.",
-                baseAttack: 10,
+                baseAttack: 12,
                 baseRatio: 3.5,
-                baseReleaseNote: "1/16",
-                knee: "Hard Knee",
-                lookahead: 0.5,
-                rationale: "Accentuates synth transient hits while maintaining energy consistency.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.5, ratioMult: 0.8 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.5, ratioMult: 1.5 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Digital Precision Compressor",
+                        desc: "Controls synth peaks without altering filter envelope characteristics.",
+                        rationale: "Clean target: Preserves synth filter movement and transient snap."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Diode Bridge / Vintage VCA",
+                        desc: "Smooths digital synth harshness with analog transformer warmth.",
+                        rationale: "Warm target: Analog saturation takes away cold digital synth edge."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "Fast VCA / FET Compressor",
+                        desc: "Slow attack lets synth transient attack pop out before clamping body with fast 1/16 release.",
+                        rationale: "Punchy target: Extended attack accentuates arpeggio transients and synth energy."
+                    }
                 }
             },
             "Drum Bus": {
-                plugins: "SSL G-Master / VCA Bus Compressor",
-                desc: "Classic stereo drum bus glue for punch, body, and room tone control.",
-                baseAttack: 30,
+                baseAttack: 25,
                 baseRatio: 4.0,
-                baseReleaseNote: "1/8",
-                knee: "Medium Knee",
-                lookahead: 1.0,
-                rationale: "Glues kick, snare, and cymbals into a cohesive, breathing drum groove.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.3, ratioMult: 0.75 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.4, ratioMult: 1.5 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
+                        plugins: "Transparent Bus Leveler",
+                        desc: "Glues kick, snare, and cymbals into a clean breathing drum groove.",
+                        rationale: "Clean target: Long attack lets full drum transients pass through cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Vari-Mu Tube Drum Bus",
+                        desc: "Adds room ambience, warm cymbal sheen, and analog drum glue.",
+                        rationale: "Warm target: Tube saturation pulls up room mic sustain & warms cymbals."
+                    },
+                    aggressive: { 
+                        attackMult: 2.0, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "SSL G-Master / VCA Bus Compressor (Punch Mode)",
+                        desc: "Classic slow attack (30ms+) allows full drum hit transients to pass, snapped tight by fast 1/16 release.",
+                        rationale: "Punchy target: Transient-pass attack + fast 1/16 release brings out explosive drum room knock."
+                    }
                 }
             },
             "Master Bus": {
-                plugins: "Vari-Mu Tube / Precision VCA Mastering Compressor",
-                desc: "Transparent mastering bus compression for overall mix glue and loudness density.",
-                baseAttack: 40,
+                baseAttack: 30,
                 baseRatio: 1.8,
-                baseReleaseNote: "1/4",
-                knee: "Ultra Soft Knee",
-                lookahead: 2.5,
-                rationale: "Provides transparent mix glue without crushing punch or dynamic headroom.",
                 goalAdjustments: {
-                    transparent: { attackMult: 1.2, ratioMult: 0.85 },
-                    warm: { attackMult: 1.0, ratioMult: 1.0 },
-                    aggressive: { attackMult: 0.6, ratioMult: 1.3 }
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.85, knee: "Ultra Soft Knee", note: "1/4",
+                        plugins: "Digital Mastering Precision Leveler (Weiss DS1-MK3)",
+                        desc: "Transparent mastering bus compression for overall mix glue and loudness density.",
+                        rationale: "Clean target: Ultra-soft knee controls mix dynamic peaks transparently."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/2",
+                        plugins: "Vari-Mu Tube Mastering Compressor (Fairchild / Manley)",
+                        desc: "Lush analog mastering glue, gentle high-end smoothing, and sub warmth.",
+                        rationale: "Warm target: Tube mastering glue adds depth and analog warmth to full mix."
+                    },
+                    aggressive: { 
+                        attackMult: 1.6, ratioMult: 1.3, knee: "Medium Knee", note: "1/8",
+                        plugins: "VCA Master Punch Compressor (SSL G-Master 4:1)",
+                        desc: "Slow attack lets full mix transients punch through, clamped for modern radio density with fast release.",
+                        rationale: "Punchy target: Glues mix tight for commercial loudness and punchy club impact."
+                    }
                 }
             }
         };
@@ -866,7 +974,7 @@
             learnGoal: 'transparent',
             thresholdDb: -8.0,
             customRatio: 2.8,
-            customReleaseNote: null, // Menyimpan note manual buatan user
+            customReleaseNote: null,
             rawWavMetrics: null,
             audioContext: null,
             audioBuffer: null,
@@ -901,7 +1009,6 @@
             }
         }
 
-        // PERHITUNGAN TEMPO MS DENGAN PILIHAN NOTE LEBIH LENGKAP
         function calculateNoteDurationMs(bpm, noteType) {
             const quarterNoteMs = (60 / bpm) * 1000;
             switch(noteType) {
@@ -932,13 +1039,11 @@
             calculateRecommendation();
         }
 
-        // RESET CUSTOM NOTE KETIKA GANTI INSTRUMEN UTAMA
         function onInstrumentChange() {
             state.customReleaseNote = null;
             calculateRecommendation();
         }
 
-        // HANDLE MANUAL RELEASE NOTE DROPDOWN CHANGE
         function onReleaseNoteChange() {
             const selectedNote = document.getElementById('input-release-note').value;
             state.customReleaseNote = selectedNote;
@@ -950,7 +1055,10 @@
             const genre = document.getElementById('input-genre').value;
             const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
 
-            const goalAdj = baseData.goalAdjustments[state.goal] || { attackMult: 1, ratioMult: 1 };
+            const goalAdj = baseData.goalAdjustments[state.goal] || { 
+                attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8",
+                plugins: "VCA Compressor", desc: "Standard compression profile.", rationale: "Balanced dynamic control." 
+            };
             
             let finalAttack = Math.round(baseData.baseAttack * goalAdj.attackMult);
             let calculatedRatio = (baseData.baseRatio * goalAdj.ratioMult).toFixed(1);
@@ -958,42 +1066,38 @@
             // Genre-specific fine-tuning
             if (genre === 'Pop Punk') {
                 calculatedRatio = (parseFloat(calculatedRatio) + 0.8).toFixed(1);
-                finalAttack = Math.max(5, Math.round(finalAttack * 0.8));
+                finalAttack = Math.max(5, Math.round(finalAttack * 1.1));
             } else if (genre === 'Midwest') {
                 calculatedRatio = Math.max(1.6, (parseFloat(calculatedRatio) - 0.4)).toFixed(1);
-                finalAttack = Math.round(finalAttack * 1.3);
+                finalAttack = Math.round(finalAttack * 1.2);
             } else if (genre === 'Modern Metal' || genre === 'Thall') {
                 calculatedRatio = (parseFloat(calculatedRatio) + 1.2).toFixed(1);
-                finalAttack = Math.max(3, Math.round(finalAttack * 0.7));
             } else if (genre === 'Hipdut') {
                 calculatedRatio = (parseFloat(calculatedRatio) + 0.5).toFixed(1);
             } else if (genre === 'Jazz' || genre === 'Acoustic/Folk') {
                 calculatedRatio = Math.max(1.5, (parseFloat(calculatedRatio) - 0.5)).toFixed(1);
             }
 
-            // MENGGUNAKAN NOTE PILIHAN PENGGUNA ATAU DEFAULT PRESET
-            const noteType = state.customReleaseNote || (baseData.baseReleaseNote.includes("1/16") ? "1/16" : (baseData.baseReleaseNote.includes("1/4") ? "1/4" : "1/8"));
+            const noteType = state.customReleaseNote || goalAdj.note || "1/8";
             const releaseMs = calculateNoteDurationMs(state.bpm, noteType);
             const activeRatio = state.customRatio || parseFloat(calculatedRatio);
             const estimatedGain = (Math.abs(state.thresholdDb) * (activeRatio - 1) / activeRatio * 0.5).toFixed(1);
 
             return {
-                plugins: baseData.plugins,
-                typeDesc: baseData.desc,
+                plugins: goalAdj.plugins,
+                typeDesc: goalAdj.desc,
                 attack: finalAttack,
                 release: releaseMs,
                 noteType: noteType,
                 ratio: `${activeRatio.toFixed(1)}:1`,
-                knee: baseData.knee,
-                lookahead: baseData.lookahead,
+                knee: goalAdj.knee,
                 makeupGain: `+${estimatedGain}`,
-                rationale: baseData.rationale,
+                rationale: goalAdj.rationale,
                 calculatedRatio: parseFloat(calculatedRatio)
             };
         }
 
         function calculateRecommendation() {
-            const inst = document.getElementById('input-instrument').value;
             const genre = document.getElementById('input-genre').value;
             const params = getCalculatedParams();
 
@@ -1012,7 +1116,6 @@
             document.getElementById('param-attack').innerText = params.attack;
             document.getElementById('param-release').innerText = params.release;
             
-            // SINKRONKAN VALUE DROPDOWN RELEASE NOTE
             const releaseSelect = document.getElementById('input-release-note');
             if (releaseSelect) {
                 releaseSelect.value = params.noteType;
@@ -1050,8 +1153,9 @@
 
             const inst = document.getElementById('input-instrument').value;
             const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
+            const currentGoal = baseData.goalAdjustments[state.goal] || {};
 
-            drawTransferCurve(ratioVal, baseData.knee);
+            drawTransferCurve(ratioVal, currentGoal.knee || "Soft Knee");
             updateAudioDspNodes();
         }
 
@@ -1258,10 +1362,10 @@
             const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
             const crest = state.rawWavMetrics ? state.rawWavMetrics.crestFactor : 15;
 
-            const goalAdj = baseData.goalAdjustments ? (baseData.goalAdjustments[state.learnGoal] || { attackMult: 1, ratioMult: 1 }) : { attackMult: 1, ratioMult: 1 };
+            const goalAdj = baseData.goalAdjustments ? (baseData.goalAdjustments[state.learnGoal] || { attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8" }) : { attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8" };
 
-            let attack = Math.max(2, Math.round(baseData.baseAttack * goalAdj.attackMult * (crest > 15 ? 0.7 : 1.2)));
-            let release = calculateNoteDurationMs(state.detectedBpm || 135, baseData.baseReleaseNote || "1/8");
+            let attack = Math.max(2, Math.round(baseData.baseAttack * goalAdj.attackMult * (crest > 15 ? 1.2 : 0.9)));
+            let release = calculateNoteDurationMs(state.detectedBpm || 135, goalAdj.note || "1/8");
             let ratio = (baseData.baseRatio * goalAdj.ratioMult).toFixed(1);
 
             if (state.rawWavMetrics) {
@@ -1274,17 +1378,17 @@
             document.getElementById('learn-param-attack').innerText = `${attack} ms`;
             document.getElementById('learn-param-release').innerText = `${release} ms`;
             document.getElementById('learn-param-ratio').innerText = `${ratio}:1`;
-            document.getElementById('learn-param-knee').innerText = baseData.knee;
+            document.getElementById('learn-param-knee').innerText = goalAdj.knee || "Soft Knee";
 
             document.getElementById('learn-rationale-text').innerText = 
-                `Based on a dynamic range (Crest Factor) of ${crest} dB, a ${attack}ms attack was calibrated for target ${inst} with ${baseData.knee} profile.`;
+                `Based on Crest Factor of ${crest} dB with ${state.learnGoal.toUpperCase()} target: Calibrated ${attack}ms attack (transient pass), ${ratio}:1 ratio, and ${goalAdj.knee} profile for ${inst}.`;
 
             state.learnedData = {
                 instrument: inst,
                 attack: attack,
                 release: release,
                 ratio: ratio,
-                knee: baseData.knee,
+                knee: goalAdj.knee || "Soft Knee",
                 gain: state.rawWavMetrics ? Math.max(0.5, (Math.abs(state.rawWavMetrics.peakDb) * (parseFloat(ratio) - 1) / parseFloat(ratio) * 0.4)).toFixed(1) : "2.5"
             };
         }
@@ -1303,6 +1407,12 @@
             state.bpm = state.detectedBpm;
             document.getElementById('input-bpm').value = state.detectedBpm;
             document.getElementById('bpm-display').innerText = `${state.detectedBpm} BPM`;
+            state.goal = state.learnGoal;
+            
+            document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('btn-studio-active-light'));
+            const activeB = document.getElementById(`goal-${state.goal}`);
+            if (activeB) activeB.classList.add('btn-studio-active-light');
+
             switchTab('manual');
             calculateRecommendation();
             showToast("Learned settings synced to Preset Engine!");
