@@ -1,0 +1,2051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Supabase JS Client -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://ozuyzelpzsvmurjdjilq.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
+  const supabaseClient = (window.supabase || window.supabasejs).createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentProfile = null;
+
+  async function checkAccess() {
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (!session || !session.user) {
+        window.location.href = 'login.html?redirect=plugin.html';
+        return;
+      }
+
+      const user = session.user;
+
+      const { data: profile } = await supabaseClient
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      const now = new Date();
+      let isValid = false;
+
+      if (profile) {
+        currentProfile = profile;
+        if (profile.is_lifetime) {
+          isValid = true;
+        } else if (profile.subscription_status === 'active' && profile.subscription_expiry) {
+          const expiry = new Date(profile.subscription_expiry);
+          if (expiry > now) isValid = true;
+        }
+      }
+
+      updateUserUI(user, profile, isValid);
+
+      if (!isValid) {
+        showLicenseLockModal();
+      }
+    } catch (err) {
+      console.error("Access verification error:", err);
+    }
+  }
+
+  function updateUserUI(user, profile, isValid) {
+    const emailEl = document.getElementById('user-email-indicator');
+    const badgeEl = document.getElementById('user-badge-indicator');
+    const ledEl = document.getElementById('user-led-indicator');
+
+    if (emailEl) emailEl.innerText = user.email || 'Member';
+    if (badgeEl) {
+      if (isValid) {
+        if (profile?.is_lifetime) {
+          badgeEl.innerText = 'LIFETIME';
+          badgeEl.className = 'text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 font-bold';
+        } else {
+          badgeEl.innerText = 'ACTIVE';
+          badgeEl.className = 'text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold';
+        }
+      } else {
+        badgeEl.innerText = 'INACTIVE';
+        badgeEl.className = 'text-[9px] font-mono px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-300 font-bold';
+      }
+    }
+    if (ledEl) {
+      ledEl.className = isValid ? 'w-2 h-2 rounded-full led-green animate-pulse' : 'w-2 h-2 rounded-full bg-red-500';
+    }
+  }
+
+  function showLicenseLockModal() {
+    const modal = document.getElementById('licenseLockModal');
+    if (modal) {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+  }
+
+  async function handleLogout() {
+    await supabaseClient.auth.signOut();
+    window.location.href = 'login.html';
+  }
+
+  document.addEventListener('DOMContentLoaded', checkAccess);
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVRIX Compressor Assistance - Dynamic Audio Compressor Engine</title>
+
+  <!-- DISABLE RIGHT CLICK & INSPECT ELEMENT -->
+<script>
+    // 1. Matikan Klik Kanan
+    document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+    }, false);
+
+    // 2. Blokir Shortcut Inspect Element & Developer Tools
+    document.addEventListener('keydown', function(e) {
+        // F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl + Shift + I (Inspect)
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl + Shift + J (Console)
+        if (e.ctrlKey && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl + Shift + C (Element Picker)
+        if (e.ctrlKey && e.shiftKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl + U (View Source)
+        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl + S (Save Page)
+        if (e.ctrlKey && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) {
+            e.preventDefault();
+            return false;
+        }
+    }, false);
+</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        studio: {
+                            50: '#f8f9f5',
+                            100: '#f1f2ec',
+                            200: '#e8eae1',
+                            300: '#cbd5e1',
+                            600: '#64748b',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        },
+                        accent: {
+                            blue: '#0284c7',
+                            darkblue: '#0369a1',
+                            green: '#059669',
+                            amber: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+          background-color: #f1f2ec;
+          background-image: 
+            radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.04) 0%, transparent 60%),
+            radial-gradient(circle at 85% 85%, rgba(2, 132, 199, 0.03) 0%, transparent 50%),
+            linear-gradient(to bottom, #f8f9f5, #e8eae1);
+          background-attachment: fixed;
+          color: #1e293b;
+          font-family: 'Inter', sans-serif;
+          overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #e8eae1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0284c7;
+        }
+
+        .glass-panel-light {
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 246, 241, 0.9) 100%);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          border-top: 1px solid rgba(255, 255, 255, 1);
+          box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .glass-card-light {
+          background: linear-gradient(135deg, #ffffff 0%, #f7f8f3 100%);
+          border: 1px solid rgba(0, 0, 0, 0.09);
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03), inset 0 1px 0 rgba(255, 255, 255, 1);
+          transition: all 0.2s ease;
+        }
+
+        .glass-card-light:hover {
+          border-color: rgba(2, 132, 199, 0.4);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 0 10px rgba(2, 132, 199, 0.1);
+        }
+
+        .btn-studio-light {
+          background: linear-gradient(180deg, #ffffff 0%, #e8ebe1 100%);
+          border: 1px solid rgba(0, 0, 0, 0.18);
+          color: #1e293b;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,1);
+          transition: all 0.2s ease;
+        }
+
+        .btn-studio-light:hover {
+          background: linear-gradient(180deg, #f8fafc 0%, #dbe0d2 100%);
+          border-color: #0284c7;
+          color: #0284c7;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.1), 0 0 8px rgba(2, 132, 199, 0.2);
+        }
+
+        .btn-studio-active-light {
+          background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+          border-color: #0284c7;
+          box-shadow: 0 2px 8px rgba(2, 132, 199, 0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+          color: #ffffff !important;
+        }
+
+        .btn-engine-light {
+          background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25), inset 0 1px 0 rgba(255,255,255,0.3);
+        }
+        .btn-engine-light:hover {
+          background: linear-gradient(180deg, #0369a1 0%, #075985 100%);
+          box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
+        }
+
+        input[type=range] {
+          -webkit-appearance: none;
+          background: transparent;
+        }
+        input[type=range]:focus {
+          outline: none;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+          width: 100%;
+          height: 8px;
+          cursor: pointer;
+          background: #e2e8f0;
+          border-radius: 9999px;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.08);
+        }
+        input[type=range]::-webkit-slider-thumb {
+          height: 24px;
+          width: 24px;
+          border-radius: 50%;
+          background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+          cursor: pointer;
+          -webkit-appearance: none;
+          margin-top: -8px;
+          box-shadow: 0 3px 8px rgba(0,0,0,0.25), 0 0 0 1px rgba(0,0,0,0.2);
+          border: 1px solid #ffffff;
+          transition: transform 0.15s ease;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+          transform: scale(1.15);
+        }
+
+        .led-cyan {
+          background-color: #0284c7;
+          box-shadow: 0 0 6px #0284c7;
+        }
+        .led-green {
+          background-color: #059669;
+          box-shadow: 0 0 6px #059669;
+        }
+        .drop-active {
+          border-color: #0284c7 !important;
+          background-color: rgba(2, 132, 199, 0.05) !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <header class="border-b border-black/10 bg-white/80 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center shadow-lg text-white font-black">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-black tracking-wider text-base text-slate-800">AVRIX</span>
+                        <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300 uppercase tracking-wider font-bold">Compressor Assistance</span>
+                    </div>
+                    <p class="text-[11px] text-slate-500 font-medium hidden sm:block">Acoustic Engine & Dynamic Compression Advisor</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300">
+                    <button id="tab-manual" onclick="switchTab('manual')" class="btn-studio-light btn-studio-active-light px-4 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-sliders text-xs"></i>
+                        <span>Preset Engine</span>
+                    </button>
+                    <button id="tab-learn" onclick="switchTab('learn')" class="px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 tracking-wide transition-all flex items-center space-x-2">
+                        <i class="fa-solid fa-compact-disc text-xs"></i>
+                        <span>Mode Learn (WAV)</span>
+                    </button>
+                </div>
+
+                <!-- User Profile & License Indicator -->
+                <div class="hidden sm:flex items-center space-x-2 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-sm font-mono text-xs">
+                    <span id="user-led-indicator" class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
+                    <span id="user-email-indicator" class="text-[11px] text-slate-700 font-bold max-w-[140px] truncate">Memeriksa...</span>
+                    <span id="user-badge-indicator" class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">ACTIVE</span>
+                </div>
+
+                <button onclick="handleLogout()" class="btn-studio-light px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-red-600 transition-all shadow-sm" title="Logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- LICENSE LOCK MODAL (IF INACTIVE / EXPIRED) -->
+    <div id="licenseLockModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-md p-4 transition-all">
+        <div class="relative w-full max-w-md glass-panel-light rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl border border-white/80 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl shadow-inner mx-auto">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            
+            <div class="space-y-2">
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">Lisensi Diperlukan</h3>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">
+                    Akses kamu belum aktif atau masa langganan AVRIX Audio sudah habis. Silakan beli atau perpanjang lisensi untuk membuka Preset Engine dan Mode Learn (WAV).
+                </p>
+            </div>
+
+            <div class="space-y-2.5 pt-2">
+                <a href="index.html#pricing" class="w-full btn-engine-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Beli / Perpanjang Lisensi</span>
+                </a>
+                <button onclick="handleLogout()" class="w-full btn-studio-light py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    <span>Ganti Akun / Logout</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- TAB 1: MANUAL RECOMMENDATION ENGINE -->
+        <div id="view-manual" class="space-y-6">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+                <div class="lg:col-span-5 space-y-5">
+                    <div class="glass-panel-light rounded-2xl p-5 space-y-5">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                            <h2 class="text-xs font-bold tracking-wider uppercase text-sky-800 flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-sky-600"></i> Track Parameters
+                            </h2>
+                            <span class="text-[10px] font-mono text-slate-500 font-medium">Source Profile</span>
+                        </div>
+
+                        <!-- STACK VERTIKAL UNTUK PARAMETER -->
+                        <div class="space-y-4">
+                            <!-- TARGET INSTRUMENT / BUS DROPDOWN (A-Z) -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                                    <span>Target Instrument / Bus</span>
+                                    <i class="fa-solid fa-microphone-lines text-sky-600 text-xs"></i>
+                                </label>
+                                <select id="input-instrument" onchange="onInstrumentChange()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                                    <option value="Acoustic Guitar">Acoustic Guitar (Body & Pick)</option>
+                                    <option value="Backing Vocal">Backing Vocals / Choir Bus</option>
+                                    <option value="Bass Guitar/Synth">Bass Guitar / Synth Bass</option>
+                                    <option value="Cymbal / Overheads">Cymbal / Overheads (Air, Sheen & Sizzle)</option>
+                                    <option value="Drum Bus">Drum Bus (Glue & Snap)</option>
+                                    <option value="Electric Guitar">Electric Guitar (Rhythm/Lead)</option>
+                                    <option value="Kick Drum">Kick Drum (Punch & Sub)</option>
+                                    <option value="Lead Vocal" selected>Lead Vocal (Pop/Rock/Rap)</option>
+                                    <option value="Master Bus">Master Bus / Stereo Mix Bus</option>
+                                    <option value="Rhythm Bus">Rhythm Bus (Guitars/Synths Glue)</option>
+                                    <option value="Snare Drum">Snare Drum (Crack & Shell)</option>
+                                    <option value="Synth Lead">Synth Lead / Brass Arp</option>
+                                    <option value="Vocal Scream">Vocal Scream / Harsh Screaming</option>
+                                </select>
+                            </div>
+
+                            <!-- MUSIC GENRE DROPDOWN (A-Z) -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5 flex items-center justify-between">
+                                    <span>Music Genre</span>
+                                    <i class="fa-solid fa-compact-disc text-amber-600 text-xs"></i>
+                                </label>
+                                <select id="input-genre" onchange="state.ratioManuallyAdjusted=false; calculateRecommendation()" class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
+                                    <option value="EDM">EDM / House / Cyber</option>
+                                    <option value="Hardcore" selected>Hardcore / Post-Hardcore (Slamming Attack, Tight Low End)</option>
+                                    <option value="Hip-Hop">Hip-Hop / Trap Modern</option>
+                                    <option value="Hipdut">Hipdut (Hip-Hop Dangdut)</option>
+                                    <option value="Jazz">Jazz / Acoustic Soul</option>
+                                    <option value="Lo-Fi">Lo-Fi / Vintage Chill</option>
+                                    <option value="Midwest">Midwest Emo / Indie (Warm Analog, Natural Dynamics)</option>
+                                    <option value="Modern Metal">Modern Metal / Core</option>
+                                    <option value="Pop">Pop / Top 40 Radio</option>
+                                    <option value="Pop Punk">Pop Punk (High Energy, Punchy Guitars & Snap Snare)</option>
+                                    <option value="Punk">Punk Rock / Melodic Punk (Raw, Fast & Aggressive Snap)</option>
+                                    <option value="R&B">R&B / Modern Soul</option>
+                                    <option value="Rock">Rock / Alternative</option>
+                                    <option value="Thall">Thall / Djent (Low-Tuned Heavy)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <label class="text-xs font-bold text-slate-700">Tempo Calibration</label>
+                                <span id="bpm-display" class="font-mono text-xs text-sky-900 font-extrabold bg-sky-100 px-2.5 py-0.5 rounded-md border border-sky-300">135 BPM</span>
+                            </div>
+                            <input type="range" id="input-bpm" min="50" max="220" value="135" oninput="updateBpmFromSlider(this.value)" class="w-full">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-2">Compression Architecture Target</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" onclick="setGoal('transparent')" id="goal-transparent" class="goal-btn btn-studio-light btn-studio-active-light py-2 px-2 rounded-xl text-[11px] font-bold text-center">Clean / Soft</button>
+                                <button type="button" onclick="setGoal('warm')" id="goal-warm" class="goal-btn btn-studio-light py-2 px-2 rounded-xl text-[11px] font-bold text-center">Warm Analog</button>
+                                <button type="button" onclick="setGoal('aggressive')" id="goal-aggressive" class="goal-btn btn-studio-light py-2 px-2 rounded-xl text-[11px] font-bold text-center">Punchy Heavy</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="hardware-recommendation-card" class="glass-panel-light rounded-2xl p-4 flex items-start space-x-3.5 border-l-4 border-l-sky-600 shadow-md">
+                        <div class="p-3 bg-sky-50 rounded-xl border border-sky-200 text-sky-700">
+                            <i class="fa-solid fa-microchip text-2xl"></i>
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[10px] font-mono text-sky-800 uppercase tracking-wider font-extrabold block">Recommended Hardware Architecture</span>
+                            <h4 id="rec-compressor-type" class="text-xs font-extrabold text-slate-900">FET Peak Limiter (1176 Style)</h4>
+                            <p id="rec-type-desc" class="text-[11px] text-slate-600 leading-relaxed font-medium">Ultra-fast FET transistor design for grabbing transients, adding harmonic grit and punch.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 space-y-5">
+                    
+                    <div class="glass-panel-light rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-2.5 h-2.5 rounded-full led-cyan animate-pulse"></span>
+                                <h3 class="text-xs font-bold tracking-wider uppercase text-slate-800">Calibrated Recommendations</h3>
+                            </div>
+                            <button onclick="copyCurrentParamsToClipboard()" class="text-xs font-mono font-bold text-sky-700 hover:text-sky-900 bg-sky-50 hover:bg-sky-100 px-3 py-1 rounded-lg border border-sky-200 transition-all flex items-center gap-1.5">
+                                <i class="fa-solid fa-copy"></i> Copy Settings
+                            </button>
+                        </div>
+
+                        <!-- CONTAINER KARTU PARAMETER STANDAR -->
+                        <div id="standard-params-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Attack Time</span>
+                                <div class="flex items-baseline space-x-1 mt-1">
+                                    <span id="param-attack" class="text-2xl font-black font-mono text-slate-900">12</span>
+                                    <span class="text-xs text-slate-500 font-mono font-bold">ms</span>
+                                </div>
+                                <span id="param-attack-note" class="text-[10px] text-slate-600 mt-1 block font-medium">Transient Pass</span>
+                            </div>
+
+                            <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Release Time</span>
+                                <div class="flex items-baseline space-x-1 mt-1">
+                                    <span id="param-release" class="text-2xl font-black font-mono text-slate-900">125</span>
+                                    <span class="text-xs text-slate-500 font-mono font-bold">ms</span>
+                                </div>
+                                
+                                <div class="mt-1 flex items-center space-x-1">
+                                    <span class="text-[10px] text-sky-700 font-mono font-bold">Synced:</span>
+                                    <select id="input-release-note" onchange="onReleaseNoteChange()" class="bg-sky-50 border border-sky-300 text-sky-800 rounded px-1.5 py-0.5 text-[10px] font-mono font-bold focus:outline-none focus:border-sky-600 cursor-pointer">
+                                        <option value="1/16">1/16 note</option>
+                                        <option value="1/8" selected>1/8 note</option>
+                                        <option value="1/4">1/4 note</option>
+                                        <option value="1/2">1/2 note</option>
+                                        <option value="1/1">1/1 note</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Ratio</span>
+                                <div class="flex items-baseline space-x-1 mt-1">
+                                    <span id="param-ratio" class="text-2xl font-black font-mono text-slate-900">4:1</span>
+                                </div>
+                                <span id="param-ratio-desc" class="text-[10px] text-slate-600 mt-1 block font-medium">Dynamic Slope</span>
+                            </div>
+
+                            <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Knee Profile</span>
+                                <div class="flex items-baseline space-x-1 mt-1">
+                                    <span id="param-knee" class="text-lg font-black font-mono text-slate-900">Soft Knee</span>
+                                </div>
+                                <span id="param-knee-desc" class="text-[10px] text-slate-600 mt-1 block font-medium">Onset Transition</span>
+                            </div>
+
+                            <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Est. Auto Makeup</span>
+                                <div class="flex items-baseline space-x-1 mt-1">
+                                    <span id="param-gain" class="text-2xl font-black font-mono text-emerald-600">+3.5</span>
+                                    <span class="text-xs text-slate-500 font-mono font-bold">dB</span>
+                                </div>
+                                <span class="text-[10px] text-slate-600 mt-1 block font-medium">Gain Compensation</span>
+                            </div>
+                        </div>
+
+                        <!-- TAMPILAN KHUSUS LA-2A (PEAK REDUCTION DINAMIS) -->
+                        <div id="la2a-params-grid" class="grid grid-cols-1 sm:grid-cols-3 gap-3 hidden">
+                            <div class="sm:col-span-2 glass-card-light p-3.5 rounded-xl border border-sky-300 bg-sky-50/50 relative overflow-hidden group">
+                                <span class="text-[10px] font-mono text-sky-800 font-extrabold uppercase tracking-wider block">Peak Reduction (Target GR)</span>
+                                <div class="flex items-baseline space-x-2 mt-1">
+                                    <span id="la2a-gr-target" class="text-2xl font-black font-mono text-sky-900">-3.0 ~ -5.0</span>
+                                    <span class="text-xs text-sky-700 font-mono font-bold">dB GR</span>
+                                </div>
+                                <span class="text-[10px] text-sky-700 mt-1 block font-medium">Turn Peak Reduction knob until GR needle hits this target</span>
+                            </div>
+
+                            <div class="glass-card-light p-3.5 rounded-xl border border-slate-200 relative overflow-hidden group">
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase tracking-wider block">Output Gain</span>
+                                <div class="flex items-baseline space-x-1 mt-1">
+                                    <span id="la2a-gain-target" class="text-2xl font-black font-mono text-emerald-600">+3.0</span>
+                                    <span class="text-xs text-slate-500 font-mono font-bold">dB</span>
+                                </div>
+                                <span class="text-[10px] text-slate-600 mt-1 block font-medium">Level Match Compensation</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3.5 bg-slate-100/80 rounded-xl border border-slate-200 text-xs text-slate-700 flex items-start space-x-3">
+                            <i class="fa-solid fa-circle-info text-sky-600 mt-0.5 text-sm"></i>
+                            <p id="rec-rationale" class="leading-relaxed font-medium">
+                                Settings tuned to maintain vocal presence while smoothing out aggressive peak transients without causing audible pumping.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel-light rounded-2xl p-5 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-chart-line text-sky-600"></i>
+                                <h3 class="text-xs font-extrabold tracking-wider uppercase text-slate-800">
+                                    COMPRESSION TRANSFER FUNCTION RATIO SLOPE
+                                </h3>
+                            </div>
+                            <div class="flex items-center space-x-4 text-[11px] font-mono text-slate-600 font-semibold">
+                                <span class="flex items-center gap-1.5"><span class="w-3 border-t-2 border-dashed border-slate-400"></span> 1:1 Direct</span>
+                                <span class="flex items-center gap-1.5"><span class="w-3.5 h-0.5 bg-sky-600"></span> Ratio Slope (<span id="legend-ratio-display">2.8:1</span>)</span>
+                            </div>
+                        </div>
+
+                        <div class="relative w-full h-64 bg-white rounded-xl border border-slate-200 shadow-inner overflow-hidden p-2">
+                            <div id="graph-tooltip-badge" class="absolute top-3 right-4 bg-white/95 border border-sky-200 text-sky-900 font-mono text-[11px] font-bold px-3 py-1 rounded-lg shadow-sm z-10 pointer-events-none">
+                                Threshold: <span id="tooltip-thresh-val">-8.0 dB</span> &nbsp;|&nbsp; Ratio: <span id="tooltip-ratio-val">2.8:1</span>
+                            </div>
+                            <canvas id="transferCurveCanvas" class="w-full h-full block"></canvas>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1 font-mono text-xs">
+                            <div class="flex flex-col space-y-1.5">
+                                <div class="flex justify-between items-center text-[11px] text-slate-600 font-bold">
+                                    <span>Threshold Adjust</span>
+                                    <span id="threshold-val-display" class="text-sky-800 font-extrabold">-8.0 dB</span>
+                                </div>
+                                <input type="range" id="input-threshold" min="-40" max="0" step="0.5" value="-8.0" oninput="updateVisualizerFromControls()" class="w-full">
+                            </div>
+
+                            <div class="flex flex-col space-y-1.5">
+                                <div class="flex justify-between items-center text-[11px] text-slate-600 font-bold">
+                                    <span>Ratio Adjust</span>
+                                    <span id="ratio-val-display" class="text-sky-800 font-extrabold">2.8 : 1</span>
+                                </div>
+                                <input type="range" id="input-ratio-slider" min="1.0" max="12.0" step="0.1" value="2.8" oninput="updateVisualizerFromControls()" class="w-full">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: MODE LEARN (DROP WAV ANALYZER & DSP PLAYER) -->
+        <div id="view-learn" class="hidden space-y-6">
+            
+            <div id="drop-zone" class="glass-panel-light border-2 border-dashed border-slate-300 hover:border-sky-600 rounded-2xl p-8 text-center transition-all shadow-md cursor-pointer relative overflow-hidden group">
+                <input type="file" id="wav-file-input" accept="audio/wav,audio/x-wav,audio/mp3,audio/flac,audio/ogg" class="hidden" onchange="handleFileSelect(event)">
+                
+                <div class="space-y-4 max-w-md mx-auto pointer-events-none">
+                    <div class="w-16 h-16 rounded-2xl bg-sky-50 border border-sky-200 mx-auto flex items-center justify-center text-sky-600 group-hover:scale-110 transition-transform shadow-sm">
+                        <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Drag & Drop Audio Track Here</h3>
+                        <p class="text-xs text-slate-500 mt-1 font-medium">Supports WAV, MP3, FLAC (Analyzed 100% locally with Auto-BPM Detection)</p>
+                    </div>
+                    <div class="pt-1">
+                        <span class="inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold bg-white text-sky-800 border border-slate-300 shadow-sm">
+                            Or click to select audio file from disk
+                        </span>
+                    </div>
+                </div>
+
+                <div id="analyzer-loader" class="hidden absolute inset-0 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center space-y-3 z-10">
+                    <div class="w-10 h-10 border-4 border-slate-200 border-t-sky-600 rounded-full animate-spin"></div>
+                    <span id="loader-text" class="text-xs font-mono text-sky-900 font-bold">Analyzing Dynamics & Detecting Tempo...</span>
+                </div>
+            </div>
+
+            <div id="waveform-section" class="glass-panel-light rounded-2xl p-5 space-y-4 hidden">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+                    <div class="flex items-center space-x-3">
+                        <button id="btn-play-audio" onclick="toggleAudioPlayback()" class="w-11 h-11 rounded-xl btn-engine-light flex items-center justify-center transition-all shadow-md">
+                            <i id="play-icon" class="fa-solid fa-play text-base"></i>
+                        </button>
+                        <div class="flex items-center space-x-2">
+                            <div>
+                                <h3 id="audio-filename" class="text-sm font-extrabold text-slate-900 font-mono">sample_vocal.wav</h3>
+                                <p id="audio-fileinfo" class="text-[11px] font-mono text-slate-500 font-medium">
+                                    44.1 kHz | 2 Ch | <span id="playback-timer" class="text-sky-800 font-bold">00:00.00</span> / <span id="audio-duration-display">00:04.20</span>
+                                </p>
+                            </div>
+                            <!-- TOMBOL X RESET -->
+                            <button onclick="resetAudioFile()" title="Change Audio File" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-red-100 hover:text-red-600 text-slate-500 flex items-center justify-center transition-all border border-slate-300 ml-2">
+                                <i class="fa-solid fa-xmark text-xs font-bold"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4 bg-white px-4 py-2 rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold text-slate-800">Live WebAudio DSP Emulation:</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="toggle-sim-compressor" onchange="updateAudioDspNodes()" class="sr-only peer" checked>
+                                <div class="w-9 h-5 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-sky-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3">
+                    <div class="md:col-span-10 relative h-36 bg-white rounded-xl border border-slate-200 overflow-hidden shadow-inner cursor-pointer" onclick="seekAudioFromCanvas(event)">
+                        <canvas id="waveformCanvas" class="w-full h-full block"></canvas>
+                    </div>
+                    <div class="md:col-span-2 bg-white rounded-xl p-3 flex flex-col justify-between border border-slate-200 text-slate-800 font-mono text-[10px] shadow-sm">
+                        <div>
+                            <div class="text-slate-500 mb-1 flex justify-between font-bold">
+                                <span>GR REDUCTION</span>
+                                <span id="meter-gr-value" class="text-amber-600 font-bold">0.0 dB</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200">
+                                <div id="meter-gr-bar" class="bg-amber-500 h-full w-0 transition-all duration-75"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-slate-500 mb-1 flex justify-between font-bold">
+                                <span>OUTPUT LEVEL</span>
+                                <span id="meter-out-value" class="text-emerald-600 font-bold">-inf dB</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200">
+                                <div id="meter-out-bar" class="bg-emerald-500 h-full w-0 transition-all duration-75"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="analysis-results" class="grid grid-cols-1 lg:grid-cols-12 gap-6 hidden">
+                
+                <div class="lg:col-span-5 glass-panel-light rounded-2xl p-5 space-y-4">
+                    <h3 class="text-xs font-bold tracking-wider uppercase text-sky-800 flex items-center gap-2 border-b border-slate-200 pb-3">
+                        <i class="fa-solid fa-chart-simple"></i> Audio Physical Profile
+                    </h3>
+
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                            <div>
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase block">Detected Audio Tempo</span>
+                                <span id="metric-bpm" class="text-xl font-black font-mono text-slate-900">135 BPM</span>
+                            </div>
+                            <span id="metric-bpm-badge" class="text-[10px] px-2.5 py-1 rounded-full bg-sky-100 text-sky-800 border border-sky-200 font-bold uppercase">Auto-Detected</span>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-mono mb-1">
+                                <span class="text-slate-600 font-semibold">Peak Amplitude</span>
+                                <span id="metric-peak" class="text-slate-900 font-bold">-1.2 dBFS</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                                <div id="bar-peak" class="h-full bg-sky-600 rounded-full transition-all duration-500" style="width: 85%;"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-mono mb-1">
+                                <span class="text-slate-600 font-semibold">RMS Level (Average Energy)</span>
+                                <span id="metric-rms" class="text-slate-900 font-bold">-18.4 dBFS</span>
+                            </div>
+                            <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-300">
+                                <div id="bar-rms" class="h-full bg-slate-500 rounded-full transition-all duration-500" style="width: 55%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="p-3 bg-white rounded-xl border border-slate-200 flex justify-between items-center shadow-sm">
+                            <div>
+                                <span class="text-[10px] font-mono text-slate-500 font-bold uppercase block">Dynamic Range (Crest Factor)</span>
+                                <span id="metric-crest" class="text-lg font-black font-mono text-slate-900">17.2 dB</span>
+                            </div>
+                            <span id="metric-crest-label" class="text-[10px] px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200 font-bold">High Dynamics</span>
+                        </div>
+
+                        <div class="p-3.5 bg-white border border-slate-200 rounded-xl space-y-3 shadow-sm">
+                            <span class="text-[10px] font-mono uppercase text-sky-800 font-extrabold block">Target Alignment</span>
+                            
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Target Instrument Profile</label>
+                                <select id="learn-target-inst" onchange="recalibrateWavRecommendation()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600">
+                                    <option value="Acoustic Guitar">Acoustic Guitar</option>
+                                    <option value="Backing Vocal">Backing Vocals / Choir</option>
+                                    <option value="Bass Guitar/Synth">Bass Guitar / Synth Bass</option>
+                                    <option value="Cymbal / Overheads">Cymbal / Overheads</option>
+                                    <option value="Drum Bus">Drum Bus</option>
+                                    <option value="Electric Guitar">Electric Guitar</option>
+                                    <option value="Kick Drum">Kick Drum</option>
+                                    <option value="Lead Vocal" selected>Lead Vocal</option>
+                                    <option value="Master Bus">Master Bus</option>
+                                    <option value="Rhythm Bus">Rhythm Bus</option>
+                                    <option value="Snare Drum">Snare Drum</option>
+                                    <option value="Synth Lead">Synth Lead</option>
+                                    <option value="Vocal Scream">Vocal Scream</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">Target Compression Character</label>
+                                <div class="grid grid-cols-3 gap-1.5">
+                                    <button type="button" onclick="setLearnGoal('transparent')" id="learn-goal-transparent" class="learn-goal-btn btn-studio-light btn-studio-active-light py-1 px-1.5 rounded-md text-[10px] font-bold text-center">Clean</button>
+                                    <button type="button" onclick="setLearnGoal('warm')" id="learn-goal-warm" class="learn-goal-btn btn-studio-light py-1 px-1.5 rounded-md text-[10px] font-bold text-center">Warm</button>
+                                    <button type="button" onclick="setLearnGoal('aggressive')" id="learn-goal-aggressive" class="learn-goal-btn btn-studio-light py-1 px-1.5 rounded-md text-[10px] font-bold text-center">Punchy</button>
+                                </div>
+                            </div>
+
+                            <button onclick="syncLearnedTargetToEngine()" class="w-full mt-2 btn-engine-light py-2 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow">
+                                <i class="fa-solid fa-arrows-rotate text-xs"></i> Sync Settings To Preset Engine
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7 glass-panel-light rounded-2xl p-5 space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                        <h3 class="text-xs font-bold tracking-wider uppercase text-sky-800 flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> WAV Calibrated Recommendation
+                        </h3>
+                        <span class="text-[10px] font-mono text-sky-800 bg-sky-100 px-2.5 py-0.5 rounded-full border border-sky-300 font-bold">Mode Learn Active</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                        <div class="glass-card-light p-3 rounded-xl border border-slate-200">
+                            <span class="text-[10px] font-mono text-slate-500 font-bold uppercase block">Attack</span>
+                            <span id="learn-param-attack" class="text-xl font-black font-mono text-slate-900">8 ms</span>
+                        </div>
+                        <div class="glass-card-light p-3 rounded-xl border border-slate-200">
+                            <span class="text-[10px] font-mono text-slate-500 font-bold uppercase block">Release</span>
+                            <span id="learn-param-release" class="text-xl font-black font-mono text-slate-900">110 ms</span>
+                        </div>
+                        <div class="glass-card-light p-3 rounded-xl border border-slate-200">
+                            <span class="text-[10px] font-mono text-slate-500 font-bold uppercase block">Ratio</span>
+                            <span id="learn-param-ratio" class="text-xl font-black font-mono text-slate-900">3.5:1</span>
+                        </div>
+                        <div class="glass-card-light p-3 rounded-xl border border-slate-200">
+                            <span class="text-[10px] font-mono text-slate-500 font-bold uppercase block">Knee</span>
+                            <span id="learn-param-knee" class="text-xs font-black font-mono text-slate-900">Soft Knee</span>
+                        </div>
+                        <div class="glass-card-light p-3 rounded-xl border border-slate-200">
+                            <span class="text-[10px] font-mono text-slate-500 font-bold uppercase block">Makeup Gain</span>
+                            <span id="learn-param-gain" class="text-xl font-black font-mono text-emerald-600">+4.2 dB</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-white/80 rounded-xl border border-slate-200 space-y-1.5 shadow-sm">
+                        <h4 class="text-xs font-bold text-slate-800 flex items-center gap-2">
+                            <i class="fa-solid fa-lightbulb text-sky-600"></i> Calibration Analysis Details:
+                        </h4>
+                        <p id="learn-rationale-text" class="text-xs text-slate-600 font-medium leading-relaxed">
+                            Because your audio clip exhibits a wide Crest Factor (17.2 dB) with sharp transients, a faster attack (8ms) was chosen to catch transient peaks, paired with a soft knee to keep gain reduction transparent.
+                        </p>
+                    </div>
+
+                    <div class="pt-2 flex items-center justify-end border-t border-slate-200">
+                        <span class="text-[11px] font-mono text-slate-500 font-medium">Realtime Dynamics Calibration Active</span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <footer class="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 font-mono font-semibold">
+        AVRIX Audio &copy; 2026 | Professional Mixing Suite
+    </footer>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-2.5 rounded-xl font-bold text-xs shadow-2xl transition-all duration-300 transform translate-y-20 opacity-0 flex items-center space-x-2 z-50">
+        <i class="fa-solid fa-circle-check text-sky-400 text-sm"></i>
+        <span id="toast-message">Settings copied to clipboard!</span>
+    </div>
+
+    <script>
+        const presetDatabase = {
+            "Acoustic Guitar": {
+                baseAttack: 20,
+                baseRatio: 2.2,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Optical / VCA Precision Compressor",
+                        desc: "Gentle dynamic control preserving string air, body resonance, and plucking dynamics.",
+                        rationale: "Clean target: Ultra-soft knee keeps acoustic plucking open & natural."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Tube Opto Compressor",
+                        desc: "Warm body enhancement for strummed folk & indie acoustic guitars.",
+                        rationale: "Warm target: Smooth release brings out woody body sustain and room air."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
+                        plugins: "VCA Pick Transient Shaper",
+                        desc: "Extended attack lets pick strums pop out clearly before clamping string decay with fast 1/16 release.",
+                        rationale: "Punchy target: Slow attack elevates pick strumming noise to cut through dense rhythm mixes."
+                    }
+                }
+            },
+            "Backing Vocal": {
+                baseAttack: 20,
+                baseRatio: 2.5,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
+                        plugins: "Digital Stereo Bus Compressor",
+                        desc: "Transparent backing choir leveling for smooth background balance.",
+                        rationale: "Clean target: Gentle reduction keeps harmonies open behind lead vocals."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Optical Tube Compressor (LA-2A Style)",
+                        desc: "Smooth musical gain reduction to glue backing harmonies into the background.",
+                        rationale: "Warm target: Adjust Peak Reduction until meter reaches target GR on COMPRESS mode."
+                    },
+                    aggressive: { 
+                        attackMult: 1.6, ratioMult: 1.4, knee: "Medium Knee", note: "1/8",
+                        plugins: "VCA Bus Compressor",
+                        desc: "Slower attack lets group consonants punch through before tight compression.",
+                        rationale: "Punchy target: Transient-pass attack keeps gang vocal consonants sharp and upfront."
+                    }
+                }
+            },
+            "Bass Guitar/Synth": {
+                baseAttack: 18,
+                baseRatio: 3.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Digital Low-End Leveler",
+                        desc: "Transparent note-to-note volume leveling without harmonic distortion.",
+                        rationale: "Clean target: Evens out bass note velocities without muddying sub frequencies."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Optical Tube Compressor (LA-2A Style)",
+                        desc: "Smooth low-end levelling with organic warmth and sustained sub bass.",
+                        rationale: "Warm target: Adjust Peak Reduction for target GR to get rich analog sub bass."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET / Fast VCA Bass Compressor",
+                        desc: "Slow attack lets slap thumb / pick attack pass through before heavy sustain clamping.",
+                        rationale: "Punchy target: Delayed attack accentuates slap/pick transient while fast release tightens low-end."
+                    }
+                }
+            },
+            "Cymbal / Overheads": {
+                baseAttack: 30,
+                baseRatio: 2.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.85, knee: "Soft Knee", note: "1/4",
+                        plugins: "Optical / VCA Precision Compressor",
+                        desc: "Transparent peak control for cymbals and overheads, controlling harsh stick strikes while preserving top-end airiness.",
+                        rationale: "Clean target: Slow attack lets initial stick hit pass naturally without dulling high-frequency brass sizzle."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Vari-Mu / Tube Opto Compressor",
+                        desc: "Smooth tube saturation rounding off high-frequency harshness and adding warm room sustain to cymbal crashes.",
+                        rationale: "Warm target: Tube harmonics smooth out piercing 4k-8k frequencies and add organic room bloom."
+                    },
+                    aggressive: { 
+                        attackMult: 1.7, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
+                        plugins: "VCA Bus / FET Compressor (Overhead Slam)",
+                        desc: "Slow attack allows stick crack through while fast release pulls up low-level cymbal ring and room ambience.",
+                        rationale: "Punchy target: Delayed attack + fast 1/16 release slams overhead room decay for massive rock/punk drum scale."
+                    }
+                }
+            },
+            "Drum Bus": {
+                baseAttack: 25,
+                baseRatio: 4.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
+                        plugins: "Transparent Bus Leveler",
+                        desc: "Glues kick, snare, and cymbals into a clean breathing drum groove.",
+                        rationale: "Clean target: Long attack lets full drum transients pass through cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Vari-Mu Tube Drum Bus",
+                        desc: "Adds room ambience, warm cymbal sheen, and analog drum glue.",
+                        rationale: "Warm target: Tube saturation pulls up room mic sustain & warms cymbals."
+                    },
+                    aggressive: { 
+                        attackMult: 2.0, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "SSL G-Master / VCA Bus Compressor (Punch Mode)",
+                        desc: "Classic slow attack (30ms+) allows full drum hit transients to pass, snapped tight by fast 1/16 release.",
+                        rationale: "Punchy target: Transient-pass attack + fast 1/16 release brings out explosive drum room knock."
+                    }
+                }
+            },
+            "Electric Guitar": {
+                baseAttack: 15,
+                baseRatio: 3.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Clean VCA Guitar Compressor",
+                        desc: "Controls high pick transients without altering amp tone or drive.",
+                        rationale: "Clean target: Transparent control keeps original guitar amp response intact."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Vari-Mu / Tube Guitar Compressor",
+                        desc: "Adds rich tube saturation and sustain to rhythm and lead guitar solos.",
+                        rationale: "Warm target: Tube saturation rounds off harsh pick bite and lengthens sustain."
+                    },
+                    aggressive: { 
+                        attackMult: 1.9, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET Peak Limiter (1176 Style)",
+                        desc: "Slow attack lets pick bite pop upfront, compressed by fast 1/16 release for aggressive chunk.",
+                        rationale: "Punchy target: Transient-pass attack + high ratio adds massive pick bite and chunk."
+                    }
+                }
+            },
+            "Kick Drum": {
+                baseAttack: 20,
+                baseRatio: 4.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Clean VCA Compressor",
+                        desc: "Controls kick dynamic variations while leaving low-end impact untouched.",
+                        rationale: "Clean target: Balanced attack preserves initial beater click cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Medium Knee", note: "1/16",
+                        plugins: "Vari-Mu / Diode Bridge Compressor (Neve / Fairchild)",
+                        desc: "Rich low-end warmth and analog transformer weight for kick body.",
+                        rationale: "Warm target: Transformer saturation adds sub-bass weight and analog roundness."
+                    },
+                    aggressive: { 
+                        attackMult: 2.0, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "VCA Punch Compressor (API 2500 / SSL G-Master)",
+                        desc: "Slow attack (30-40ms) lets initial beater transient pass cleanly, clamped by fast 1/16 release.",
+                        rationale: "Punchy target: Extended slow attack lets the beater transient pop hard before clamping sub tail."
+                    }
+                }
+            },
+            "Lead Vocal": {
+                baseAttack: 12,
+                baseRatio: 3.5,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Precision Digital / Transparent VCA",
+                        desc: "Controlled dynamic balance without coloration, preserving natural vocal transients.",
+                        rationale: "Clean target: Natural attack & mild ratio maintain clean vocal clarity."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Optical Tube Compressor (LA-2A Style)",
+                        desc: "Smooth opto leveling with organic tube warmth and continuous non-linear release.",
+                        rationale: "Warm target: Adjust Peak Reduction until meter shows target GR for smooth opto tube leveling."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.4, knee: "Medium Knee", note: "1/16",
+                        plugins: "FET Peak Limiter / VCA Punch (1176 / Distressor)",
+                        desc: "Slow attack lets initial vocal transient pass through before clamping body with fast 1/16 release.",
+                        rationale: "Punchy target: Extended attack (transient pass) + fast release gives vocal explosive front-presence."
+                    }
+                }
+            },
+            "Master Bus": {
+                baseAttack: 30,
+                baseRatio: 1.8,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.85, knee: "Ultra Soft Knee", note: "1/8",
+                        plugins: "Digital Mastering Precision Leveler (Weiss DS1-MK3)",
+                        desc: "Transparent mastering bus compression for overall mix glue and loudness density.",
+                        rationale: "Clean target: Ultra-soft knee controls mix dynamic peaks transparently."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "Vari-Mu Tube Mastering Compressor (Fairchild / Manley)",
+                        desc: "Lush analog mastering glue, gentle high-end smoothing, and sub warmth.",
+                        rationale: "Warm target: Tube mastering glue adds depth and analog warmth to full mix."
+                    },
+                    aggressive: { 
+                        attackMult: 1.6, ratioMult: 1.3, knee: "Medium Knee", note: "1/8",
+                        plugins: "VCA Master Punch Compressor (SSL G-Master 4:1)",
+                        desc: "Slow attack lets full mix transients punch through, clamped for modern radio density with fast release.",
+                        rationale: "Punchy target: Glues mix tight for commercial loudness and punchy club impact."
+                    }
+                }
+            },
+            "Rhythm Bus": {
+                baseAttack: 25,
+                baseRatio: 2.5,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/4",
+                        plugins: "Clean Stereo Bus Leveler",
+                        desc: "Unifies rhythm guitars, synths, and keys transparently.",
+                        rationale: "Clean target: Mild ratio glues rhythm instruments without losing punch."
+                    },
+                    warm: { 
+                        attackMult: 1.2, ratioMult: 1.0, knee: "Soft Knee", note: "1/4",
+                        plugins: "SSL G-Master Bus / VCA Glue",
+                        desc: "Cohesive stereo mix bus compressor for unifying mid-range rhythm elements.",
+                        rationale: "Warm target: Analog VCA glue unifies mid-range elements with warm cohesion."
+                    },
+                    aggressive: { 
+                        attackMult: 1.7, ratioMult: 1.4, knee: "Medium Knee", note: "1/8",
+                        plugins: "API 2500 Thrust Bus Compressor",
+                        desc: "Slow attack lets rhythm hits punch through, clamped tightly with fast tempo release.",
+                        rationale: "Punchy target: Slow attack + fast release makes rhythm bus pump with groove."
+                    }
+                }
+            },
+            "Snare Drum": {
+                baseAttack: 15,
+                baseRatio: 4.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Transparent Precision VCA",
+                        desc: "Maintains natural stick hit and snare wire sizzle without clamping.",
+                        rationale: "Clean target: Natural attack ensures stick crack passes 100% cleanly."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Diode Bridge / Opto Hybrid",
+                        desc: "Thickens snare body shell resonance with warm analog harmonic grit.",
+                        rationale: "Warm target: Analog saturation fills out thin snare shells with harmonic fatness."
+                    },
+                    aggressive: { 
+                        attackMult: 2.2, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET / VCA Hybrid Compressor (1176 / Distressor)",
+                        desc: "Slow attack (30ms+) allows full stick crack to pass before heavy decay compression with fast 1/16 release.",
+                        rationale: "Punchy target: Maximum transient pass (slow attack) + rapid release = explosive snare crack!"
+                    }
+                }
+            },
+            "Synth Lead": {
+                baseAttack: 12,
+                baseRatio: 3.5,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.8, knee: "Soft Knee", note: "1/8",
+                        plugins: "Digital Precision Compressor",
+                        desc: "Controls synth peaks without altering filter envelope characteristics.",
+                        rationale: "Clean target: Preserves synth filter movement and transient snap."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 1.0, knee: "Medium Knee", note: "1/8",
+                        plugins: "Diode Bridge / Vintage VCA",
+                        desc: "Smooths digital synth harshness with analog transformer warmth.",
+                        rationale: "Warm target: Analog saturation takes away cold digital synth edge."
+                    },
+                    aggressive: { 
+                        attackMult: 1.8, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "Fast VCA / FET Compressor",
+                        desc: "Slow attack lets synth transient attack pop out before clamping body with fast 1/16 release.",
+                        rationale: "Punchy target: Extended attack accentuates arpeggio transients and synth energy."
+                    }
+                }
+            },
+            "Vocal Scream": {
+                baseAttack: 8,
+                baseRatio: 5.0,
+                goalAdjustments: {
+                    transparent: { 
+                        attackMult: 1.0, ratioMult: 0.7, knee: "Medium Knee", note: "1/8",
+                        plugins: "Clean Peak Limiter",
+                        desc: "Transparent peak catching to avoid clipping without squashing scream dynamics.",
+                        rationale: "Clean target: Mild peak control keeps shouting vocals open and dynamic."
+                    },
+                    warm: { 
+                        attackMult: 1.3, ratioMult: 0.9, knee: "Soft Knee", note: "1/8",
+                        plugins: "Vari-Mu Tube Limiter",
+                        desc: "Adds analog tube body and softens harsh upper-mid sibilance.",
+                        rationale: "Warm target: Tube saturation thickens harsh screams and rounds off extreme edge."
+                    },
+                    aggressive: { 
+                        attackMult: 1.7, ratioMult: 1.5, knee: "Hard Knee", note: "1/16",
+                        plugins: "FET Peak Limiter (1176 All-Buttons Mode)",
+                        desc: "Slightly delayed attack allows harsh vocal snap through, paired with fast release to slam decay.",
+                        rationale: "Punchy target: High ratio + fast release clamps scream sustain while retaining transient bite."
+                    }
+                }
+            }
+        };
+
+        const state = {
+            activeTab: 'manual',
+            instrument: 'Lead Vocal',
+            genre: 'Hardcore',
+            bpm: 135,
+            detectedBpm: 135,
+            goal: 'transparent',
+            learnGoal: 'transparent',
+            thresholdDb: -8.0,
+            customRatio: null,
+            ratioManuallyAdjusted: false,
+            customReleaseNote: null,
+            rawWavMetrics: null,
+            audioContext: null,
+            audioBuffer: null,
+            audioSource: null,
+            compressorNode: null,
+            gainNode: null,
+            analyserNode: null,
+            isPlaying: false,
+            learnedData: null,
+            animFrameId: null,
+            playbackStartTime: 0,
+            playbackStartOffset: 0
+        };
+
+        function switchTab(tab) {
+            state.activeTab = tab;
+            const viewManual = document.getElementById('view-manual');
+            const viewLearn = document.getElementById('view-learn');
+            const btnManual = document.getElementById('tab-manual');
+            const btnLearn = document.getElementById('tab-learn');
+
+            if (tab === 'manual') {
+                viewManual.classList.remove('hidden');
+                viewLearn.classList.add('hidden');
+                btnManual.className = "btn-studio-light btn-studio-active-light px-4 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all flex items-center space-x-2";
+                btnLearn.className = "px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 tracking-wide transition-all flex items-center space-x-2";
+            } else {
+                viewManual.classList.add('hidden');
+                viewLearn.classList.remove('hidden');
+                btnLearn.className = "btn-studio-light btn-studio-active-light px-4 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all flex items-center space-x-2";
+                btnManual.className = "px-4 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 tracking-wide transition-all flex items-center space-x-2";
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            const ms = Math.floor((seconds % 1) * 100);
+            return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}.${String(ms).padStart(2, '0')}`;
+        }
+
+        function calculateNoteDurationMs(bpm, noteType) {
+            const quarterNoteMs = (60 / bpm) * 1000;
+            switch(noteType) {
+                case "1/16": return Math.round(quarterNoteMs / 4);
+                case "1/8": return Math.round(quarterNoteMs / 2);
+                case "1/4": return Math.round(quarterNoteMs);
+                case "1/2": return Math.round(quarterNoteMs * 2);
+                case "1/1": return Math.round(quarterNoteMs * 4);
+                default: return Math.round(quarterNoteMs / 2);
+            }
+        }
+
+        function updateBpmFromSlider(val) {
+            state.bpm = parseInt(val, 10);
+            document.getElementById('bpm-display').innerText = `${state.bpm} BPM`;
+            calculateRecommendation();
+        }
+
+        function setGoal(goalType) {
+            state.goal = goalType;
+            state.ratioManuallyAdjusted = false;
+            document.querySelectorAll('.goal-btn').forEach(btn => {
+                btn.classList.remove('btn-studio-active-light');
+            });
+            const activeBtn = document.getElementById(`goal-${goalType}`);
+            if (activeBtn) {
+                activeBtn.classList.add('btn-studio-active-light');
+            }
+            calculateRecommendation();
+        }
+
+        function onInstrumentChange() {
+            state.customReleaseNote = null;
+            state.ratioManuallyAdjusted = false;
+            calculateRecommendation();
+        }
+
+        function onReleaseNoteChange() {
+            const selectedNote = document.getElementById('input-release-note').value;
+            state.customReleaseNote = selectedNote;
+            calculateRecommendation();
+        }
+
+        function getCalculatedParams() {
+            const inst = document.getElementById('input-instrument').value;
+            const genre = document.getElementById('input-genre').value;
+            const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
+            const goalAdj = baseData.goalAdjustments[state.goal] || {
+                attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8",
+                plugins: "VCA Compressor",
+                desc: "General-purpose compression starting point.",
+                rationale: "Use gain reduction and level-matched listening to fine-tune this starting point."
+            };
+
+            let attack = baseData.baseAttack * goalAdj.attackMult;
+            let ratio = baseData.baseRatio * goalAdj.ratioMult;
+
+            if (genre === 'Hardcore') {
+                ratio += 0.5;
+                attack *= 0.9;
+            } else if (genre === 'Punk') {
+                ratio += 0.3;
+                attack *= 0.95;
+            } else if (genre === 'Pop Punk') {
+                ratio += 0.4;
+                attack *= 1.05;
+            } else if (genre === 'Midwest') {
+                ratio -= 0.2;
+                attack *= 1.1;
+            } else if (genre === 'Modern Metal' || genre === 'Thall') {
+                ratio += 0.6;
+            } else if (genre === 'Hipdut') {
+                ratio += 0.3;
+            } else if (genre === 'Jazz' || genre === 'Lo-Fi') {
+                ratio -= 0.3;
+            }
+
+            ratio = Math.min(10, Math.max(1.5, ratio));
+            attack = Math.min(80, Math.max(1, Math.round(attack)));
+
+            const calculatedRatio = Math.round(ratio * 10) / 10;
+            const activeRatio = state.ratioManuallyAdjusted && Number.isFinite(state.customRatio)
+                ? Math.min(12, Math.max(1, state.customRatio))
+                : calculatedRatio;
+
+            let noteType = state.customReleaseNote || goalAdj.note || "1/8";
+            if (inst === "Master Bus" && (genre === "Hardcore" || genre === "Punk" || genre === "Pop Punk" || genre === "Modern Metal")) {
+                if (!state.customReleaseNote && state.goal !== "warm") {
+                    noteType = "1/8";
+                }
+            }
+
+            const releaseMs = calculateNoteDurationMs(state.bpm, noteType);
+            const autoGain = (Math.abs(state.thresholdDb) * (1 - (1 / activeRatio)) * 0.5).toFixed(1);
+
+            const baseGR = activeRatio * 1.0;
+            const minGR = Math.max(1.5, Math.round((baseGR - 1.0) * 10) / 10);
+            const maxGR = Math.round((baseGR + 1.5) * 10) / 10;
+            const targetGRRange = `-${minGR.toFixed(1)} ~ -${maxGR.toFixed(1)}`;
+
+            return {
+                plugins: goalAdj.plugins,
+                typeDesc: goalAdj.desc,
+                attack,
+                release: releaseMs,
+                noteType,
+                ratio: `${activeRatio.toFixed(1)}:1`,
+                knee: goalAdj.knee || "Soft Knee",
+                makeupGain: `${autoGain}`,
+                targetGRRange: targetGRRange,
+                rationale: goalAdj.rationale,
+                calculatedRatio,
+                activeRatio
+            };
+        }
+
+        function calculateRecommendation() {
+            const genre = document.getElementById('input-genre').value;
+            const params = getCalculatedParams();
+
+            if (!state.ratioManuallyAdjusted) {
+                state.customRatio = params.calculatedRatio;
+            }
+
+            const slider = document.getElementById('input-ratio-slider');
+            if (slider && document.activeElement !== slider) {
+                slider.value = params.activeRatio;
+            }
+
+            const threshSlider = document.getElementById('input-threshold');
+            if (threshSlider) state.thresholdDb = parseFloat(threshSlider.value);
+
+            document.getElementById('rec-compressor-type').innerText = params.plugins;
+            document.getElementById('rec-type-desc').innerText = params.typeDesc;
+
+            const standardGrid = document.getElementById('standard-params-grid');
+            const la2aGrid = document.getElementById('la2a-params-grid');
+
+            if (params.plugins.toLowerCase().includes('la-2a')) {
+                standardGrid.classList.add('hidden');
+                la2aGrid.classList.remove('hidden');
+
+                document.getElementById('la2a-gr-target').innerText = params.targetGRRange;
+                document.getElementById('la2a-gain-target').innerText = `+${params.makeupGain}`;
+            } else {
+                standardGrid.classList.remove('hidden');
+                la2aGrid.classList.add('hidden');
+
+                document.getElementById('param-attack').innerText = params.attack;
+                document.getElementById('param-release').innerText = params.release;
+
+                const releaseSelect = document.getElementById('input-release-note');
+                if (releaseSelect) releaseSelect.value = params.noteType;
+
+                document.getElementById('param-ratio').innerText = params.ratio;
+                document.getElementById('param-knee').innerText = params.knee;
+                document.getElementById('param-gain').innerText = `+${params.makeupGain}`;
+                document.getElementById('param-gain').className = "text-2xl font-black font-mono text-emerald-600";
+                document.getElementById('param-knee-desc').innerText = `${genre} starting profile`;
+            }
+
+            document.getElementById('rec-rationale').innerText = params.rationale;
+
+            document.getElementById('legend-ratio-display').innerText = params.ratio;
+            document.getElementById('threshold-val-display').innerText = `${state.thresholdDb.toFixed(1)} dB`;
+            document.getElementById('ratio-val-display').innerText = `${params.activeRatio.toFixed(1)} : 1`;
+            document.getElementById('tooltip-thresh-val').innerText = `${state.thresholdDb.toFixed(1)} dB`;
+            document.getElementById('tooltip-ratio-val').innerText = params.ratio;
+
+            const inst = document.getElementById('input-instrument').value;
+            const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
+            const goalAdj = baseData.goalAdjustments[state.goal] || {};
+            drawTransferCurve(params.activeRatio, goalAdj.knee || params.knee);
+            updateAudioDspNodes();
+        }
+
+        function updateVisualizerFromControls() {
+            const threshVal = parseFloat(document.getElementById('input-threshold').value);
+            const ratioVal = parseFloat(document.getElementById('input-ratio-slider').value);
+
+            state.thresholdDb = threshVal;
+            state.customRatio = ratioVal;
+            state.ratioManuallyAdjusted = true;
+
+            const autoGain = (Math.abs(threshVal) * (1 - (1 / ratioVal)) * 0.5).toFixed(1);
+
+            const baseGR = ratioVal * 1.0;
+            const minGR = Math.max(1.5, Math.round((baseGR - 1.0) * 10) / 10);
+            const maxGR = Math.round((baseGR + 1.5) * 10) / 10;
+            const targetGRRange = `-${minGR.toFixed(1)} ~ -${maxGR.toFixed(1)}`;
+
+            document.getElementById('threshold-val-display').innerText = `${threshVal.toFixed(1)} dB`;
+            document.getElementById('ratio-val-display').innerText = `${ratioVal.toFixed(1)} : 1`;
+            document.getElementById('param-ratio').innerText = `${ratioVal.toFixed(1)}:1`;
+            document.getElementById('param-gain').innerText = `+${autoGain}`;
+            document.getElementById('la2a-gain-target').innerText = `+${autoGain}`;
+            document.getElementById('la2a-gr-target').innerText = targetGRRange;
+            document.getElementById('legend-ratio-display').innerText = `${ratioVal.toFixed(1)}:1`;
+            document.getElementById('tooltip-thresh-val').innerText = `${threshVal.toFixed(1)} dB`;
+            document.getElementById('tooltip-ratio-val').innerText = `${ratioVal.toFixed(1)}:1`;
+
+            const inst = document.getElementById('input-instrument').value;
+            const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
+            const currentGoal = baseData.goalAdjustments[state.goal] || {};
+
+            drawTransferCurve(ratioVal, currentGoal.knee || "Soft Knee");
+            updateAudioDspNodes();
+        }
+
+        function drawTransferCurve(ratio, kneeType) {
+            const canvas = document.getElementById('transferCurveCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const dpr = window.devicePixelRatio || 1;
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            const width = rect.width, height = rect.height;
+            const left = 45, bottom = 35, top = 20, right = 25;
+            const plotWidth = width - left - right;
+            const plotHeight = height - top - bottom;
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            const xToPx = x => left + ((x + 40) / 40) * plotWidth;
+            const yToPx = y => height - bottom - ((y + 40) / 40) * plotHeight;
+            const inputDbToOutputDb = (inputDb) => {
+                const threshold = state.thresholdDb;
+                const safeRatio = Math.max(1, Number(ratio) || 1);
+                const kneeWidth = String(kneeType).toLowerCase().includes('soft') ? 6 :
+                                  String(kneeType).toLowerCase().includes('medium') ? 3 : 0;
+
+                if (kneeWidth <= 0) {
+                    return inputDb <= threshold ? inputDb : threshold + (inputDb - threshold) / safeRatio;
+                }
+
+                const lower = threshold - kneeWidth / 2;
+                const upper = threshold + kneeWidth / 2;
+                if (inputDb < lower) return inputDb;
+                if (inputDb > upper) return threshold + (inputDb - threshold) / safeRatio;
+
+                const offset = inputDb - threshold + kneeWidth / 2;
+                return inputDb + ((1 / safeRatio) - 1) * (offset * offset) / (2 * kneeWidth);
+            };
+
+            ctx.strokeStyle = '#f1f5f9';
+            ctx.lineWidth = 1;
+            [-40, -30, -20, -10, 0].forEach(db => {
+                const x = xToPx(db);
+                ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, height - bottom); ctx.stroke();
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '500 10px "JetBrains Mono", monospace';
+                ctx.fillText(String(db), x - 8, height - 12);
+            });
+            [-40, -30, -20, -10, 0].forEach(db => {
+                const y = yToPx(db);
+                ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(width - right, y); ctx.stroke();
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '500 10px "JetBrains Mono", monospace';
+                ctx.fillText(String(db), 8, y + 3);
+            });
+
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.strokeRect(left, top, plotWidth, plotHeight);
+
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(xToPx(-40), yToPx(-40));
+            ctx.lineTo(xToPx(0), yToPx(0));
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.strokeStyle = '#0284c7';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            for (let i = 0; i <= 400; i++) {
+                const inputDb = -40 + i * 0.1;
+                const outputDb = inputDbToOutputDb(inputDb);
+                const x = xToPx(inputDb), y = yToPx(outputDb);
+                if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            const t = state.thresholdDb;
+            const ty = inputDbToOutputDb(t);
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(xToPx(t), yToPx(ty), 5, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#0284c7'; ctx.lineWidth = 2.5; ctx.stroke();
+        }
+
+        function estimateTempo(buffer) {
+            const sampleRate = buffer.sampleRate;
+            const hopSeconds = 0.01;
+            const hop = Math.max(1, Math.round(sampleRate * hopSeconds));
+            const mono = new Float32Array(Math.ceil(buffer.length / hop));
+            const channels = buffer.numberOfChannels;
+
+            for (let frame = 0, offset = 0; offset < buffer.length; frame++, offset += hop) {
+                const end = Math.min(buffer.length, offset + hop);
+                let sum = 0, count = 0;
+                for (let ch = 0; ch < channels; ch++) {
+                    const channel = buffer.getChannelData(ch);
+                    for (let i = offset; i < end; i++) {
+                        sum += channel[i] * channel[i];
+                        count++;
+                    }
+                }
+                mono[frame] = count ? Math.sqrt(sum / count) : 0;
+            }
+
+            if (mono.length < 200) return 120;
+            const novelty = new Float32Array(mono.length);
+            let mean = 0;
+            for (let i = 1; i < mono.length; i++) {
+                novelty[i] = Math.max(0, mono[i] - mono[i - 1]);
+                mean += novelty[i];
+            }
+            mean /= novelty.length;
+            if (mean < 1e-5) return 120;
+            for (let i = 0; i < novelty.length; i++) novelty[i] -= mean;
+
+            const minLag = Math.max(1, Math.floor(60 / 200 / hopSeconds));
+            const maxLag = Math.min(novelty.length - 2, Math.ceil(60 / 55 / hopSeconds));
+            let bestLag = 0, bestScore = -Infinity;
+            for (let lag = minLag; lag <= maxLag; lag++) {
+                let score = 0, normA = 0, normB = 0;
+                for (let i = lag; i < novelty.length; i++) {
+                    const a = novelty[i], b = novelty[i - lag];
+                    score += a * b;
+                    normA += a * a;
+                    normB += b * b;
+                }
+                const normalized = score / Math.sqrt((normA * normB) || 1);
+                if (normalized > bestScore) {
+                    bestScore = normalized;
+                    bestLag = lag;
+                }
+            }
+
+            if (!bestLag || bestScore < 0.03) return 120;
+            let bpm = 60 / (bestLag * hopSeconds);
+            while (bpm < 70) bpm *= 2;
+            while (bpm > 180) bpm /= 2;
+            return Math.round(Math.min(200, Math.max(50, bpm)));
+        }
+
+        function analyzeAudioBuffer(buffer) {
+            let peak = 0, sumSq = 0, sampleCount = 0;
+            for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+                const data = buffer.getChannelData(ch);
+                for (let i = 0; i < data.length; i++) {
+                    const abs = Math.abs(data[i]);
+                    if (abs > peak) peak = abs;
+                    sumSq += data[i] * data[i];
+                    sampleCount++;
+                }
+            }
+
+            const rms = sampleCount ? Math.sqrt(sumSq / sampleCount) : 0;
+            const peakDb = peak > 0 ? 20 * Math.log10(peak) : -120;
+            const rmsDb = rms > 0 ? 20 * Math.log10(rms) : -120;
+            const crestFactor = peakDb - rmsDb;
+
+            state.detectedBpm = estimateTempo(buffer);
+            document.getElementById('metric-peak').innerText = `${peakDb.toFixed(1)} dBFS`;
+            document.getElementById('metric-rms').innerText = `${rmsDb.toFixed(1)} dBFS`;
+            document.getElementById('metric-crest').innerText = `${crestFactor.toFixed(1)} dB`;
+            document.getElementById('metric-bpm').innerText = `${state.detectedBpm} BPM`;
+            document.getElementById('metric-bpm-badge').innerText = 'Estimated';
+            document.getElementById('metric-crest-label').innerText =
+                crestFactor > 18 ? 'Very High Dynamics' : crestFactor > 12 ? 'High Dynamics' : crestFactor > 6 ? 'Moderate Dynamics' : 'Low Crest Factor';
+
+            const peakPct = Math.min(100, Math.max(0, (peakDb + 60) * (100 / 60)));
+            const rmsPct = Math.min(100, Math.max(0, (rmsDb + 60) * (100 / 60)));
+            document.getElementById('bar-peak').style.width = `${peakPct}%`;
+            document.getElementById('bar-rms').style.width = `${rmsPct}%`;
+
+            state.rawWavMetrics = {
+                peakDb: Number(peakDb.toFixed(2)),
+                rmsDb: Number(rmsDb.toFixed(2)),
+                crestFactor: Number(crestFactor.toFixed(2))
+            };
+            recalibrateWavRecommendation();
+        }
+
+        // FUNGSI UTAMA PEMROSESAN FILE AUDIO
+        function processAudioFile(file) {
+            if (!file) return;
+
+            const loader = document.getElementById('analyzer-loader');
+            if (loader) loader.classList.remove('hidden');
+
+            document.getElementById('audio-filename').innerText = file.name;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (!state.audioContext) {
+                    state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                state.audioContext.decodeAudioData(e.target.result, function(decodedData) {
+                    state.audioBuffer = decodedData;
+                    state.playbackStartOffset = 0;
+                    document.getElementById('audio-duration-display').innerText = formatTime(decodedData.duration);
+                    document.getElementById('playback-timer').innerText = "00:00.00";
+
+                    if (loader) loader.classList.add('hidden');
+                    document.getElementById('drop-zone').classList.add('hidden');
+                    document.getElementById('waveform-section').classList.remove('hidden');
+                    document.getElementById('analysis-results').classList.remove('hidden');
+
+                    requestAnimationFrame(() => {
+                        drawWaveform(decodedData, 0);
+                    });
+
+                    analyzeAudioBuffer(decodedData);
+                }, function(err) {
+                    if (loader) loader.classList.add('hidden');
+                    showToast("Error decoding audio file.");
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            processAudioFile(file);
+        }
+
+        // INISIALISASI EVENT DRAG & DROP
+        function initDragAndDrop() {
+            const dropZone = document.getElementById('drop-zone');
+            if (!dropZone) return;
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('drop-active'), false);
+            });
+
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('drop-active'), false);
+            });
+
+            dropZone.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                if (files && files.length > 0) {
+                    processAudioFile(files[0]);
+                }
+            }, false);
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function resetAudioFile() {
+            stopAudioPlayback();
+            state.audioBuffer = null;
+            state.rawWavMetrics = null;
+            state.learnedData = null;
+            state.playbackStartOffset = 0;
+            document.getElementById('wav-file-input').value = "";
+            document.getElementById('waveform-section').classList.add('hidden');
+            document.getElementById('analysis-results').classList.add('hidden');
+            document.getElementById('drop-zone').classList.remove('hidden');
+        }
+
+        function recalibrateWavRecommendation() {
+            const inst = document.getElementById('learn-target-inst').value;
+            const baseData = presetDatabase[inst] || presetDatabase["Lead Vocal"];
+            const metrics = state.rawWavMetrics;
+            const crest = metrics ? metrics.crestFactor : 0;
+            const goalAdj = baseData.goalAdjustments[state.learnGoal] || {
+                attackMult: 1, ratioMult: 1, knee: "Soft Knee", note: "1/8"
+            };
+
+            const crestFactor = metrics ? (crest > 18 ? 1.15 : crest > 12 ? 1.0 : 0.9) : 1;
+            const attack = Math.min(80, Math.max(1, Math.round(baseData.baseAttack * goalAdj.attackMult * crestFactor)));
+            const release = calculateNoteDurationMs(state.detectedBpm || 120, goalAdj.note || "1/8");
+            const ratio = Math.min(10, Math.max(1.5, Math.round(baseData.baseRatio * goalAdj.ratioMult * 10) / 10));
+
+            const targetThreshold = metrics ? Math.min(-6, Math.max(-36, metrics.rmsDb + 3)) : -18;
+            const estimatedGain = metrics ? (Math.abs(targetThreshold - metrics.rmsDb) * (1 - (1 / ratio)) * 0.6).toFixed(1) : "2.5";
+
+            document.getElementById('learn-param-gain').innerText = `+${estimatedGain} dB`;
+            document.getElementById('learn-param-attack').innerText = `${attack} ms`;
+            document.getElementById('learn-param-release').innerText = `${release} ms`;
+            document.getElementById('learn-param-ratio').innerText = `${ratio.toFixed(1)}:1`;
+            document.getElementById('learn-param-knee').innerText = goalAdj.knee || "Soft Knee";
+            document.getElementById('learn-rationale-text').innerText = metrics
+                ? `Audio peak: ${metrics.peakDb.toFixed(1)} dBFS, RMS: ${metrics.rmsDb.toFixed(1)} dBFS, Crest Factor: ${crest.toFixed(1)} dB. Recommended calibration: ${attack}ms Attack, ${release}ms Release (${goalAdj.note || '1/8'}), and +${estimatedGain} dB Makeup Gain.`
+                : `Select an audio file to measure physical characteristics.`;
+
+            state.learnedData = {
+                instrument: inst,
+                attack,
+                release,
+                ratio: ratio.toFixed(1),
+                knee: goalAdj.knee || "Soft Knee",
+                gain: estimatedGain,
+                threshold: targetThreshold
+            };
+
+            updateAudioDspNodes();
+        }
+
+        function setLearnGoal(goal) {
+            state.learnGoal = goal;
+            document.querySelectorAll('.learn-goal-btn').forEach(btn => btn.classList.remove('btn-studio-active-light'));
+            const btn = document.getElementById(`learn-goal-${goal}`);
+            if (btn) btn.classList.add('btn-studio-active-light');
+            recalibrateWavRecommendation();
+        }
+
+        function syncLearnedTargetToEngine() {
+            if (!state.learnedData) return;
+            document.getElementById('input-instrument').value = state.learnedData.instrument;
+            state.bpm = state.detectedBpm;
+            document.getElementById('input-bpm').value = state.detectedBpm;
+            document.getElementById('bpm-display').innerText = `${state.detectedBpm} BPM`;
+            state.goal = state.learnGoal;
+            
+            document.querySelectorAll('.goal-btn').forEach(b => b.classList.remove('btn-studio-active-light'));
+            const activeB = document.getElementById(`goal-${state.goal}`);
+            if (activeB) activeB.classList.add('btn-studio-active-light');
+
+            switchTab('manual');
+            calculateRecommendation();
+            showToast("Learned settings synced to Preset Engine!");
+        }
+
+        function drawWaveform(buffer, currentProgressSec = 0) {
+            const canvas = document.getElementById('waveformCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const rect = canvas.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = Math.round(rect.width * dpr);
+            canvas.height = Math.round(rect.height * dpr);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+            const width = rect.width;
+            const height = rect.height;
+            const data = buffer.getChannelData(0);
+            const duration = buffer.duration || 1;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(0, height / 2);
+            ctx.lineTo(width, height / 2);
+            ctx.stroke();
+
+            const barWidth = 2.5;
+            const gap = 1.5;
+            const totalBars = Math.floor(width / (barWidth + gap));
+            const step = Math.floor(data.length / totalBars);
+            const centerY = height / 2;
+            const minBarHeight = 3;
+
+            const playheadX = (currentProgressSec / duration) * width;
+
+            for (let i = 0; i < totalBars; i++) {
+                let max = 0;
+                const offset = i * step;
+                for (let j = 0; j < step && (offset + j) < data.length; j++) {
+                    const abs = Math.abs(data[offset + j]);
+                    if (abs > max) max = abs;
+                }
+
+                const barHeight = Math.max(minBarHeight, max * (height - 16));
+                const x = i * (barWidth + gap);
+                const y = centerY - (barHeight / 2);
+
+                if (x <= playheadX) {
+                    ctx.fillStyle = '#64748b';
+                } else {
+                    ctx.fillStyle = '#0284c7';
+                }
+
+                ctx.fillRect(x, y, barWidth, barHeight);
+            }
+
+            if (currentProgressSec > 0 || state.isPlaying) {
+                ctx.strokeStyle = '#ef4444';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(playheadX, 0);
+                ctx.lineTo(playheadX, height);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.arc(playheadX, 4, 4, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function seekAudioFromCanvas(event) {
+            if (!state.audioBuffer) return;
+            const canvas = document.getElementById('waveformCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const percentage = Math.max(0, Math.min(1, clickX / rect.width));
+            const seekTime = percentage * state.audioBuffer.duration;
+
+            state.playbackStartOffset = seekTime;
+
+            if (state.isPlaying) {
+                stopAudioPlayback(false);
+                startAudioPlayback(seekTime);
+            } else {
+                drawWaveform(state.audioBuffer, seekTime);
+                document.getElementById('playback-timer').innerText = formatTime(seekTime);
+            }
+        }
+
+        function toggleAudioPlayback() {
+            if (!state.audioBuffer) return;
+
+            if (state.isPlaying) {
+                stopAudioPlayback(true);
+            } else {
+                startAudioPlayback(state.playbackStartOffset);
+            }
+        }
+
+        function startAudioPlayback(offset = 0) {
+            if (!state.audioContext) {
+                state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+
+            if (state.audioContext.state === 'suspended') {
+                state.audioContext.resume();
+            }
+
+            if (state.audioSource) {
+                try { state.audioSource.disconnect(); } catch(e){}
+            }
+
+            state.audioSource = state.audioContext.createBufferSource();
+            state.audioSource.buffer = state.audioBuffer;
+
+            state.compressorNode = state.audioContext.createDynamicsCompressor();
+            state.gainNode = state.audioContext.createGain();
+            state.analyserNode = state.audioContext.createAnalyser();
+
+            updateAudioDspNodes();
+
+            state.playbackStartTime = state.audioContext.currentTime - offset;
+            state.audioSource.start(0, offset);
+            state.isPlaying = true;
+            document.getElementById('play-icon').className = "fa-solid fa-pause text-base";
+
+            state.audioSource.onended = () => {
+                if (state.isPlaying && (getCurrentPlaybackTime() >= state.audioBuffer.duration - 0.1)) {
+                    stopAudioPlayback(true);
+                    state.playbackStartOffset = 0;
+                    drawWaveform(state.audioBuffer, 0);
+                    document.getElementById('playback-timer').innerText = "00:00.00";
+                }
+            };
+
+            updateMeters();
+        }
+
+        function getCurrentPlaybackTime() {
+            if (!state.isPlaying || !state.audioContext) return state.playbackStartOffset;
+            return state.audioContext.currentTime - state.playbackStartTime;
+        }
+
+        function stopAudioPlayback(resetOffset = true) {
+            if (state.isPlaying && state.audioContext) {
+                state.playbackStartOffset = state.audioContext.currentTime - state.playbackStartTime;
+            }
+            if (resetOffset) {
+                state.playbackStartOffset = 0;
+            }
+
+            if (state.audioSource) {
+                try { state.audioSource.stop(); } catch(e){}
+            }
+            state.isPlaying = false;
+            document.getElementById('play-icon').className = "fa-play text-base";
+            if (state.animFrameId) cancelAnimationFrame(state.animFrameId);
+            
+            document.getElementById('meter-gr-value').innerText = "0.0 dB";
+            document.getElementById('meter-gr-bar').style.width = "0%";
+            document.getElementById('meter-out-value').innerText = "-inf dB";
+            document.getElementById('meter-out-bar').style.width = "0%";
+        }
+
+        function updateAudioDspNodes() {
+            if (!state.audioSource || !state.audioContext) return;
+
+            const enabled = document.getElementById('toggle-sim-compressor').checked;
+
+            try {
+                state.audioSource.disconnect();
+                if (state.compressorNode) state.compressorNode.disconnect();
+                if (state.gainNode) state.gainNode.disconnect();
+                if (state.analyserNode) state.analyserNode.disconnect();
+            } catch(e){}
+
+            if (enabled) {
+                const inst = document.getElementById('input-instrument').value;
+                const params = getCalculatedParams();
+                const thresh = state.thresholdDb;
+
+                state.compressorNode.threshold.setValueAtTime(thresh, state.audioContext.currentTime);
+                state.compressorNode.ratio.setValueAtTime(params.activeRatio, state.audioContext.currentTime);
+                state.compressorNode.attack.setValueAtTime(params.attack / 1000, state.audioContext.currentTime);
+                state.compressorNode.release.setValueAtTime(params.release / 1000, state.audioContext.currentTime);
+                
+                const gainDb = parseFloat(params.makeupGain) || 0;
+                state.gainNode.gain.setValueAtTime(Math.pow(10, gainDb / 20), state.audioContext.currentTime);
+
+                state.audioSource.connect(state.compressorNode);
+                state.compressorNode.connect(state.gainNode);
+                state.gainNode.connect(state.analyserNode);
+                state.analyserNode.connect(state.audioContext.destination);
+            } else {
+                state.audioSource.connect(state.analyserNode);
+                state.analyserNode.connect(state.audioContext.destination);
+            }
+        }
+
+        function updateMeters() {
+            if (!state.isPlaying || !state.analyserNode) return;
+
+            const currentTime = getCurrentPlaybackTime();
+            document.getElementById('playback-timer').innerText = formatTime(currentTime);
+            drawWaveform(state.audioBuffer, currentTime);
+
+            const array = new Uint8Array(state.analyserNode.frequencyBinCount);
+            state.analyserNode.getByteTimeDomainData(array);
+
+            let max = 0;
+            for (let i = 0; i < array.length; i++) {
+                const v = Math.abs(array[i] - 128) / 128;
+                if (v > max) max = v;
+            }
+
+            const outDb = 20 * Math.log10(max || 0.0001);
+            document.getElementById('meter-out-value').innerText = `${outDb.toFixed(1)} dB`;
+            document.getElementById('meter-out-bar').style.width = `${Math.min(100, Math.max(0, (outDb + 48) * 2.08))}%`;
+
+            const enabled = document.getElementById('toggle-sim-compressor').checked;
+            if (enabled && state.compressorNode && state.compressorNode.reduction) {
+                const gr = state.compressorNode.reduction;
+                const grVal = typeof gr === 'number' ? gr : (gr.value || 0);
+                document.getElementById('meter-gr-value').innerText = `${grVal.toFixed(1)} dB`;
+                document.getElementById('meter-gr-bar').style.width = `${Math.min(100, Math.abs(grVal) * 8)}%`;
+            } else {
+                document.getElementById('meter-gr-value').innerText = "0.0 dB";
+                document.getElementById('meter-gr-bar').style.width = "0%";
+            }
+
+            state.animFrameId = requestAnimationFrame(updateMeters);
+        }
+
+        function copyCurrentParamsToClipboard() {
+            const p = getCalculatedParams();
+            let text = "";
+
+            if (p.plugins.toLowerCase().includes('la-2a')) {
+                text = `AVRIX Compressor Preset (LA-2A Opto Style):
+- Target: ${document.getElementById('input-instrument').value}
+- Genre: ${document.getElementById('input-genre').value}
+- Mode Switch: COMPRESS
+- Peak Reduction Target: ${p.targetGRRange} dB GR
+- Output Gain: +${p.makeupGain} dB
+- Architecture: ${p.plugins}`;
+            } else {
+                text = `AVRIX Compressor Preset:
+- Target: ${document.getElementById('input-instrument').value}
+- Genre: ${document.getElementById('input-genre').value}
+- Attack: ${p.attack} ms
+- Release: ${p.release} ms (${p.noteType})
+- Ratio: ${p.ratio}
+- Threshold: ${state.thresholdDb.toFixed(1)} dB
+- Knee: ${p.knee}
+- Makeup Gain: +${p.makeupGain} dB
+- Architecture: ${p.plugins}`;
+            }
+
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("Compressor settings copied to clipboard!");
+            }).catch(() => {
+                showToast("Failed to copy settings.");
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        window.onload = function() {
+            calculateRecommendation();
+            initDragAndDrop();
+
+            window.addEventListener('resize', () => {
+                const data = getCalculatedParams();
+                drawTransferCurve(state.customRatio, data.knee);
+                if (state.audioBuffer) {
+                    drawWaveform(state.audioBuffer, getCurrentPlaybackTime());
+                }
+            });
+        };
+    </script>
+</body>
+</html>

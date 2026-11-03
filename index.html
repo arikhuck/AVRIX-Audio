@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AVRIX Audio Needs - Dynamic Audio Compressor Engine</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        studio: {
+                            50: '#f8f9f5',
+                            100: '#f1f2ec',
+                            200: '#e8eae1',
+                            300: '#cbd5e1',
+                            600: '#64748b',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'wave': 'wave 1.2s ease-in-out infinite alternate'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        },
+                        wave: {
+                            '0%': { height: '15%' },
+                            '100%': { height: '95%' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+          font-family: 'Inter', sans-serif;
+          overflow-x: hidden;
+          position: relative;
+          background-color: #f1f2ec;
+        }
+
+        /* 1. LAYER FOTO UI COMPRESSOR DI BACKGROUND */
+        .bg-compressor-fixed {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-image: url('ui-compressor.JPG'); 
+          background-size: cover;
+          background-position: center top;
+          background-repeat: no-repeat;
+          opacity: 0.60;
+          z-index: -3;
+        }
+
+        /* 2. BACKUP PATTERN VECTOR AUDIO */
+        .bg-audio-pattern {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background-image: 
+            radial-gradient(circle at 50% 0%, rgba(2, 132, 199, 0.15) 0%, transparent 65%),
+            radial-gradient(circle at 85% 85%, rgba(217, 119, 6, 0.10) 0%, transparent 55%),
+            url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 20 Q 30 5, 50 20 T 90 20 T 110 20' stroke='%230284c7' stroke-width='1.2' fill='none' opacity='0.15'/%3E%3Cpath d='M10 60 Q 30 80, 50 60 T 90 60 T 110 60' stroke='%23d97706' stroke-width='1.2' fill='none' opacity='0.12'/%3E%3Ccircle cx='50' cy='20' r='3' fill='%230284c7' opacity='0.2'/%3E%3C/svg%3E");
+          z-index: -2;
+        }
+
+        /* 3. OVERLAY TIPIS KREM STUDIO LIGHT */
+        .bg-light-tint {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100vw;
+          height: 100vh;
+          background: linear-gradient(180deg, rgba(248, 249, 245, 0.68) 0%, rgba(232, 234, 225, 0.82) 100%);
+          z-index: -1;
+        }
+
+        .glass-panel-light {
+          background: rgba(255, 255, 255, 0.88);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          border: 1px solid rgba(255, 255, 255, 0.95);
+          box-shadow: 0 12px 35px -10px rgba(0, 0, 0, 0.07);
+        }
+
+        .btn-engine-light {
+          background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+          border: 1px solid #0284c7;
+          color: #ffffff;
+          box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+          transition: all 0.2s ease;
+        }
+        .btn-engine-light:hover {
+          background: linear-gradient(180deg, #0369a1 0%, #075985 100%);
+          box-shadow: 0 6px 20px rgba(2, 132, 199, 0.4);
+          transform: translateY(-1px);
+        }
+
+        .btn-studio-light {
+          background: rgba(255, 255, 255, 0.95);
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          color: #1e293b;
+          transition: all 0.2s ease;
+        }
+        .btn-studio-light:hover {
+          background: #ffffff;
+          border-color: #0284c7;
+          color: #0284c7;
+          transform: translateY(-1px);
+        }
+
+        .led-green {
+          background-color: #059669;
+          box-shadow: 0 0 8px #059669;
+        }
+
+        .pricing-card-popup {
+          transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .pricing-card-popup:hover {
+          transform: translateY(-8px);
+        }
+
+        .glow-sky:hover {
+          border-color: #0284c7 !important;
+          box-shadow: 0 15px 35px rgba(2, 132, 199, 0.22) !important;
+        }
+
+        .glow-amber:hover {
+          border-color: #d97706 !important;
+          box-shadow: 0 15px 35px rgba(217, 119, 6, 0.22) !important;
+        }
+
+        /* Waveform Animation Custom Bars */
+        .bar-1 { animation-delay: 0.1s; }
+        .bar-2 { animation-delay: 0.3s; }
+        .bar-3 { animation-delay: 0.2s; }
+        .bar-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
+
+    <!-- OVERLAY BACKGROUND LAYERS -->
+    <div class="bg-compressor-fixed"></div>
+    <div class="bg-audio-pattern"></div>
+    <div class="bg-light-tint"></div>
+
+    <!-- HEADER -->
+    <header class="border-b border-black/10 bg-white/75 backdrop-blur-md sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-600 to-sky-800 flex items-center justify-center shadow-lg text-white font-black">
+                    <i class="fa-solid fa-sliders text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-black tracking-wider text-base text-slate-900">AVRIX</span>
+                        <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-sky-100/90 text-sky-800 border border-sky-300 uppercase tracking-wider font-bold">Audio Needs</span>
+                    </div>
+                    <p class="text-[11px] text-slate-600 font-bold hidden sm:block uppercase tracking-wider">WE ASSIST YOUR NEED</p>
+                </div>
+            </div>
+
+            <div id="nav-auth-container" class="flex items-center space-x-3">
+                <a href="login.html" class="btn-studio-light px-4 py-2 rounded-xl text-xs font-bold transition-all">Login Member</a>
+                <a href="#pricing" class="btn-engine-light px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                    <i class="fa-solid fa-bolt text-xs"></i>
+                    <span>Get Access</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-24 relative z-10">
+        
+        <!-- HERO SECTION -->
+        <div class="text-center max-w-4xl mx-auto space-y-6 pt-4">
+            
+            <div class="inline-flex items-center space-x-3 bg-white/95 backdrop-blur-md border border-sky-200/80 px-4 py-1.5 rounded-full shadow-md font-mono text-xs animate-float">
+                <div class="flex items-end gap-0.5 h-3">
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-1 h-full"></span>
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-2 h-full"></span>
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-3 h-full"></span>
+                    <span class="w-0.5 bg-sky-600 rounded-full animate-wave bar-4 h-full"></span>
+                </div>
+                <span class="text-[11px] text-slate-900 font-extrabold uppercase tracking-wider">Acoustic Engine & Dynamic Compression Advisor</span>
+            </div>
+
+            <h1 class="text-4xl sm:text-6xl font-black text-slate-950 tracking-tight leading-tight drop-shadow-sm">
+                Get Precise & Pro <br>
+                <span class="bg-gradient-to-r from-sky-700 via-sky-600 to-indigo-700 bg-clip-text text-transparent">
+                    Audio Compression Settings
+                </span> Instantly
+            </h1>
+            
+            <p class="text-xs sm:text-base text-slate-800 leading-relaxed font-bold max-w-2xl mx-auto">
+                No guessing Attack, Release, and Ratio anymore. AVRIX automatically discovers optimal compression parameters tailored to your track's physical dynamics & music genre!
+            </p>
+
+            <div class="pt-2 flex flex-wrap justify-center gap-3">
+                <a href="#pricing" class="btn-engine-light px-7 py-3.5 rounded-xl font-extrabold text-xs tracking-wide transition-all shadow-lg flex items-center gap-2">
+                    <i class="fa-solid fa-cart-shopping"></i> Get License Now
+                </a>
+                <a href="login.html" class="btn-studio-light px-7 py-3.5 rounded-xl font-extrabold text-xs transition-all shadow-sm">
+                    Already Have An Account? Login
+                </a>
+            </div>
+
+            <!-- STATS METRICS BAR -->
+            <div class="pt-6 grid grid-cols-3 gap-3 max-w-lg mx-auto font-mono">
+                <div class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <span class="block text-xl font-black text-sky-800">12+</span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Instruments</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <span class="block text-xl font-black text-sky-800">14+</span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Genres A-Z</span>
+                </div>
+                <div class="bg-white/80 backdrop-blur-sm p-3 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <span class="block text-xl font-black text-emerald-600">100%</span>
+                    <span class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">DSP Accuracy</span>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE COMPRESSOR DEMO PREVIEW (PRO AUDIO A/B DEMO) -->
+            <div class="pt-6 max-w-2xl mx-auto">
+                <div class="glass-panel-light p-5 rounded-3xl border border-sky-300/80 shadow-2xl text-left space-y-4 relative overflow-hidden group">
+                    
+                    <!-- HEADER WIDGET -->
+                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
+                            <span class="text-xs font-mono font-extrabold text-slate-800 uppercase tracking-wider">Live WebAudio DSP Engine Preview</span>
+                        </div>
+                        <span class="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">Interactive A/B Test</span>
+                    </div>
+
+                    <!-- DROPDOWN & AUDIO A/B CONTROLS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
+                        <div class="sm:col-span-7">
+                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Select Track Profile:</label>
+                            <select id="demo-inst-select" onchange="changeDemoPreset(this.value)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 shadow-sm">
+                                <option value="lead_vocal">Lead Vocal (Pop / Rock - Punchy Presence)</option>
+                                <option value="snare">Snare Drum (High Snap & Crack)</option>
+                                <option value="master_bus">Master Bus (Pop Punk Glue & Density)</option>
+                            </select>
+                        </div>
+
+                        <!-- AUDIO PLAY & A/B TOGGLE -->
+                        <div class="sm:col-span-5 flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0">
+                            <button id="demo-play-btn" onclick="toggleDemoAudio()" class="btn-engine-light px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow">
+                                <i id="demo-play-icon" class="fa-solid fa-play"></i>
+                                <span id="demo-play-text">Play Audio</span>
+                            </button>
+
+                            <div class="flex items-center space-x-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                                <span class="text-[10px] font-mono font-bold text-slate-600">A/B DSP:</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="demo-ab-toggle" onchange="toggleDemoDsp()" class="sr-only peer" checked>
+                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-sky-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PARAMETERS GRID OUTPUT -->
+                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-center">
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Attack</span>
+                            <span id="demo-attack" class="text-xs font-black text-sky-400">12 ms</span>
+                        </div>
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Release</span>
+                            <span id="demo-release" class="text-xs font-black text-sky-400">125 ms</span>
+                        </div>
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Ratio</span>
+                            <span id="demo-ratio" class="text-xs font-black text-white">3.5:1</span>
+                        </div>
+                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Knee</span>
+                            <span id="demo-knee" class="text-xs font-black text-white">Soft</span>
+                        </div>
+                        <div class="col-span-2 sm:col-span-1 bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
+                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Auto Gain</span>
+                            <span id="demo-gain" class="text-xs font-black text-emerald-400">+3.2 dB</span>
+                        </div>
+                    </div>
+
+                    <!-- LIVE ANIMATED METER BAR -->
+                    <div class="bg-slate-100 p-2.5 rounded-2xl border border-slate-200/80 space-y-1.5 font-mono text-[9px]">
+                        <div class="flex justify-between font-bold text-slate-600">
+                            <span>ESTIMATED DYNAMIC GAIN REDUCTION:</span>
+                            <span id="demo-gr-text" class="text-amber-600 font-black">0.0 dB</span>
+                        </div>
+                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                            <div id="demo-gr-bar" class="bg-amber-500 h-full w-0 transition-all duration-100"></div>
+                        </div>
+                    </div>
+
+                    <!-- FOOTER MICRO CTA -->
+                    <div class="pt-1 flex items-center justify-between text-[11px] font-medium border-t border-slate-200">
+                        <span class="text-slate-600 font-bold">Want full WAV Mode Learn & custom BPM calibration?</span>
+                        <a href="#pricing" class="text-sky-700 hover:text-sky-900 font-extrabold flex items-center gap-1 underline underline-offset-2">
+                            Unlock Access <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- HOW IT WORKS SECTION -->
+        <section class="space-y-8">
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">How It Works in 3 Simple Steps</h2>
+                <p class="text-xs text-slate-600 font-bold">Fast, accurate, and scientifically designed for audio engineers</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">1</div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase">Choose Target Profile</h3>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Select from 12 instruments and 14 music genres.</p>
+                </div>
+                <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">2</div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase">Calibrate or Drop WAV</h3>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Set your song BPM or drag & drop a WAV audio file for automatic Crest Factor measurement.</p>
+                </div>
+                <div class="glass-panel-light p-6 rounded-3xl border border-white text-center space-y-3 shadow-lg">
+                    <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-800 flex items-center justify-center text-xl font-black mx-auto">3</div>
+                    <h3 class="text-sm font-black text-slate-900 uppercase">Copy & Mix</h3>
+                    <p class="text-xs text-slate-600 font-medium leading-relaxed">Copy the calibrated Attack, Release, Knee, and Makeup Gain directly into your DAW compressor.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- INSIDE AVRIX AUDIO ENGINE -->
+        <section class="space-y-8">
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Inside AVRIX Comp Assistance</h2>
+                <p class="text-xs text-slate-600 font-bold">Scientific compression logic mapped perfectly to legendary hardware & genre dynamics</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                
+                <!-- FITUR 1: TARGET INSTRUMENT & GENRE CALIBRATION SECTION -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-10 h-10 rounded-xl bg-sky-100 text-sky-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-sliders"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">12 Instruments & 14 Genres</h4>
+                                <h3 class="text-base font-black text-slate-900">Target Instrument & Genre Calibration</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Calibrate dynamics instantly based on specialized target profiles and sub-genre characteristics, paired with fine BPM tempo tracking.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-100/90 rounded-2xl p-4 border border-slate-200/80 space-y-4">
+                        <div>
+                            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-2">Available Target Instruments (A-Z):</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Acoustic Guitar</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Backing Vocal</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Bass Guitar/Synth</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Drum Bus</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Electric Guitar</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Kick Drum</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Lead Vocal</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Master Bus</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Rhythm Bus</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Snare Drum</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Synth Lead</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Vocal Scream</span>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-slate-200/60 pt-3">
+                            <span class="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block mb-2">Available Music Genres (A-Z):</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">EDM</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Hardcore</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Hip-Hop/Trap</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Hipdut</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Jazz</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Lo-Fi</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Midwest Emo</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Modern Metal</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Pop</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Pop Punk</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Punk</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">R&B</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Rock</span>
+                                <span class="px-2.5 py-1 rounded-md text-[11px] font-mono font-medium bg-white text-slate-700 border border-slate-200 shadow-sm">Thall/Djent</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FITUR 2: CALIBRATED RECOMMENDATIONS -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white space-y-4 shadow-xl">
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Smart Engine Calculations</h4>
+                                <h3 class="text-base font-black text-slate-900">Calibrated Recommendations Engine</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Auto-calculates precise Attack, Release (synced to 1/16, 1/8, 1/4 note tempo), Knee Curves, and exact Makeup Gain compensation.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-100/90 rounded-2xl p-3.5 border border-slate-200/80 space-y-3">
+                        <div class="grid grid-cols-3 gap-2 font-mono">
+                            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-[9px] text-slate-400 block uppercase font-bold">Attack Time</span>
+                                <span class="text-xs font-black text-slate-900">14 ms</span>
+                                <span class="text-[8px] text-sky-600 font-semibold block mt-0.5">Transient Pass</span>
+                            </div>
+                            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-[9px] text-slate-400 block uppercase font-bold">Release Time</span>
+                                <span class="text-xs font-black text-slate-900">222 ms</span>
+                                <span class="text-[8px] text-sky-600 font-semibold block mt-0.5">1/8 Note @ 135 BPM</span>
+                            </div>
+                            <div class="text-center p-2.5 bg-white rounded-xl border border-slate-200 shadow-sm">
+                                <span class="text-[9px] text-slate-400 block uppercase font-bold">Ratio Slope</span>
+                                <span class="text-xs font-black text-slate-900">2.8:1</span>
+                                <span class="text-[8px] text-slate-500 font-semibold block mt-0.5">Dynamic Slope</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2 font-mono">
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between px-3">
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">Knee Profile:</span>
+                                <span class="text-[10px] font-bold text-slate-800">Soft Knee</span>
+                            </div>
+                            <div class="p-2 bg-white rounded-xl border border-slate-200 shadow-sm flex items-center justify-between px-3">
+                                <span class="text-[9px] text-slate-400 uppercase font-bold">Auto Makeup:</span>
+                                <span class="text-[10px] font-black text-emerald-600">+2.6 dB</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FITUR 3: VINTAGE HARDWARE SIMULATION -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-microchip"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Hardware Topologies</h4>
+                                <h3 class="text-base font-black text-slate-900">Vintage Hardware Simulation</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Matches transient profiles to suggested analog hardware topologies based on dynamic source requirements.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-100/90 rounded-2xl p-4 border border-slate-200/80 space-y-3">
+                        <span class="text-[9px] font-mono font-bold text-slate-400 uppercase block">Supported Analog Topologies:</span>
+                        
+                        <div class="grid grid-cols-1 gap-1.5 text-[10px] font-mono font-bold">
+                            <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                                <span class="text-slate-800"><i class="fa-solid fa-bolt text-amber-500 mr-1.5"></i> FET Peak Limiter</span>
+                                <span class="text-[9px] text-slate-400">1176 Rev E Style</span>
+                            </div>
+                            <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                                <span class="text-slate-800"><i class="fa-solid fa-eye text-sky-500 mr-1.5"></i> Optical Tube Limiter</span>
+                                <span class="text-[9px] text-slate-400">Teletronix LA-2A</span>
+                            </div>
+                            <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                                <span class="text-slate-800"><i class="fa-solid fa-compact-disc text-emerald-500 mr-1.5"></i> VCA Bus Compressor</span>
+                                <span class="text-[9px] text-slate-400">SSL G-Master / API 2500</span>
+                            </div>
+                            <div class="bg-white p-2 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between">
+                                <span class="text-slate-800"><i class="fa-solid fa-wave-square text-indigo-500 mr-1.5"></i> Vari-Mu Tube / Diode Bridge</span>
+                                <span class="text-[9px] text-slate-400">Fairchild 670 / Neve</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-1 flex items-center justify-between border-t border-slate-200/80 text-[9px] font-mono text-slate-500 font-bold">
+                            <span>MODES:</span>
+                            <div class="flex gap-1">
+                                <span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded">Clean</span>
+                                <span class="bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">Warm Analog</span>
+                                <span class="bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded">Punchy Heavy</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FITUR 4: RATIO SLOPE VISUALIZATION -->
+                <div class="glass-panel-light p-6 rounded-3xl border border-white flex flex-col justify-between space-y-6 shadow-xl">
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-800 flex items-center justify-center text-lg font-bold">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold">Transfer Curve Visualization</h4>
+                                <h3 class="text-base font-black text-slate-900">Compression Curve Visualizer</h3>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed font-medium">
+                            Interactively analyze direct compression transfer functions. Real-time threshold knee-points and ratio sliders provide total control.
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl overflow-hidden border border-slate-200/90 shadow-sm bg-white">
+                        <img src="feature-curve.png" alt="AVRIX Compression Transfer Function Ratio Slope" class="w-full h-auto block object-cover">
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- PRICING SECTION -->
+        <div id="pricing" class="space-y-8 pt-6">
+            <div class="text-center space-y-1">
+                <h2 class="text-2xl font-black text-slate-900 tracking-wider uppercase">Choose Your Plan</h2>
+                <p class="text-xs text-slate-600 font-bold">Instant activation & secure checkout via Mayar</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
+                
+                <!-- 1 MONTH ACCESS -->
+                <div class="glass-panel-light p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between pricing-card-popup glow-sky bg-white/95">
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
+                            <h3 class="text-xs font-extrabold text-slate-700 uppercase tracking-wider">1 Month Access</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-slate-900">Rp 10.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ month</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-xs text-slate-600 font-medium pt-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Full Preset Engine Access</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-sky-600"></i> Standard Email Support</li>
+                        </ul>
+                    </div>
+
+                    <button type="button" 
+                        onclick="openMayarModal('https://avrix-audio-50348.myr.id/pl/avrix-comp-assistance-1-month-access?iframe=true')" 
+                        class="w-full btn-studio-light py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center mt-6">
+                        Buy Now
+                    </button>
+                </div>
+
+                <!-- 1 YEAR ACCESS (BEST VALUE) -->
+                <div class="glass-panel-light p-6 rounded-2xl border-2 border-sky-600 shadow-xl relative flex flex-col justify-between pricing-card-popup glow-sky bg-white/95">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-sky-700 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow z-10">Best Value</span>
+                    
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
+                            <h3 class="text-xs font-extrabold text-sky-800 uppercase tracking-wider">1 Year Access</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-sky-800">Rp 100.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ year</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Save More Than 15%</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Full Mode Learn Access (WAV)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> All Core Features Included</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Priority Feature Updates</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check-circle text-sky-600"></i> Community Support</li>
+                        </ul>
+                    </div>
+
+                    <button type="button" 
+                        onclick="openMayarModal('https://avrix-audio-50348.myr.id/pl/avrix-compressor-assistance-1-year?iframe=true')" 
+                        class="w-full btn-engine-light py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md mt-6">
+                        Buy Now
+                    </button>
+                </div>
+
+                <!-- FOREVER (LIFETIME) -->
+                <div class="glass-panel-light p-6 rounded-2xl border border-amber-400 shadow-md relative flex flex-col justify-between pricing-card-popup glow-amber bg-white/95">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-600 text-white text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider shadow z-10">Lifetime</span>
+
+                    <div class="space-y-4">
+                        <div class="text-center space-y-1 border-b border-slate-200 pb-4 min-h-[90px] flex flex-col justify-center">
+                            <h3 class="text-xs font-extrabold text-amber-800 uppercase tracking-wider">Forever (Lifetime)</h3>
+                            <div class="flex items-baseline justify-center gap-1 pt-1">
+                                <span class="text-2xl font-black font-mono text-slate-900">Rp 150.000</span>
+                                <span class="text-xs text-slate-500 font-bold font-mono">/ one-time</span>
+                            </div>
+                        </div>
+
+                        <ul class="space-y-2.5 text-xs text-slate-700 font-medium pt-1">
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Lifetime Access</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Full Mode Learn Access (WAV)</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> No Monthly Subscription Fees</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Free Future Updates</li>
+                            <li class="flex items-center gap-2"><i class="fa-solid fa-check text-amber-600"></i> Top Priority VIP Support</li>
+                        </ul>
+                    </div>
+
+                    <button type="button" 
+                        onclick="openMayarModal('https://avrix-audio-50348.myr.id/pl/avrix-comp-assistance-lifetime?iframe=true')" 
+                        class="w-full bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 text-white py-3 rounded-xl font-bold text-xs tracking-wide transition-all text-center shadow-md mt-6">
+                        Buy Now
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 bg-white/90 backdrop-blur-md py-4 text-center text-xs text-slate-700 font-mono font-bold relative z-10">
+        AVRIX Audio &copy; 2026 | Professional Mixing Suite
+    </footer>
+
+    <!-- AUTH FIRST REQUIRED MODAL -->
+    <div id="authRequiredModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4 transition-all duration-300">
+        <div class="relative w-full max-w-md glass-panel-light rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl border border-white/60">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
+                    <span class="font-mono text-[11px] font-bold text-sky-800 uppercase tracking-wider">Auth First Required</span>
+                </div>
+                <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-700 transition-colors w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center mx-auto text-xl shadow-inner">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+                <h3 class="text-lg font-black text-slate-900 tracking-tight">Login atau Buat Akun Terlebih Dahulu</h3>
+                <p class="text-xs text-slate-600 font-medium leading-relaxed">
+                    Untuk memastikan lisensi audio mixing otomatis aktif dan terhubung ke akun Anda secara instan setelah pembayaran selesai di Mayar, silakan masuk atau daftarkan akun Anda terlebih dahulu.
+                </p>
+            </div>
+
+            <div class="space-y-2.5 pt-2">
+                <a id="btn-modal-login" href="login.html?redirect=index.html%23pricing" class="w-full btn-engine-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    <span>Masuk ke Akun (Login)</span>
+                </a>
+                <a id="btn-modal-register" href="register.html?redirect=index.html%23pricing" class="w-full btn-studio-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Daftar Akun Baru (Register)</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAYAR POPUP MODAL -->
+    <div id="mayarModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4 transition-all duration-300">
+        <div class="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[85vh] md:h-[750px]">
+            <div class="flex items-center justify-between px-6 py-4 bg-slate-900 text-white border-b border-slate-800">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-shield-halved text-sky-400 text-sm"></i>
+                    <span class="text-sm font-bold tracking-wide">AVRIX Secure Checkout</span>
+                </div>
+                <button onclick="closeMayarModal()" class="text-slate-400 hover:text-white transition-colors text-lg font-bold w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-800">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <!-- Auth User Status Banner -->
+            <div id="mayarUserStrip" class="px-6 py-2.5 bg-sky-50 border-b border-sky-100 flex items-center justify-between text-xs font-mono text-sky-900">
+                <span class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-check text-sky-600"></i>
+                    <span>Akun: <strong id="mayarUserEmail" class="text-sky-800"></strong></span>
+                </span>
+                <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">Lisensi otomatis aktif setelah pembayaran</span>
+            </div>
+            <div class="flex-1 w-full h-full bg-slate-50 relative">
+                <iframe id="mayarIframe" src="" class="w-full h-full border-0" allow="payment"></iframe>
+            </div>
+            <div class="px-6 py-3 bg-white border-t border-slate-200 flex items-center justify-between">
+                <span class="text-[11px] text-slate-500 font-medium">Selesai bayar?</span>
+                <a href="plugin.html" class="btn-engine-light px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Buka AVRIX Studio</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- WEBAUDIO DSP DEMO ENGINE SCRIPT -->
+    <script>
+        let demoAudioCtx = null;
+        let demoOsc = null;
+        let demoGain = null;
+        let demoComp = null;
+        let demoIsPlaying = false;
+        let demoAnimFrame = null;
+
+        const demoPresets = {
+            lead_vocal: { attack: 0.012, release: 0.125, ratio: 3.5, knee: "Soft", gain: "+3.2 dB", thresh: -16 },
+            snare: { attack: 0.030, release: 0.080, ratio: 4.5, knee: "Hard", gain: "+4.5 dB", thresh: -12 },
+            master_bus: { attack: 0.030, release: 0.250, ratio: 2.0, knee: "Ultra Soft", gain: "+1.8 dB", thresh: -8 }
+        };
+
+        function initDemoAudio() {
+            if (!demoAudioCtx) {
+                demoAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (demoAudioCtx.state === 'suspended') {
+                demoAudioCtx.resume();
+            }
+        }
+
+        function changeDemoPreset(val) {
+            const p = demoPresets[val] || demoPresets.lead_vocal;
+            document.getElementById('demo-attack').innerText = `${Math.round(p.attack * 1000)} ms`;
+            document.getElementById('demo-release').innerText = `${Math.round(p.release * 1000)} ms`;
+            document.getElementById('demo-ratio').innerText = `${p.ratio}:1`;
+            document.getElementById('demo-knee').innerText = p.knee;
+            document.getElementById('demo-gain').innerText = p.gain;
+
+            if (demoComp && demoAudioCtx) {
+                demoComp.attack.setValueAtTime(p.attack, demoAudioCtx.currentTime);
+                demoComp.release.setValueAtTime(p.release, demoAudioCtx.currentTime);
+                demoComp.ratio.setValueAtTime(p.ratio, demoAudioCtx.currentTime);
+                demoComp.threshold.setValueAtTime(p.thresh, demoAudioCtx.currentTime);
+            }
+        }
+
+        function toggleDemoAudio() {
+            initDemoAudio();
+            if (demoIsPlaying) {
+                stopDemoAudio();
+            } else {
+                startDemoAudio();
+            }
+        }
+
+        function startDemoAudio() {
+            const key = document.getElementById('demo-inst-select').value;
+            const p = demoPresets[key] || demoPresets.lead_vocal;
+
+            demoOsc = demoAudioCtx.createOscillator();
+            demoGain = demoAudioCtx.createGain();
+            demoComp = demoAudioCtx.createDynamicsCompressor();
+
+            demoComp.threshold.setValueAtTime(p.thresh, demoAudioCtx.currentTime);
+            demoComp.ratio.setValueAtTime(p.ratio, demoAudioCtx.currentTime);
+            demoComp.attack.setValueAtTime(p.attack, demoAudioCtx.currentTime);
+            demoComp.release.setValueAtTime(p.release, demoAudioCtx.currentTime);
+
+            demoOsc.type = 'sawtooth';
+            demoOsc.frequency.setValueAtTime(110, demoAudioCtx.currentTime);
+
+            const lfo = demoAudioCtx.createOscillator();
+            const lfoGain = demoAudioCtx.createGain();
+            lfo.frequency.value = 2.5; 
+            lfoGain.gain.value = 0.4;
+            lfo.connect(demoGain.gain);
+            lfo.start();
+
+            toggleDemoDsp();
+
+            demoOsc.start();
+            demoIsPlaying = true;
+
+            document.getElementById('demo-play-icon').className = "fa-solid fa-pause";
+            document.getElementById('demo-play-text').innerText = "Pause Demo";
+
+            updateDemoMeter();
+        }
+
+        function stopDemoAudio() {
+            if (demoOsc) {
+                try { demoOsc.stop(); } catch(e){}
+            }
+            demoIsPlaying = false;
+            document.getElementById('demo-play-icon').className = "fa-solid fa-play";
+            document.getElementById('demo-play-text').innerText = "Play Audio";
+            document.getElementById('demo-gr-text').innerText = "0.0 dB";
+            document.getElementById('demo-gr-bar').style.width = "0%";
+            if (demoAnimFrame) cancelAnimationFrame(demoAnimFrame);
+        }
+
+        function toggleDemoDsp() {
+            if (!demoIsPlaying || !demoAudioCtx) return;
+            const enabled = document.getElementById('demo-ab-toggle').checked;
+            
+            demoOsc.disconnect();
+            demoComp.disconnect();
+            demoGain.disconnect();
+
+            if (enabled) {
+                demoOsc.connect(demoComp);
+                demoComp.connect(demoGain);
+                demoGain.connect(demoAudioCtx.destination);
+            } else {
+                demoOsc.connect(demoGain);
+                demoGain.connect(demoAudioCtx.destination);
+            }
+        }
+
+        function updateDemoMeter() {
+            if (!demoIsPlaying) return;
+            const enabled = document.getElementById('demo-ab-toggle').checked;
+
+            if (enabled && demoComp && demoComp.reduction) {
+                const gr = Math.abs(demoComp.reduction);
+                document.getElementById('demo-gr-text').innerText = `-${gr.toFixed(1)} dB`;
+                document.getElementById('demo-gr-bar').style.width = `${Math.min(100, gr * 12)}%`;
+            } else {
+                document.getElementById('demo-gr-text').innerText = "0.0 dB (Bypassed)";
+                document.getElementById('demo-gr-bar').style.width = "0%";
+            }
+
+            demoAnimFrame = requestAnimationFrame(updateDemoMeter);
+        }
+
+        // ==========================================
+        // SUPABASE AUTH & MAYAR CHECKOUT HANDLERS
+        // ==========================================
+        const SUPABASE_URL = 'https://ozuyzelpzsvmurjdjilq.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
+        const supabaseClient = (window.supabase || window.supabasejs).createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user) {
+                currentUser = session.user;
+                updateHeaderForAuth(session.user);
+            }
+
+            supabaseClient.auth.onAuthStateChange((_event, session) => {
+                currentUser = session?.user ?? null;
+                updateHeaderForAuth(currentUser);
+            });
+        });
+
+        function updateHeaderForAuth(user) {
+            const container = document.getElementById('nav-auth-container');
+            if (!container) return;
+
+            if (user) {
+                const displayEmail = user.email || 'Member';
+                container.innerHTML = `
+                    <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-sm font-mono text-xs">
+                        <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
+                        <span class="text-[11px] text-slate-700 font-bold max-w-[130px] sm:max-w-[180px] truncate">${displayEmail}</span>
+                    </div>
+                    <a href="plugin.html" class="btn-engine-light px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-sliders text-xs"></i>
+                        <span class="hidden sm:inline">Launch Studio</span>
+                    </a>
+                    <button onclick="handleLogout()" class="btn-studio-light px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-red-600 transition-all" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <a href="login.html" class="btn-studio-light px-4 py-2 rounded-xl text-xs font-bold transition-all">Login Member</a>
+                    <a href="#pricing" class="btn-engine-light px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
+                        <i class="fa-solid fa-bolt text-xs"></i>
+                        <span>Get Access</span>
+                    </a>
+                `;
+            }
+        }
+
+        async function handleLogout() {
+            await supabaseClient.auth.signOut();
+            window.location.reload();
+        }
+
+        // AUTH-FIRST CHECKOUT HANDLER
+        function openMayarModal(rawUrl) {
+            if (!currentUser) {
+                const authModal = document.getElementById('authRequiredModal');
+                if (authModal) {
+                    authModal.classList.remove('hidden');
+                    authModal.classList.add('flex');
+                    document.body.style.overflow = 'hidden';
+                }
+                return;
+            }
+
+            let checkoutUrl = rawUrl;
+            if (currentUser.email) {
+                const separator = checkoutUrl.includes('?') ? '&' : '?';
+                checkoutUrl += `${separator}email=${encodeURIComponent(currentUser.email)}`;
+            }
+
+            const emailEl = document.getElementById('mayarUserEmail');
+            if (emailEl) emailEl.innerText = currentUser.email;
+
+            const modal = document.getElementById('mayarModal');
+            const iframe = document.getElementById('mayarIframe');
+            if (modal && iframe) {
+                iframe.src = checkoutUrl;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeMayarModal() {
+            const modal = document.getElementById('mayarModal');
+            const iframe = document.getElementById('mayarIframe');
+            if (modal && iframe) {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+                iframe.src = '';
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeAuthModal() {
+            const authModal = document.getElementById('authRequiredModal');
+            if (authModal) {
+                authModal.classList.remove('flex');
+                authModal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        const modalEl = document.getElementById('mayarModal');
+        if (modalEl) {
+            modalEl.addEventListener('click', function(e) {
+                if (e.target === this) closeMayarModal();
+            });
+        }
+
+        const authModalEl = document.getElementById('authRequiredModal');
+        if (authModalEl) {
+            authModalEl.addEventListener('click', function(e) {
+                if (e.target === this) closeAuthModal();
+            });
+        }
+    </script>
+</body>
+</html>

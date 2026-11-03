@@ -1,0 +1,27 @@
+# Credentials & Secrets (JANGAN upload ke publik)
+Key.txt
+.env
+.env.local
+*.secret
+*.pem
+
+# Supabase temp & local CLI
+supabase/.temp/
+.temp/
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+
+# Temporary files
+curl
+New Text Document.txt
+*.tmp
+*.log
+
+# Editor directories
+.vscode/
+.idea/
