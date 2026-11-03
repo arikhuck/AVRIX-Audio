@@ -210,5 +210,26 @@
             }
         }
     </script>
+
+    <!-- Anti-Inspect & Right-Click Protection -->
+    <script>
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.addEventListener('keydown', (e) => {
+            const isCtrlOrMeta = e.ctrlKey || e.metaKey;
+            const isShift = e.shiftKey;
+            const key = e.key ? e.key.toLowerCase() : '';
+            const code = e.keyCode || e.which;
+
+            if (
+                key === 'f12' || code === 123 ||
+                (isCtrlOrMeta && isShift && (key === 'i' || key === 'j' || key === 'c' || code === 73 || code === 74 || code === 67)) ||
+                (isCtrlOrMeta && (key === 'u' || code === 85)) ||
+                (isCtrlOrMeta && (key === 's' || code === 83))
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+    </script>
 </body>
 </html>
