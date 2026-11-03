@@ -18,6 +18,7 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS subscription_expiry TIMESTA
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS is_lifetime BOOLEAN DEFAULT FALSE;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS last_payment_date TIMESTAMPTZ;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS last_transaction_id TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS reminder_sent_for_expiry TIMESTAMPTZ;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS created_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now());
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT timezone('utc'::text, now());
 
@@ -181,3 +182,27 @@ ON CONFLICT (id) DO UPDATE SET
     email = EXCLUDED.email,
     full_name = COALESCE(public.profiles.full_name, EXCLUDED.full_name),
     updated_at = now();
+
+-- 8. Fungsi Otomatis Menonaktifkan Lisensi yang Sudah Habis Masa Aktifnya
+CREATE OR REPLACE FUNCTION public.check_and_expire_subscriptions()
+RETURNS INTEGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    expired_count INTEGER;
+BEGIN
+    UPDATE public.profiles
+    SET 
+        subscription_status = 'expired',
+        updated_at = NOW()
+    WHERE 
+        is_lifetime = FALSE
+        AND subscription_status = 'active'
+        AND subscription_expiry IS NOT NULL
+        AND subscription_expiry < NOW();
+        
+    GET DIAGNOSTICS expired_count = ROW_COUNT;
+    RETURN expired_count;
+END;
+$$;
