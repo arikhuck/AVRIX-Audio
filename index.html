@@ -248,91 +248,129 @@
                 </div>
             </div>
 
-            <!-- INTERACTIVE COMPRESSOR DEMO PREVIEW (PRO AUDIO A/B DEMO) -->
-            <div class="pt-6 max-w-2xl mx-auto">
-                <div class="glass-panel-light p-5 rounded-3xl border border-sky-300/80 shadow-2xl text-left space-y-4 relative overflow-hidden group">
+            <!-- PRO STUDIO INTERFACE SLIDESHOW SHOWCASE (HIGH-CONVERTING) -->
+            <div class="pt-8 max-w-5xl mx-auto space-y-4">
+                
+                <!-- SLIDESHOW TAB SWITCHER -->
+                <div class="flex items-center justify-center gap-2">
+                    <button type="button" onclick="goToSlide(1)" id="slide-tab-1" class="px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-2 bg-sky-600 text-white shadow-sky-200">
+                        <i class="fa-solid fa-sliders text-xs"></i>
+                        <span>Preset Engine (Calibration)</span>
+                    </button>
+                    <button type="button" onclick="goToSlide(2)" id="slide-tab-2" class="px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-50 border border-slate-300">
+                        <i class="fa-solid fa-compact-disc text-xs text-sky-600"></i>
+                        <span>Mode Learn (WAV Analyzer)</span>
+                    </button>
+                </div>
+
+                <!-- MAIN SLIDESHOW SCREEN BEZEL -->
+                <div id="preview-slider-container" class="relative w-full h-[22rem] sm:h-[30rem] md:h-[36rem] overflow-hidden rounded-3xl bg-slate-950 shadow-2xl border-2 border-slate-800 group">
                     
-                    <!-- HEADER WIDGET -->
-                    <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                            <span class="text-xs font-mono font-extrabold text-slate-800 uppercase tracking-wider">Live WebAudio DSP Engine Preview</span>
+                    <!-- SLIDER TRACK -->
+                    <div id="slider-track" class="flex w-full h-full transition-transform duration-700 ease-out">
+                        <!-- SLIDE 1: PRESET ENGINE -->
+                        <div class="w-full h-full flex-shrink-0 relative bg-slate-950">
+                            <img src="preview-1.jpg" onerror="this.onerror=null; this.src='preview-1.jfif';" alt="AVRIX Preset Engine & Ratio Slope Calibration" class="w-full h-full object-contain sm:object-cover object-top select-none">
+                            
+                            <!-- GRADIENT OVERLAYS -->
+                            <div class="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none"></div>
+                            <div class="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
+
+                            <!-- FLOATING FEATURE CALLOUTS -->
+                            <div class="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-3 text-white z-20 pointer-events-none">
+                                <div class="bg-black/75 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15 shadow-lg max-w-md text-left">
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
+                                        <h4 class="text-xs font-extrabold font-mono uppercase tracking-wider text-sky-400">Parameter Calibration View</h4>
+                                    </div>
+                                    <p class="text-[11px] text-slate-300 font-medium">Attack, tempo-synced Release, Knee Profile, & Interactive Transfer Function Slope.</p>
+                                </div>
+                                <div class="hidden md:flex items-center gap-2">
+                                    <span class="bg-sky-500/20 text-sky-300 border border-sky-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                        12+ Instruments
+                                    </span>
+                                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                        14+ Music Genres
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                        <span class="text-[10px] font-mono font-bold bg-sky-100 text-sky-800 px-2.5 py-0.5 rounded-full border border-sky-200">Interactive A/B Test</span>
-                    </div>
 
-                    <!-- DROPDOWN & AUDIO A/B CONTROLS -->
-                    <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
-                        <div class="sm:col-span-7">
-                            <label class="block text-[11px] font-bold text-slate-700 mb-1">Select Track Profile:</label>
-                            <select id="demo-inst-select" onchange="changeDemoPreset(this.value)" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 shadow-sm">
-                                <option value="lead_vocal">Lead Vocal (Pop / Rock - Punchy Presence)</option>
-                                <option value="snare">Snare Drum (High Snap & Crack)</option>
-                                <option value="master_bus">Master Bus (Pop Punk Glue & Density)</option>
-                            </select>
-                        </div>
+                        <!-- SLIDE 2: MODE LEARN (WAV) -->
+                        <div class="w-full h-full flex-shrink-0 relative bg-slate-950">
+                            <img src="preview-2.jpg" onerror="this.onerror=null; this.src='preview-2.jfif';" alt="AVRIX Mode Learn Intelligent WAV Audio Analyzer" class="w-full h-full object-contain sm:object-cover object-top select-none">
+                            
+                            <!-- GRADIENT OVERLAYS -->
+                            <div class="absolute top-0 inset-x-0 h-20 bg-gradient-to-b from-black/70 to-transparent pointer-events-none"></div>
+                            <div class="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none"></div>
 
-                        <!-- AUDIO PLAY & A/B TOGGLE -->
-                        <div class="sm:col-span-5 flex items-center justify-between sm:justify-end gap-2 pt-1 sm:pt-0">
-                            <button id="demo-play-btn" onclick="toggleDemoAudio()" class="btn-engine-light px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow">
-                                <i id="demo-play-icon" class="fa-solid fa-play"></i>
-                                <span id="demo-play-text">Play Audio</span>
-                            </button>
-
-                            <div class="flex items-center space-x-1.5 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                                <span class="text-[10px] font-mono font-bold text-slate-600">A/B DSP:</span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="demo-ab-toggle" onchange="toggleDemoDsp()" class="sr-only peer" checked>
-                                    <div class="w-8 h-4 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-sky-600"></div>
-                                </label>
+                            <!-- FLOATING FEATURE CALLOUTS -->
+                            <div class="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-3 text-white z-20 pointer-events-none">
+                                <div class="bg-black/75 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15 shadow-lg max-w-md text-left">
+                                    <div class="flex items-center gap-2 mb-0.5">
+                                        <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
+                                        <h4 class="text-xs font-extrabold font-mono uppercase tracking-wider text-sky-400">Mode Learn (WAV Intelligence)</h4>
+                                    </div>
+                                    <p class="text-[11px] text-slate-300 font-medium">Deteksi Peak, RMS, Crest Factor Dynamics, dan kalkulasi rekomendasi sekali klik.</p>
+                                </div>
+                                <div class="hidden md:flex items-center gap-2">
+                                    <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                        WAV Drag & Drop
+                                    </span>
+                                    <span class="bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                        Live DSP Metering
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- PARAMETERS GRID OUTPUT -->
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-center">
-                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
-                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Attack</span>
-                            <span id="demo-attack" class="text-xs font-black text-sky-400">12 ms</span>
-                        </div>
-                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
-                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Release</span>
-                            <span id="demo-release" class="text-xs font-black text-sky-400">125 ms</span>
-                        </div>
-                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
-                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Ratio</span>
-                            <span id="demo-ratio" class="text-xs font-black text-white">3.5:1</span>
-                        </div>
-                        <div class="bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
-                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Knee</span>
-                            <span id="demo-knee" class="text-xs font-black text-white">Soft</span>
-                        </div>
-                        <div class="col-span-2 sm:col-span-1 bg-slate-900 text-white p-2 rounded-xl border border-slate-800">
-                            <span class="text-[8px] text-slate-400 block uppercase font-bold">Auto Gain</span>
-                            <span id="demo-gain" class="text-xs font-black text-emerald-400">+3.2 dB</span>
-                        </div>
+                    <!-- SLIDESHOW BADGE -->
+                    <div class="absolute top-4 left-4 sm:left-6 z-30 flex items-center space-x-2">
+                        <span class="inline-flex items-center space-x-2 bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 font-mono text-white text-[11px] shadow-lg">
+                            <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
+                            <span id="slider-caption" class="font-extrabold uppercase tracking-wider">Preset Engine: Track Calibration</span>
+                        </span>
                     </div>
 
-                    <!-- LIVE ANIMATED METER BAR -->
-                    <div class="bg-slate-100 p-2.5 rounded-2xl border border-slate-200/80 space-y-1.5 font-mono text-[9px]">
-                        <div class="flex justify-between font-bold text-slate-600">
-                            <span>ESTIMATED DYNAMIC GAIN REDUCTION:</span>
-                            <span id="demo-gr-text" class="text-amber-600 font-black">0.0 dB</span>
-                        </div>
-                        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                            <div id="demo-gr-bar" class="bg-amber-500 h-full w-0 transition-all duration-100"></div>
-                        </div>
+                    <div class="absolute top-4 right-4 sm:right-6 z-30">
+                        <span class="text-[10px] font-mono font-bold bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full border border-white/25 shadow-lg tracking-widest uppercase">
+                            Official GUI Preview
+                        </span>
                     </div>
 
-                    <!-- FOOTER MICRO CTA -->
-                    <div class="pt-1 flex items-center justify-between text-[11px] font-medium border-t border-slate-200">
-                        <span class="text-slate-600 font-bold">Want full WAV Mode Learn & custom BPM calibration?</span>
-                        <a href="#pricing" class="text-sky-700 hover:text-sky-900 font-extrabold flex items-center gap-1 underline underline-offset-2">
-                            Unlock Access <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                        </a>
-                    </div>
+                    <!-- PREV & NEXT CONTROLS -->
+                    <button type="button" onclick="prevSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur text-white flex items-center justify-center transition-all opacity-80 sm:opacity-0 group-hover:opacity-100 border border-white/20 z-30 shadow-xl" aria-label="Previous Slide">
+                        <i class="fa-solid fa-chevron-left text-sm"></i>
+                    </button>
+                    <button type="button" onclick="nextSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-black/50 hover:bg-black/80 backdrop-blur text-white flex items-center justify-center transition-all opacity-80 sm:opacity-0 group-hover:opacity-100 border border-white/20 z-30 shadow-xl" aria-label="Next Slide">
+                        <i class="fa-solid fa-chevron-right text-sm"></i>
+                    </button>
 
+                    <!-- PAGINATION DOTS -->
+                    <div class="absolute bottom-3 inset-x-0 flex justify-center items-center space-x-2.5 z-30">
+                        <button type="button" onclick="goToSlide(1)" id="dot-1" class="w-3 h-3 rounded-full bg-sky-500 shadow-md transition-all duration-300 scale-125" aria-label="Go to slide 1"></button>
+                        <button type="button" onclick="goToSlide(2)" id="dot-2" class="w-3 h-3 rounded-full bg-white/40 shadow-sm hover:bg-white/70 transition-all duration-300" aria-label="Go to slide 2"></button>
+                    </div>
                 </div>
+
+                <!-- VALUE / SALES CALLOUT BAR -->
+                <div class="glass-panel-light p-4 rounded-2xl border border-slate-200/90 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-left">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-500 to-sky-700 text-white flex items-center justify-center shadow text-base flex-shrink-0">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-black text-slate-900 uppercase tracking-wide">Tingkatkan Kualitas Mixing Kamu Secara Drastis</h4>
+                            <p class="text-[11px] text-slate-600 font-medium">Bebas tebak-tebakan. Dapatkan rekomendasi kompresi instan terstandarisasi industri pro audio.</p>
+                        </div>
+                    </div>
+                    <a href="#pricing" class="btn-engine-light px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap shadow-md flex items-center gap-2">
+                        <span>Beli Akses Sekarang</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
+
             </div>
 
         </div>
@@ -723,138 +761,95 @@
         </div>
     </div>
 
-    <!-- WEBAUDIO DSP DEMO ENGINE SCRIPT -->
+    <!-- STUDIO SHOWCASE SLIDESHOW SCRIPT -->
     <script>
-        let demoAudioCtx = null;
-        let demoOsc = null;
-        let demoGain = null;
-        let demoComp = null;
-        let demoIsPlaying = false;
-        let demoAnimFrame = null;
+        let currentSlide = 1;
+        const totalSlides = 2;
+        let slideTimer = null;
+        const slideInterval = 4500;
 
-        const demoPresets = {
-            lead_vocal: { attack: 0.012, release: 0.125, ratio: 3.5, knee: "Soft", gain: "+3.2 dB", thresh: -16 },
-            snare: { attack: 0.030, release: 0.080, ratio: 4.5, knee: "Hard", gain: "+4.5 dB", thresh: -12 },
-            master_bus: { attack: 0.030, release: 0.250, ratio: 2.0, knee: "Ultra Soft", gain: "+1.8 dB", thresh: -8 }
+        const sliderCaptions = {
+            1: "Preset Engine: Track Calibration",
+            2: "Mode Learn: WAV Audio Intelligence"
         };
 
-        function initDemoAudio() {
-            if (!demoAudioCtx) {
-                demoAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function showSlide(index) {
+            currentSlide = index;
+            const track = document.getElementById('slider-track');
+            if (track) {
+                track.style.transform = `translateX(-${(index - 1) * 100}%)`;
             }
-            if (demoAudioCtx.state === 'suspended') {
-                demoAudioCtx.resume();
+
+            // Update dots
+            for (let i = 1; i <= totalSlides; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                if (dot) {
+                    if (i === index) {
+                        dot.className = "w-3 h-3 rounded-full bg-sky-500 shadow-md transition-all duration-300 scale-125";
+                    } else {
+                        dot.className = "w-3 h-3 rounded-full bg-white/40 shadow-sm hover:bg-white/70 transition-all duration-300";
+                    }
+                }
             }
-        }
 
-        function changeDemoPreset(val) {
-            const p = demoPresets[val] || demoPresets.lead_vocal;
-            document.getElementById('demo-attack').innerText = `${Math.round(p.attack * 1000)} ms`;
-            document.getElementById('demo-release').innerText = `${Math.round(p.release * 1000)} ms`;
-            document.getElementById('demo-ratio').innerText = `${p.ratio}:1`;
-            document.getElementById('demo-knee').innerText = p.knee;
-            document.getElementById('demo-gain').innerText = p.gain;
-
-            if (demoComp && demoAudioCtx) {
-                demoComp.attack.setValueAtTime(p.attack, demoAudioCtx.currentTime);
-                demoComp.release.setValueAtTime(p.release, demoAudioCtx.currentTime);
-                demoComp.ratio.setValueAtTime(p.ratio, demoAudioCtx.currentTime);
-                demoComp.threshold.setValueAtTime(p.thresh, demoAudioCtx.currentTime);
+            // Update Tab buttons
+            const tab1 = document.getElementById('slide-tab-1');
+            const tab2 = document.getElementById('slide-tab-2');
+            if (tab1 && tab2) {
+                if (index === 1) {
+                    tab1.className = "px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-2 bg-sky-600 text-white shadow-sky-200";
+                    tab2.className = "px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-50 border border-slate-300";
+                } else {
+                    tab1.className = "px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-2 bg-white text-slate-700 hover:bg-slate-50 border border-slate-300";
+                    tab2.className = "px-5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-sm flex items-center gap-2 bg-sky-600 text-white shadow-sky-200";
+                }
             }
-        }
 
-        function toggleDemoAudio() {
-            initDemoAudio();
-            if (demoIsPlaying) {
-                stopDemoAudio();
-            } else {
-                startDemoAudio();
-            }
-        }
-
-        function startDemoAudio() {
-            const key = document.getElementById('demo-inst-select').value;
-            const p = demoPresets[key] || demoPresets.lead_vocal;
-
-            demoOsc = demoAudioCtx.createOscillator();
-            demoGain = demoAudioCtx.createGain();
-            demoComp = demoAudioCtx.createDynamicsCompressor();
-
-            demoComp.threshold.setValueAtTime(p.thresh, demoAudioCtx.currentTime);
-            demoComp.ratio.setValueAtTime(p.ratio, demoAudioCtx.currentTime);
-            demoComp.attack.setValueAtTime(p.attack, demoAudioCtx.currentTime);
-            demoComp.release.setValueAtTime(p.release, demoAudioCtx.currentTime);
-
-            demoOsc.type = 'sawtooth';
-            demoOsc.frequency.setValueAtTime(110, demoAudioCtx.currentTime);
-
-            const lfo = demoAudioCtx.createOscillator();
-            const lfoGain = demoAudioCtx.createGain();
-            lfo.frequency.value = 2.5; 
-            lfoGain.gain.value = 0.4;
-            lfo.connect(demoGain.gain);
-            lfo.start();
-
-            toggleDemoDsp();
-
-            demoOsc.start();
-            demoIsPlaying = true;
-
-            document.getElementById('demo-play-icon').className = "fa-solid fa-pause";
-            document.getElementById('demo-play-text').innerText = "Pause Demo";
-
-            updateDemoMeter();
-        }
-
-        function stopDemoAudio() {
-            if (demoOsc) {
-                try { demoOsc.stop(); } catch(e){}
-            }
-            demoIsPlaying = false;
-            document.getElementById('demo-play-icon').className = "fa-solid fa-play";
-            document.getElementById('demo-play-text').innerText = "Play Audio";
-            document.getElementById('demo-gr-text').innerText = "0.0 dB";
-            document.getElementById('demo-gr-bar').style.width = "0%";
-            if (demoAnimFrame) cancelAnimationFrame(demoAnimFrame);
-        }
-
-        function toggleDemoDsp() {
-            if (!demoIsPlaying || !demoAudioCtx) return;
-            const enabled = document.getElementById('demo-ab-toggle').checked;
-            
-            demoOsc.disconnect();
-            demoComp.disconnect();
-            demoGain.disconnect();
-
-            if (enabled) {
-                demoOsc.connect(demoComp);
-                demoComp.connect(demoGain);
-                demoGain.connect(demoAudioCtx.destination);
-            } else {
-                demoOsc.connect(demoGain);
-                demoGain.connect(demoAudioCtx.destination);
+            // Update caption
+            const caption = document.getElementById('slider-caption');
+            if (caption) {
+                caption.innerText = sliderCaptions[index] || "AVRIX Studio Interface";
             }
         }
 
-        function updateDemoMeter() {
-            if (!demoIsPlaying) return;
-            const enabled = document.getElementById('demo-ab-toggle').checked;
-
-            if (enabled && demoComp && demoComp.reduction) {
-                const gr = Math.abs(demoComp.reduction);
-                document.getElementById('demo-gr-text').innerText = `-${gr.toFixed(1)} dB`;
-                document.getElementById('demo-gr-bar').style.width = `${Math.min(100, gr * 12)}%`;
-            } else {
-                document.getElementById('demo-gr-text').innerText = "0.0 dB (Bypassed)";
-                document.getElementById('demo-gr-bar').style.width = "0%";
-            }
-
-            demoAnimFrame = requestAnimationFrame(updateDemoMeter);
+        function nextSlide() {
+            showSlide(currentSlide + 1 > totalSlides ? 1 : currentSlide + 1);
         }
 
-        // ==========================================
-        // SUPABASE AUTH & MAYAR CHECKOUT HANDLERS
-        // ==========================================
+        function prevSlide() {
+            showSlide(currentSlide - 1 < 1 ? totalSlides : currentSlide - 1);
+        }
+
+        function goToSlide(index) {
+            showSlide(index);
+            resetAutoSlide();
+        }
+
+        function startAutoSlide() {
+            stopAutoSlide();
+            slideTimer = setInterval(nextSlide, slideInterval);
+        }
+
+        function stopAutoSlide() {
+            if (slideTimer) clearInterval(slideTimer);
+        }
+
+        function resetAutoSlide() {
+            stopAutoSlide();
+            startAutoSlide();
+        }
+
+        startAutoSlide();
+
+        const sliderContainer = document.getElementById('preview-slider-container');
+        if (sliderContainer) {
+            sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+            sliderContainer.addEventListener('mouseleave', startAutoSlide);
+        }
+    </script>
+
+    <!-- SUPABASE AUTH & MAYAR CHECKOUT SCRIPT -->
+    <script>
         const SUPABASE_URL = 'https://ozuyzelpzsvmurjdjilq.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
         const supabaseClient = (window.supabase || window.supabasejs).createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
