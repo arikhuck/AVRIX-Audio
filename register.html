@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,19 +26,17 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     }
                 }
             }
         }
     </script>
     
-    <!-- FontAwesome Icons & Google Fonts -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -49,7 +47,7 @@
             linear-gradient(to bottom, #f8f9f5, #e8eae1);
           background-attachment: fixed;
           color: #1e293b;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
         .glass-panel-light {
@@ -72,11 +70,6 @@
           background: linear-gradient(180deg, #0369a1 0%, #075985 100%);
           box-shadow: 0 6px 16px rgba(2, 132, 199, 0.35);
         }
-
-        .led-green {
-          background-color: #059669;
-          box-shadow: 0 0 6px #059669;
-        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between selection:bg-sky-500 selection:text-white">
@@ -91,15 +84,14 @@
                 <div>
                     <div class="flex items-center space-x-2">
                         <span class="font-black tracking-wider text-base text-slate-800">AVRIX</span>
-                        <span class="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300 uppercase tracking-wider font-bold">Audio Needs</span>
+                        <span class="text-[10px] px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300 uppercase tracking-wider font-bold">Audio Needs</span>
                     </div>
                     <p class="text-[11px] text-slate-500 font-medium hidden sm:block">WE ASSIST YOUR AUDIO NEED</p>
                 </div>
             </a>
 
-            <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-lg border border-slate-300 shadow-sm font-mono text-xs">
-                <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                <span class="text-[11px] text-slate-700 font-bold">Register Portal</span>
+            <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-lg border border-slate-300 shadow-sm text-xs">
+                <span class="text-[11px] text-slate-700 font-bold uppercase tracking-wider">Registration</span>
             </div>
         </div>
     </header>
@@ -110,52 +102,52 @@
             
             <div class="text-center space-y-1">
                 <h1 class="text-2xl font-black tracking-wider text-sky-800">Create Account</h1>
-                <p class="text-xs text-slate-500 font-medium">Daftar akun untuk menggunakan AVRIX Audio</p>
+                <p class="text-xs text-slate-500 font-medium">Register to get started with AVRIX Audio</p>
             </div>
 
             <!-- SUCCESS ALERT -->
             <div id="success-alert" class="hidden p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold flex items-start space-x-2">
                 <i class="fa-solid fa-circle-check text-sm mt-0.5 text-emerald-600"></i>
-                <span id="success-message">Pendaftaran berhasil! Mengalihkan ke login...</span>
+                <span id="success-message">Registration successful! Redirecting to login...</span>
             </div>
 
             <!-- ERROR ALERT -->
             <div id="error-alert" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-start space-x-2">
                 <i class="fa-solid fa-circle-exclamation text-sm mt-0.5 text-red-600"></i>
-                <span id="error-message">Gagal membuat akun.</span>
+                <span id="error-message">Failed to register account.</span>
             </div>
 
             <form id="register-form" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Email Address</label>
-                    <input type="email" id="register-email" required placeholder="nama@email.com" 
+                    <input type="email" id="register-email" required placeholder="name@email.com" 
                         class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 mb-1.5">Password</label>
-                    <input type="password" id="register-password" required minlength="6" placeholder="Minimal 6 karakter" 
+                    <input type="password" id="register-password" required minlength="6" placeholder="At least 6 characters" 
                         class="w-full bg-white border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-600 focus:ring-2 focus:ring-sky-100 transition-all shadow-sm">
                 </div>
 
                 <button type="submit" id="btn-register" 
                     class="w-full btn-engine-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-md mt-2 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-user-plus"></i>
-                    <span>Daftar Akun</span>
+                    <span>Create Account</span>
                 </button>
             </form>
 
             <div class="text-center pt-3 border-t border-slate-200 space-y-2">
                 <p class="text-xs text-slate-600 font-medium">
-                    Sudah memiliki akun? 
-                    <a id="login-link" href="login.html" class="text-sky-700 font-bold hover:underline">Login di sini</a>
+                    Already have an account? 
+                    <a id="login-link" href="login.html" class="text-sky-700 font-bold hover:underline">Log In Here</a>
                 </p>
             </div>
         </div>
     </main>
 
     <!-- FOOTER -->
-    <footer class="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 font-mono font-semibold">
+    <footer class="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 font-semibold">
         AVRIX Audio &copy; 2026 | Professional Mixing Suite
     </footer>
 
@@ -165,7 +157,6 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_jjcJHXMYxL7ItF-zwct7WQ_-6DlrXp2';
         const supabaseClient = (window.supabase || window.supabasejs).createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Ambil query param redirect
         const urlParams = new URLSearchParams(window.location.search);
         const redirectParam = urlParams.get('redirect');
 
@@ -193,7 +184,7 @@
             errBox.classList.add('hidden');
             succBox.classList.add('hidden');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Mendaftarkan Akun...</span>`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i><span>Creating Account...</span>`;
 
             try {
                 const { data, error } = await supabaseClient.auth.signUp({
@@ -212,10 +203,10 @@
                 }, 1500);
 
             } catch (err) {
-                errMsg.innerText = err.message || "Gagal membuat akun.";
+                errMsg.innerText = err.message || "Failed to create account.";
                 errBox.classList.remove('hidden');
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-user-plus"></i><span>Daftar Akun</span>`;
+                btn.innerHTML = `<i class="fa-solid fa-user-plus"></i><span>Create Account</span>`;
             }
         }
     </script>

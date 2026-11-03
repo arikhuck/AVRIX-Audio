@@ -25,8 +25,8 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
@@ -50,7 +50,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -132,11 +132,6 @@
           border-color: #0284c7;
           color: #0284c7;
           transform: translateY(-1px);
-        }
-
-        .led-green {
-          background-color: #059669;
-          box-shadow: 0 0 8px #059669;
         }
 
         .pricing-card-popup {
@@ -280,16 +275,16 @@
                             <div class="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-3 text-white z-20 pointer-events-none">
                                 <div class="bg-black/75 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15 shadow-lg max-w-md text-left">
                                     <div class="flex items-center gap-2 mb-0.5">
-                                        <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
-                                        <h4 class="text-xs font-extrabold font-mono uppercase tracking-wider text-sky-400">Parameter Calibration View</h4>
+                                        <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                                        <h4 class="text-xs font-extrabold uppercase tracking-wider text-sky-400">Parameter Calibration View</h4>
                                     </div>
                                     <p class="text-[11px] text-slate-300 font-medium">Attack, tempo-synced Release, Knee Profile, & Interactive Transfer Function Slope.</p>
                                 </div>
                                 <div class="hidden md:flex items-center gap-2">
-                                    <span class="bg-sky-500/20 text-sky-300 border border-sky-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                    <span class="bg-sky-500/20 text-sky-300 border border-sky-400/30 text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md">
                                         12+ Instruments
                                     </span>
-                                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                    <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md">
                                         14+ Music Genres
                                     </span>
                                 </div>
@@ -308,16 +303,16 @@
                             <div class="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-3 text-white z-20 pointer-events-none">
                                 <div class="bg-black/75 backdrop-blur-md px-4 py-2 rounded-xl border border-white/15 shadow-lg max-w-md text-left">
                                     <div class="flex items-center gap-2 mb-0.5">
-                                        <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
-                                        <h4 class="text-xs font-extrabold font-mono uppercase tracking-wider text-sky-400">Mode Learn (WAV Intelligence)</h4>
+                                        <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                                        <h4 class="text-xs font-extrabold uppercase tracking-wider text-sky-400">Mode Learn (WAV Intelligence)</h4>
                                     </div>
-                                    <p class="text-[11px] text-slate-300 font-medium">Deteksi Peak, RMS, Crest Factor Dynamics, dan kalkulasi rekomendasi sekali klik.</p>
+                                    <p class="text-[11px] text-slate-300 font-medium">Detect Peak, RMS, Crest Factor Dynamics, and calculate optimal compressor calibration in one click.</p>
                                 </div>
                                 <div class="hidden md:flex items-center gap-2">
-                                    <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                    <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md">
                                         WAV Drag & Drop
                                     </span>
-                                    <span class="bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[10px] font-mono font-bold px-3 py-1 rounded-full backdrop-blur-md">
+                                    <span class="bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-md">
                                         Live DSP Metering
                                     </span>
                                 </div>
@@ -327,14 +322,14 @@
 
                     <!-- SLIDESHOW BADGE -->
                     <div class="absolute top-4 left-4 sm:left-6 z-30 flex items-center space-x-2">
-                        <span class="inline-flex items-center space-x-2 bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 font-mono text-white text-[11px] shadow-lg">
-                            <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
+                        <span class="inline-flex items-center space-x-2 bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/15 text-white text-[11px] shadow-lg">
+                            <span class="w-2 h-2 rounded-full bg-sky-400"></span>
                             <span id="slider-caption" class="font-extrabold uppercase tracking-wider">Preset Engine: Track Calibration</span>
                         </span>
                     </div>
 
                     <div class="absolute top-4 right-4 sm:right-6 z-30">
-                        <span class="text-[10px] font-mono font-bold bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full border border-white/25 shadow-lg tracking-widest uppercase">
+                        <span class="text-[10px] font-bold bg-white/20 backdrop-blur-md text-white px-3 py-1 rounded-full border border-white/25 shadow-lg tracking-widest uppercase">
                             Official GUI Preview
                         </span>
                     </div>
@@ -361,12 +356,12 @@
                             <i class="fa-solid fa-bolt"></i>
                         </div>
                         <div>
-                            <h4 class="text-xs font-black text-slate-900 uppercase tracking-wide">Tingkatkan Kualitas Mixing Kamu Secara Drastis</h4>
-                            <p class="text-[11px] text-slate-600 font-medium">Bebas tebak-tebakan. Dapatkan rekomendasi kompresi instan terstandarisasi industri pro audio.</p>
+                            <h4 class="text-xs font-black text-slate-900 uppercase tracking-wide">Dramatically Elevate Your Mix Dynamics</h4>
+                            <p class="text-[11px] text-slate-600 font-medium">No more guesswork. Get instant, pro-audio industry standardized compression recommendations.</p>
                         </div>
                     </div>
                     <a href="#pricing" class="btn-engine-light px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap shadow-md flex items-center gap-2">
-                        <span>Beli Akses Sekarang</span>
+                        <span>Get Instant Access</span>
                         <i class="fa-solid fa-arrow-right text-[10px]"></i>
                     </a>
                 </div>
@@ -697,8 +692,8 @@
         <div class="relative w-full max-w-md glass-panel-light rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl border border-white/60">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div class="flex items-center space-x-2">
-                    <span class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                    <span class="font-mono text-[11px] font-bold text-sky-800 uppercase tracking-wider">Auth First Required</span>
+                    <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                    <span class="text-[11px] font-bold text-sky-800 uppercase tracking-wider">Authentication Required</span>
                 </div>
                 <button onclick="closeAuthModal()" class="text-slate-400 hover:text-slate-700 transition-colors w-7 h-7 flex items-center justify-center rounded-lg hover:bg-slate-100">
                     <i class="fa-solid fa-xmark text-sm"></i>
@@ -709,20 +704,20 @@
                 <div class="w-12 h-12 rounded-2xl bg-sky-100 text-sky-700 flex items-center justify-center mx-auto text-xl shadow-inner">
                     <i class="fa-solid fa-user-lock"></i>
                 </div>
-                <h3 class="text-lg font-black text-slate-900 tracking-tight">Login atau Buat Akun Terlebih Dahulu</h3>
+                <h3 class="text-lg font-black text-slate-900 tracking-tight">Sign In or Create an Account First</h3>
                 <p class="text-xs text-slate-600 font-medium leading-relaxed">
-                    Untuk memastikan lisensi audio mixing otomatis aktif dan terhubung ke akun Anda secara instan setelah pembayaran selesai di Mayar, silakan masuk atau daftarkan akun Anda terlebih dahulu.
+                    To ensure your audio license automatically activates and instantly links to your account upon checkout, please sign in or register first.
                 </p>
             </div>
 
             <div class="space-y-2.5 pt-2">
                 <a id="btn-modal-login" href="login.html?redirect=index.html%23pricing" class="w-full btn-engine-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-right-to-bracket"></i>
-                    <span>Masuk ke Akun (Login)</span>
+                    <span>Sign In to Account</span>
                 </a>
                 <a id="btn-modal-register" href="register.html?redirect=index.html%23pricing" class="w-full btn-studio-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-sm flex items-center justify-center gap-2">
                     <i class="fa-solid fa-user-plus"></i>
-                    <span>Daftar Akun Baru (Register)</span>
+                    <span>Create New Account</span>
                 </a>
             </div>
         </div>
@@ -741,21 +736,21 @@
                 </button>
             </div>
             <!-- Auth User Status Banner -->
-            <div id="mayarUserStrip" class="px-6 py-2.5 bg-sky-50 border-b border-sky-100 flex items-center justify-between text-xs font-mono text-sky-900">
+            <div id="mayarUserStrip" class="px-6 py-2.5 bg-sky-50 border-b border-sky-100 flex items-center justify-between text-xs text-sky-900">
                 <span class="flex items-center gap-2">
                     <i class="fa-solid fa-circle-check text-sky-600"></i>
-                    <span>Akun: <strong id="mayarUserEmail" class="text-sky-800"></strong></span>
+                    <span>Account: <strong id="mayarUserEmail" class="text-sky-800"></strong></span>
                 </span>
-                <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">Lisensi otomatis aktif setelah pembayaran</span>
+                <span class="text-[11px] text-slate-500 font-medium hidden sm:inline">License automatically activates upon payment</span>
             </div>
             <div class="flex-1 w-full h-full bg-slate-50 relative">
                 <iframe id="mayarIframe" src="" class="w-full h-full border-0" allow="payment"></iframe>
             </div>
             <div class="px-6 py-3 bg-white border-t border-slate-200 flex items-center justify-between">
-                <span class="text-[11px] text-slate-500 font-medium">Selesai bayar?</span>
+                <span class="text-[11px] text-slate-500 font-medium">Finished checkout?</span>
                 <a href="plugin.html" class="btn-engine-light px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
                     <i class="fa-solid fa-sliders"></i>
-                    <span>Buka AVRIX Studio</span>
+                    <span>Open AVRIX Studio</span>
                 </a>
             </div>
         </div>
@@ -876,21 +871,21 @@
             if (user) {
                 const displayEmail = user.email || 'Member';
                 container.innerHTML = `
-                    <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-sm font-mono text-xs">
-                        <span class="w-2 h-2 rounded-full led-green animate-pulse"></span>
+                    <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-sm text-xs">
+                        <span class="w-2 h-2 rounded-full bg-sky-500"></span>
                         <span class="text-[11px] text-slate-700 font-bold max-w-[130px] sm:max-w-[180px] truncate">${displayEmail}</span>
                     </div>
                     <a href="plugin.html" class="btn-engine-light px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
                         <i class="fa-solid fa-sliders text-xs"></i>
                         <span class="hidden sm:inline">Launch Studio</span>
                     </a>
-                    <button onclick="handleLogout()" class="btn-studio-light px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-red-600 transition-all" title="Logout">
+                    <button onclick="handleLogout()" class="btn-studio-light px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-red-600 transition-all" title="Sign Out">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i>
                     </button>
                 `;
             } else {
                 container.innerHTML = `
-                    <a href="login.html" class="btn-studio-light px-4 py-2 rounded-xl text-xs font-bold transition-all">Login Member</a>
+                    <a href="login.html" class="btn-studio-light px-4 py-2 rounded-xl text-xs font-bold transition-all">Sign In</a>
                     <a href="#pricing" class="btn-engine-light px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-md">
                         <i class="fa-solid fa-bolt text-xs"></i>
                         <span>Get Access</span>

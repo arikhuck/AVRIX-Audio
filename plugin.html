@@ -59,18 +59,18 @@
       if (isValid) {
         if (profile?.is_lifetime) {
           badgeEl.innerText = 'LIFETIME';
-          badgeEl.className = 'text-[9px] font-mono px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 font-bold';
+          badgeEl.className = 'text-[9px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-300 font-bold uppercase tracking-wider';
         } else {
           badgeEl.innerText = 'ACTIVE';
-          badgeEl.className = 'text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold';
+          badgeEl.className = 'text-[9px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-300 font-bold uppercase tracking-wider';
         }
       } else {
         badgeEl.innerText = 'INACTIVE';
-        badgeEl.className = 'text-[9px] font-mono px-2 py-0.5 rounded-full bg-red-100 text-red-800 border border-red-300 font-bold';
+        badgeEl.className = 'text-[9px] px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300 font-bold uppercase tracking-wider';
       }
     }
     if (ledEl) {
-      ledEl.className = isValid ? 'w-2 h-2 rounded-full led-green animate-pulse' : 'w-2 h-2 rounded-full bg-red-500';
+      ledEl.className = isValid ? 'w-2 h-2 rounded-full bg-sky-500' : 'w-2 h-2 rounded-full bg-slate-400';
     }
   }
 
@@ -164,8 +164,8 @@
                         }
                     },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+                        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif']
                     }
                 }
             }
@@ -177,7 +177,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -297,10 +297,6 @@
           background-color: #0284c7;
           box-shadow: 0 0 6px #0284c7;
         }
-        .led-green {
-          background-color: #059669;
-          box-shadow: 0 0 6px #059669;
-        }
         .drop-active {
           border-color: #0284c7 !important;
           background-color: rgba(2, 132, 199, 0.05) !important;
@@ -337,13 +333,13 @@
                 </div>
 
                 <!-- User Profile & License Indicator -->
-                <div class="hidden sm:flex items-center space-x-2 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-sm font-mono text-xs">
-                    <span id="user-led-indicator" class="w-2.5 h-2.5 rounded-full led-green animate-pulse"></span>
-                    <span id="user-email-indicator" class="text-[11px] text-slate-700 font-bold max-w-[140px] truncate">Memeriksa...</span>
-                    <span id="user-badge-indicator" class="text-[9px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-300">ACTIVE</span>
+                <div class="hidden sm:flex items-center space-x-2 bg-white px-3 py-1.5 rounded-xl border border-slate-300 shadow-sm text-xs">
+                    <span id="user-led-indicator" class="w-2 h-2 rounded-full bg-sky-500"></span>
+                    <span id="user-email-indicator" class="text-[11px] text-slate-700 font-bold max-w-[140px] truncate">Checking access...</span>
+                    <span id="user-badge-indicator" class="text-[9px] px-2 py-0.5 rounded-full bg-sky-100 text-sky-800 font-bold border border-sky-300 uppercase tracking-wider">ACTIVE</span>
                 </div>
 
-                <button onclick="handleLogout()" class="btn-studio-light px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-red-600 transition-all shadow-sm" title="Logout">
+                <button onclick="handleLogout()" class="btn-studio-light px-3 py-1.5 rounded-xl text-xs font-bold text-slate-500 hover:text-red-600 transition-all shadow-sm" title="Sign Out">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
                 </button>
             </div>
@@ -358,20 +354,20 @@
             </div>
             
             <div class="space-y-2">
-                <h3 class="text-xl font-black text-slate-900 tracking-tight">Lisensi Diperlukan</h3>
+                <h3 class="text-xl font-black text-slate-900 tracking-tight">License Activation Required</h3>
                 <p class="text-xs text-slate-600 font-medium leading-relaxed">
-                    Akses kamu belum aktif atau masa langganan AVRIX Audio sudah habis. Silakan beli atau perpanjang lisensi untuk membuka Preset Engine dan Mode Learn (WAV).
+                    Your access is currently inactive or your AVRIX Audio subscription has expired. Please purchase or renew a license to unlock Preset Engine and Mode Learn (WAV).
                 </p>
             </div>
 
             <div class="space-y-2.5 pt-2">
                 <a href="index.html#pricing" class="w-full btn-engine-light py-3 rounded-xl text-xs font-bold tracking-wide transition-all shadow-md flex items-center justify-center gap-2">
                     <i class="fa-solid fa-bolt"></i>
-                    <span>Beli / Perpanjang Lisensi</span>
+                    <span>Purchase / Renew License</span>
                 </a>
                 <button onclick="handleLogout()" class="w-full btn-studio-light py-2.5 rounded-xl text-xs font-bold text-slate-600 hover:text-red-600 transition-all flex items-center justify-center gap-2">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                    <span>Ganti Akun / Logout</span>
+                    <span>Switch Account / Sign Out</span>
                 </button>
             </div>
         </div>
@@ -392,7 +388,7 @@
                             <span class="text-[10px] font-mono text-slate-500 font-medium">Source Profile</span>
                         </div>
 
-                        <!-- STACK VERTIKAL UNTUK PARAMETER -->
+                        <!-- VERTICAL STACK FOR PARAMETERS -->
                         <div class="space-y-4">
                             <!-- TARGET INSTRUMENT / BUS DROPDOWN (A-Z) -->
                             <div>
@@ -1467,14 +1463,14 @@
                 const x = xToPx(db);
                 ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, height - bottom); ctx.stroke();
                 ctx.fillStyle = '#94a3b8';
-                ctx.font = '500 10px "JetBrains Mono", monospace';
+                ctx.font = '500 10px "Inter", -apple-system, sans-serif';
                 ctx.fillText(String(db), x - 8, height - 12);
             });
             [-40, -30, -20, -10, 0].forEach(db => {
                 const y = yToPx(db);
                 ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(width - right, y); ctx.stroke();
                 ctx.fillStyle = '#94a3b8';
-                ctx.font = '500 10px "JetBrains Mono", monospace';
+                ctx.font = '500 10px "Inter", -apple-system, sans-serif';
                 ctx.fillText(String(db), 8, y + 3);
             });
 
