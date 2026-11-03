@@ -15,8 +15,8 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     const resendApiKey = Deno.env.get('RESEND_API_KEY') ?? ''
-    const appUrl = Deno.env.get('APP_URL') || 'https://arikhuck.github.io/AVRIX-Audio'
-    const pricingUrl = `${appUrl}/index.html#pricing`
+    const appUrl = Deno.env.get('APP_URL') || 'https://avrixaudio.site'
+    const pricingUrl = `${appUrl}/#pricing`
 
     if (!supabaseUrl || !supabaseServiceKey) {
       return new Response(

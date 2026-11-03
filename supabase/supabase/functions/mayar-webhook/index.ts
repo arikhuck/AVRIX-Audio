@@ -247,7 +247,7 @@ serve(async (req) => {
 
     // 7. Kirim Email Otomatis ke Customer yang Berhasil Membeli
     const resendApiKey = Deno.env.get('RESEND_API_KEY') || ''
-    const appUrl = Deno.env.get('APP_URL') || 'https://arikhuck.github.io/AVRIX-Audio'
+    const appUrl = Deno.env.get('APP_URL') || 'https://avrixaudio.site'
     const studioUrl = `${appUrl}/plugin.html`
 
     const formattedExpiry = isLifetime 
